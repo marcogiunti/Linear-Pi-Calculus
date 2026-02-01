@@ -1,0 +1,61 @@
+val andb : bool -> bool -> bool
+val negb : bool -> bool
+val fst : 'a * 'b -> 'a
+val snd : 'a * 'b -> 'b
+val app : 'a list -> 'a list -> 'a list
+val add : int -> int -> int
+val sub : int -> int -> int
+module Nat : sig val ltb : 'a -> 'a -> bool end
+val nat_pair_eq_dec : int * int -> int * int -> bool
+val pair_eq : 'a -> 'a -> bool
+type dproc =
+    DZero
+  | DBang of int * int * int * int * dproc
+  | DPar of dproc * dproc
+  | DNu of int * int * dproc
+  | DInp of int * int * int * int * dproc
+  | DOut of int * int * int * int * dproc
+val secLabs : dproc -> (int * int) list
+val mv : 'a * 'b -> 'a * 'b -> 'a * 'b -> 'a * 'b
+val pmap : dproc -> int -> int -> int -> int -> dproc
+val max : ('a * int) list -> int
+val dep_relabel : dproc -> ('a * int) list -> dproc
+type pol = Empty | Inp | Out | Io
+type mode = Lin | Un
+type piType = Chan of mode * pol * piType | Top
+type flag = Hid | Ill | Vis
+type typeEnv = (((int * int) * flag) * piType) list
+val pol_eq : pol -> pol -> bool
+val mode_eq : mode -> mode -> bool
+val type_eq : piType -> piType -> bool
+val flag_eq : flag -> flag -> bool
+val removeEntry : 'a -> (('a * 'b) * 'c) list -> (('a * 'b) * 'c) list
+val pol_cup : pol -> pol -> pol
+val domain : (('a * 'b) * 'c) list -> 'a list
+type action =
+    AIn of int * int * int * int
+  | AOut of int * int * int * int
+  | ATau of int * int
+val inB : 'a -> (('a * flag) * piType) list -> (flag * piType) * bool
+val newEntries :
+  ((('a * int) * flag) * piType) list ->
+  ('a * int) list -> int -> ((('a * int) * flag) * piType) list
+type 'a t = 'a option
+val raise : 'a option
+val tplus : piType -> piType -> piType option
+val tremove : piType -> piType -> piType option
+val typeEnv_eq :
+  (('a * flag) * piType) list -> (('a * flag) * piType) list -> bool
+val changeVis : 'a -> (('a * flag) * 'b) list -> (('a * flag) * 'b) list
+val changeHid : 'a -> (('a * flag) * 'b) list -> (('a * flag) * 'b) list
+val posB : ('a * int) list -> bool
+val inB0 : 'a -> 'a list -> bool
+val inclB : 'a list -> 'a list -> bool
+val nodupb : 'a list -> bool
+type bothRedexesChange = bool
+val elts :
+  (((int * int) * flag) * piType) list ->
+  dproc ->
+  action ->
+  (int * int) option ->
+  bool -> ((((int * int) * flag) * piType) list * dproc) option
