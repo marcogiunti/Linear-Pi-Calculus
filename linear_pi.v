@@ -57,6 +57,10 @@ Section SubjectReduction.
        in_g_in_domain.
 
 
+
+       
+
+
   Lemma wf_rewrite  p :
     NoDup (secLabs p) -> NoDup (secLabs p).
   Proof. intros; assumption. Qed.  
