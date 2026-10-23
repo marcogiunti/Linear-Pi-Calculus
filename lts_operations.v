@@ -1,5 +1,5 @@
 Require Import
-         Bool List Omega PeanoNat Program.Equality
+         Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -87,7 +87,7 @@ Proof with eauto.
      eapply typeEnv_eq_change_flag_removeEntry_app...
 Qed. 
     
-Hint Resolve lts_lin_input_action.
+#[global] Hint Resolve lts_lin_input_action.
 
 
 Lemma lts_inp:
@@ -160,8 +160,8 @@ Proof with eauto using typeEnv_eq_change_flag_removeEntry.
     apply in_isMap with (x := (b1, b2)) (g := g)...
     intuition. subst.
     specialize IHLTS with
-        (a3 := a1) (a4 := a2) (b3 :=b1) (b4 := b2)
-        (pol := pol) (t := t0) (r := r) (s0 := s).
+        (a1 := a1) (a2 := a2) (b1 :=b1) (b2 := b2)
+        (pol := pol) (t := t0) (r := r) (s := s).
     assert (typeOf ((b1, b2, vis, s) :: removeEntry (b1, b2) g) (a1, a2) (Chan un pol t0)).
     apply typeOf_removeEntry...
     assert ( typeOf ((b1, b2, vis, s) :: removeEntry (b1, b2) g) (b1, b2) s)...
@@ -230,8 +230,8 @@ intros g p a1 a2 b1 b2 g1 p' nd_pf pol t s r
     apply in_isMap with (x := (b1, b2)) (g := g)...
     intuition. subst.
     specialize IHLTS with
-        (a3 := a1) (a4 := a2) (b3 :=b1) (b4 := b2)
-        (pol := pol) (t := t0) (r := r) (s0 := s).
+        (a1 := a1) (a2 := a2) (b1 :=b1) (b2 := b2)
+        (pol := pol) (t := t0) (r := r) (s := s).
     assert (typeOf ((b1, b2, vis, s) :: removeEntry (b1, b2) g) (a1, a2) (Chan lin pol t0)).
     apply typeOf_removeEntry...
     assert ( typeOf ((b1, b2, vis, s) :: removeEntry (b1, b2) g) (b1, b2) s)...

@@ -1,5 +1,5 @@
 Require Import
-       Bool List Omega PeanoNat Program.Equality
+       Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -148,7 +148,7 @@ Proof with eauto.
   subst...
 Qed.   
 
-Hint Resolve flag_of_split_l.
+#[global] Hint Resolve flag_of_split_l.
 
 Lemma split_not_in_not_ex_l: forall g1 g2 g pf1 pf2 pf a,
     tEnv_split g1 g2 g pf1 pf2 pf ->
@@ -178,12 +178,11 @@ Proof with eauto.
   - apply no_dup_removeEntry_no_dup
       with (a := n) in nd_pf as nd_pf0. 
     subst; intuition.
-    rewrite NoDup_count_occ'.
+    rewrite (NoDup_count_occ' nat_pair_eq_dec).
     intros x IN.
     case_eq (pair_eq n x).
     intro PEQ; rewrite <-pairEq_eq in PEQ; subst x.
 
-    Existential 3:=nat_pair_eq_dec.
     apply count_occ_removeEntry in IN.
 
     assert (count_occ nat_pair_eq_dec
@@ -1019,8 +1018,8 @@ Proof with eauto.
       rewrite <-EQ in TYP0; intuition.
 Qed.
 
-Hint Resolve flag_of_split_l.
-Hint Resolve split_of_split.
+#[global] Hint Resolve flag_of_split_l.
+#[global] Hint Resolve split_of_split.
 
 (*Lemma split_lin_un_false:
   forall g1 g2 g pf1 pf2 pf y1 y2 f p q t,

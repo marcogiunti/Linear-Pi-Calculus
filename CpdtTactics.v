@@ -7,7 +7,7 @@
  *   http://creativecommons.org/licenses/by-nc-nd/3.0/
  *)
 
-Require Import Eqdep List Omega.
+Require Import Eqdep List Lia.
 
 Set Implicit Arguments.
 
@@ -108,7 +108,7 @@ Ltac rewriterP := repeat (rewriteHyp; autorewrite with core in *).
 Ltac rewriter := autorewrite with core in *; rewriterP.
 
 (** This one is just so darned useful, let's add it as a hint here. *)
-Hint Rewrite app_ass.
+#[global] Hint Rewrite app_ass.
 
 (** Devious marker predicate to use for encoding state within proof goals *)
 Definition done (T : Type) (x : T) := True.
@@ -196,8 +196,8 @@ Ltac crush' lemmas invOne :=
           repeat (simplHyp invOne; intuition)); un_done
       end;
       sintuition; rewriter; sintuition;
-      (** End with a last attempt to prove an arithmetic fact with [omega], or prove any sort of fact in a context that is contradictory by reasoning that [omega] can do. *)
-      try omega; try (elimtype False; omega)).
+      (** End with a last attempt to prove an arithmetic fact with [lia], or prove any sort of fact in a context that is contradictory by reasoning that [lia] can do. *)
+      try lia; try (exfalso; lia)).
 
 (** [crush] instantiates [crush'] with the simplest possible parameters. *)
 Ltac crush := crush' false fail.

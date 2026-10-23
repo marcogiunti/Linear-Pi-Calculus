@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         pairEq type_system pi_syntax semantics.
 
   Require Import CpdtTactics LibTactics.

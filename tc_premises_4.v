@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality Classical
+  Bool List Lia PeanoNat Program.Equality Classical
   ListAddOns Max RemoveEntry Domain Replication
   pairEq
   sne_premises
@@ -34,7 +34,7 @@ Require Import
 
 Require Import CpdtTactics LibTactics.
 
-Hint Constructors Permutation.
+#[global] Hint Constructors Permutation.
 
 
 
@@ -248,10 +248,10 @@ Proof with eauto.
     try destruct a as [a1 a2];
     try inversion H0; subst;
     case_eq ( x2 <? max l); intros;
-    try rewrite Nat.ltb_lt in *; try omega;
+    try rewrite Nat.ltb_lt in *; try lia;
     try eapply IHl in H0;
     case_eq ( a2 <? max l); intros;
-    try rewrite Nat.ltb_nlt in *;try omega...
+    try rewrite Nat.ltb_nlt in *;try lia...
 Qed.
 
 Lemma max_distr: forall x l1 l2,
@@ -259,13 +259,13 @@ Lemma max_distr: forall x l1 l2,
 Proof with eauto.
   intros. rewrite max_app.
   case_eq (max l1 <? max l2 ); intros...
-  erewrite Nat.ltb_ge in H0; omega.
+  erewrite Nat.ltb_ge in H0; lia.
 Qed.
 
 Lemma rewrite_max_var : forall x v t g,
     snd x < max (domain g) ->
     max (domain g) = max (domain ((x, v, t) :: g)).
-Proof with omega.
+Proof with lia.
   introv LT; induction g; destruct x as [x1 x2];
     simpl in *; intuition;
     try destruct a as [[[a1 a2]f1]t1].
@@ -284,7 +284,7 @@ Proof with eauto using in_map.
     try eapply isMap...
 Qed.
 
-Hint Resolve proj_isMap.
+#[global] Hint Resolve proj_isMap.
 
 
 Lemma proj_cons : forall f g pf pf1,
@@ -386,12 +386,12 @@ Proof with eauto.
     try contradiction...
 Qed.
 
-Hint Resolve in_removeEntry_cons_iff
+#[global] Hint Resolve in_removeEntry_cons_iff
   in_removeEntry_cons_iff_2.
 
-Hint Constructors NoDup.
-Hint Resolve in_hid_proj.
-Hint Resolve isMap_not_in incl_cons inB_implies_In_2.
+#[global] Hint Constructors NoDup.
+#[global] Hint Resolve in_hid_proj.
+#[global] Hint Resolve isMap_not_in incl_cons inB_implies_In_2.
 
  Lemma max_distr_2: forall x l1 l2,
                  x < max l1 -> x < max (l1 ++ l2).
@@ -399,10 +399,10 @@ Proof with
 eauto.
    intros. rewrite max_app.
    case_eq (max l1 <? max l2 ); intros...
-   erewrite Nat.ltb_lt in H0; omega.
+   erewrite Nat.ltb_lt in H0; lia.
 Qed.
 
-Hint Resolve in_g_in_domain.
+#[global] Hint Resolve in_g_in_domain.
 
 Lemma typeCheck_weak2: forall g pf p k pfk pf1 (nd_pf : NoDup (domain g ++ domain k)),
     typeCheck g pf p ->
@@ -779,8 +779,8 @@ Proof with eauto.
    all:repeat right...
 Qed.
 
-Hint Resolve split_pf.
-Hint Constructors tEnv_split.
+#[global] Hint Resolve split_pf.
+#[global] Hint Constructors tEnv_split.
 
 Lemma split_illECast_cons: forall g pf pfic pfc,
     cons (vis_proj g ++ ill_proj g) pfc ->

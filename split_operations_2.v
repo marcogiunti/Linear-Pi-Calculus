@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality  Classical
+  Bool List Lia PeanoNat Program.Equality  Classical
   ListAddOns Max RemoveEntry Domain NewEntries
   header
   operations pi_syntax 
@@ -20,13 +20,13 @@ Require Import CpdtTactics LibTactics.
 
 
 
-Hint Resolve pol_cup_empty.
-Hint Resolve pol_cup_empty_r.
-Hint Resolve pol_cup_empty_res.
+#[global] Hint Resolve pol_cup_empty.
+#[global] Hint Resolve pol_cup_empty_r.
+#[global] Hint Resolve pol_cup_empty_res.
 
-Hint Resolve no_dup_split_no_dup_r no_dup_split_no_dup_l.
+#[global] Hint Resolve no_dup_split_no_dup_r no_dup_split_no_dup_l.
 
-Hint Resolve beq_nat_refl.
+#[global] Hint Resolve beq_nat_refl.
 
 Ltac appIH IH := 
   try eapply IH;  econstructor; eauto.
@@ -352,7 +352,7 @@ Proof with eauto.
   all:eauto.
 Qed.
 
-Hint Constructors flag_plus.
+#[global] Hint Constructors flag_plus.
 
 Lemma tEnv_split_add_vis:
   forall b1 b2 s1 s2 s g1 g2 g
@@ -1156,7 +1156,7 @@ Proof with eauto.
   repeat right...
 Qed. 
 
-Hint Resolve in_eq.
+#[global] Hint Resolve in_eq.
 
 Lemma split_eq_flag:
   forall g1 g2 g pf1 pf2 pf a1 a2 f1 t1 f t,
@@ -1171,7 +1171,7 @@ Proof with eauto.
   apply fsuper_flag with g1 g2 g pf1 pf2 pf (a1, a2) t t1...
 Qed.
 
-Hint Resolve split_eq_flag.
+#[global] Hint Resolve split_eq_flag.
 
 
 Lemma finv_hid_r :
@@ -1195,9 +1195,9 @@ Proof with eauto.
 Qed.
 
 
-Hint Resolve finv_hid_r.
-Hint Resolve pairEq_eq.
-Hint Resolve pairEq_neq.
+#[global] Hint Resolve finv_hid_r.
+#[global] Hint Resolve pairEq_eq.
+#[global] Hint Resolve pairEq_neq.
 (*Hint Resolve pair_equal_bool.*)
 
 Lemma isMap_cons_2 : forall n f t g,
@@ -1304,7 +1304,7 @@ Proof with eauto.
                      specialize H1 with x f0 t0 f2 t2; intuition.
 Qed.
 
-Hint Resolve isMap_cons_2.
+#[global] Hint Resolve isMap_cons_2.
 
 Lemma split_cons: forall g1 g2 g pf1 pf2 pf b1 b2 f s pf',
     tEnv_split g1 g2 g pf1 pf2 pf ->
@@ -1509,7 +1509,7 @@ Proof with eauto.
   - inversion PP. subst. apply Ts_id.
 Qed.
 
-Hint Resolve pol_plus_type_sub.
+#[global] Hint Resolve pol_plus_type_sub.
 
 Lemma split_sub : forall g1 g2 g pf1 pf2 pf a t1 t,
     typeOf g1 a t1 ->

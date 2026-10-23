@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max Domain RemoveEntry NewEntries Replication
         header
         operations pi_syntax 
@@ -297,10 +297,10 @@ Proof with eauto.
               let (a1, a2) := y0 in
               if In2 (a1, a2) l then (a1, a2 + max (domain g), f, t) else cast x) g))).
        intros ABS; eapply in_domain_in_g in ABS as (ff &tt &ABS); erewrite in_map_iff in ABS; destruct ABS as ([[[x1 x2] ff1] tt1] &ABS  &IN2); case_eq (In2 (x1, x2) l); intros EQ2; rewrite EQ2 in *;inversion ABS.
-         assert (x2 = 0); try omega;
+         assert (x2 = 0); try lia;
            unfold pos in POS; specialize POS with x1 x2;
              assert (x2 >0); try eapply POS; eauto;
-               try omega. 
+               try lia. 
          subst x1 x2. erewrite in2_nIn_iff in *. contradiction.
          assert (INM :
                In (n, n0 + max (domain g)) (domain (map (fun x : name * name * flag * piType =>
@@ -311,9 +311,9 @@ Proof with eauto.
          eapply in_g_in_domain,in_map_iff.
           exists (n, n0, hid, t); split;  try rewrite ISIN...
     
-     assert (LE2 : n0 < n0 + max (domain g)). omega. 
+     assert (LE2 : n0 < n0 + max (domain g)). lia. 
      assert (DIFF:  (n, n0) <> (n, n0 + max (domain g))).
-     intros ABS; inversion ABS; omega.
+     intros ABS; inversion ABS; lia.
      assert (PNEQ: pair_eq (n, n0 + max (domain g)) (n, n0 ) = false).
      eapply pairEq_neq...
      assert (PEQ: pair_eq (n, n0) (n, n0) = true).
@@ -478,9 +478,9 @@ Proof with eauto.
            NoDup_cons; try intros ABS;
              subst f M; try contradiction;try eapply no_dup_shift...
         assert (DIFFM :  (n, n0 + M) <> (n, n0)).
-          intros ABS; inversion ABS. assert (M = 0). omega.
+          intros ABS; inversion ABS. assert (M = 0). lia.
          subst.
-         assert (n0 = 0). omega. 
+         assert (n0 = 0). lia. 
          unfold pos in POS; move POS at bottom; specialize POS with n n0; intuition.
          assert (nd_pfIH:
                    NoDup (domain ([(n, n0 + M, vis, N)] ++ (n, n0, vis, t) :: removeEntry (n, n0 + M) (map f g)))).
@@ -576,7 +576,7 @@ Proof with eauto.
          assert (EQ:
                   max (domain ((n, n0, vis, t) :: removeEntry (n, n0) g)) = max (domain g)).
          erewrite <-max_same_domain...
-         rewrite EQ in ABS1. omega.
+         rewrite EQ in ABS1. lia.
          
          
          
@@ -640,7 +640,7 @@ Proof with eauto.
      eauto.
      eauto.
      eapply split_comm...
-     omega.
+     lia.
      eauto.
      eapply split_comm...
      eapply split_comm...
@@ -852,7 +852,7 @@ Proof with eauto.
 
     assert (max (domain g) <= max (domain (map f g))).
     subst f; eapply max_map...
-    omega.
+    lia.
 
     assert (nd_pf'' :
               NoDup (domain (((u, vis, t1) :: (x, vis, t) :: removeEntry u g)))).
@@ -964,7 +964,7 @@ Proof with eauto.
 
     assert (max (domain g) <= max (domain (map f g))).
     subst f; eapply max_map...
-    omega.
+    lia.
 
     assert (nd_pf'' :
               NoDup (domain ((x, vis, t) :: g))).
@@ -1051,7 +1051,7 @@ Proof with eauto.
 
     assert (max (domain g) <= max (domain (map f g))).
     subst f; eapply max_map...
-    omega.
+    lia.
     
     (* cons (vis_proj (map f g) ++ ill_proj (map f g)) pf16 *)
     erewrite tc_ill_vis.cons_distr in *; split.
@@ -1108,6 +1108,6 @@ Proof with eauto.
     eauto.
     try eapply no_dup_split_no_dup_r with (g := g)...
     eapply isMap_distr in pf16; intuition.
-    Grab Existential Variables.
+    Unshelve.
     all:  eapply isMap_distr in pf16; intuition.
 Qed.

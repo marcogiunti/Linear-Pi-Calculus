@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain NewEntries
         header
         operations pi_syntax 
@@ -16,7 +16,7 @@ Require Import
 
 Require Import CpdtTactics LibTactics.
 
-Hint Constructors cons.
+#[global] Hint Constructors cons.
 
 
 
@@ -89,7 +89,7 @@ Proof with eauto.
 Qed.
 
 
-Hint Resolve incl_incl.
+#[global] Hint Resolve incl_incl.
 
 Lemma typeEnv_eq_change_flag a1 a2 f1 f2 t1 t2 f3 (h1 h2 k1 k2 : typeEnv):
   h1 ++ ((a1, a2, f1, t1) :: h2) =
@@ -578,7 +578,7 @@ Proof with eauto using
     rewrite <-EQ in ABS.
     rewrite <-app_nil_l with (l := (b1, b2, vis, t2) :: nil) in ABS. rewrite last_length with (l := nil) in ABS.
     unfold  List.length at 1 in ABS.
-    assert (ABS2: Datatypes.length k = 0). omega.
+    assert (ABS2: Datatypes.length k = 0). lia.
     rewrite length_zero_iff_nil in ABS2; contradiction.
   - exists p. split. eapply replInp...
     unfold secLabs; fold secLabs...
@@ -605,7 +605,7 @@ Proof with eauto.
   rewrite IHp...
 Qed.
 
-Hint Rewrite newEntries_swap.
+#[global] Hint Rewrite newEntries_swap.
 
 
 

@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality  Classical
+        Bool List Lia PeanoNat Program.Equality  Classical
         ListAddOns Max RemoveEntry Domain NewEntries
         header
         operations pi_syntax 
@@ -29,9 +29,9 @@ Fixpoint nonRec_typable p :=
   | dZero => True
   end.
 
-Hint Unfold nonRec_typable.
+#[global] Hint Unfold nonRec_typable.
 
-Hint Resolve nonRecTypes.
+#[global] Hint Resolve nonRecTypes.
 
 Lemma typeCheck_object_neq_subject: forall g p pf,
     typeCheck g pf p -> nonRec_typable p.

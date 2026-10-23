@@ -29,7 +29,7 @@ KNOWNFILES   := Makefile _CoqProject
 # 	@ echo Making main files: $^
 
 CoqMakefile: Makefile _CoqProject
-	$(COQBIN)coq_makefile -f _CoqProject -o CoqMakefile $(VFILES)
+	$(COQBIN)rocq makefile -f _CoqProject -o CoqMakefile $(VFILES)
 
 invoke-coqmakefile: CoqMakefile
 	$(MAKE) --no-print-directory -f CoqMakefile $(filter-out $(KNOWNTARGETS),$(MAKECMDGOALS))

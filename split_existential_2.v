@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality
+  Bool List Lia PeanoNat Program.Equality
   ListAddOns Max RemoveEntry Domain Classical
   Permutation
   header
@@ -27,7 +27,7 @@ Require Import
 Require Import CpdtTactics LibTactics.
 Import ListNotations.
 
-Hint Resolve split_cons remove_exists split_sub
+#[global] Hint Resolve split_cons remove_exists split_sub
   Fp_hi Fp_ih Fp_vv Fp_ii un_is_unrestricted
   type_remove_top type_remove_top_2
   lts_type_remove_lin_out lts_type_remove_un_out
@@ -77,7 +77,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
       specialize  split_not_exists_lts
         with (g:= g1) as SNEA.
       specialize SNEA with
-        (g2 :=g0) (g3:=g3) (k1 := k0).
+        (g1 :=g0) (g2:=g3) (k1 := k0).
       specialize SNEA with p1 a p2 pf0  pf3 pf1 nd_pf0 nd_pf1.
 
       assert (TC' := TC1);
@@ -352,7 +352,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     exists ( (( ((b1, b2), vis, t')
                   :: removeEntry (b1, b2) g1))).
     inversion TYPx1; subst. 
-    apply uIn with (f := f0) (t1 := ty) (pol0 := pol2) (t := t).
+    apply uIn with (f := f0) (t1 := ty) (pol := pol2) (t := t).
     intuition.
     apply type_plus_comm...
     assert (f = f0).
@@ -394,7 +394,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     specialize uRin with
       (a1 := a1) (a2 := a2) (b1 := b1) (b2 := b2) (x1 := x1) (x2 := x2)
       (p := p) (t2 := t')
-      (pf := nd_pf1) (f := f1) (t1 := ty) (pol0 := p0) (t := t) as URIN.
+      (pf := nd_pf1) (f := f1) (t1 := ty) (pol := p0) (t := t) as URIN.
     assert (LTS: p0 = inp \/ p0 = io) by intuition.
     apply URIN in LTS.
     unfold q.

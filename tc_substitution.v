@@ -1,5 +1,5 @@
 Require Import
-         Bool List Omega PeanoNat Program.Equality
+         Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -22,15 +22,15 @@ Require Import
         split_existential
         split_not_exists.
 
-Hint Resolve split_comm.
-Hint Constructors cons.
-Hint Constructors type_sub.
-Hint Constructors type_plus.
+#[global] Hint Resolve split_comm.
+#[global] Hint Constructors cons.
+#[global] Hint Constructors type_sub.
+#[global] Hint Constructors type_plus.
 
 
-  Hint Constructors cons.
+  #[global] Hint Constructors cons.
 
-Hint Resolve
+#[global] Hint Resolve
      gcons_removeEntry
      cons_lin
      cons_cons_iff
@@ -1421,7 +1421,7 @@ removeEntry (u1, u2)
         eapply in_removeEntry,in_removeEntry in H.
            eapply in_g_in_domain in  H; try contradiction.
            erewrite <-max_removeEntry_cons,max_removeEntry3... destruct MIN as [MIN1 | MIN2]...
-           assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+           assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
            eapply removeEntry_in in INb.
            eapply in_g_in_domain...
            eauto.
@@ -1504,7 +1504,7 @@ removeEntry (u1, u2)
              eapply in_removeEntry,in_removeEntry,in_g_in_domain in H; try contradiction.
            unfold snd; erewrite <-max_removeEntry_cons,max_removeEntry3...
            destruct MIN as [MIN1 | MIN2]...
-           assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+           assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
            eapply in_g_in_domain,removeEntry_in...
            (* typeCheck
     ((b1, b2, vis, t2)
@@ -1575,7 +1575,7 @@ removeEntry (u1, u2)
            eauto.
            unfold snd; erewrite <-max_removeEntry_cons,max_removeEntry3...
            destruct MIN as [MIN1 | MIN2]...
-           assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+           assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
             eapply in_g_in_domain,removeEntry_in...
             assert (nd_pf'' : NoDup (domain (((b1, b2, vis, s2)
           :: removeEntry (b1, b2)
@@ -1681,7 +1681,7 @@ removeEntry (u1, u2)
         eauto.
         erewrite <-max_removeEntry_cons,max_removeEntry3...
         destruct MIN as [MIN1 | MIN2]...
-        assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+        assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
         eapply removeEntry_in in INb.
            eapply in_g_in_domain...
            eauto.
@@ -1742,7 +1742,7 @@ removeEntry (u1, u2)
            eauto.
            unfold snd; erewrite <-max_removeEntry_cons,max_removeEntry3...
            destruct MIN as [MIN1 | MIN2]...
-           assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+           assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
            eapply in_g_in_domain,removeEntry_in...
            (* typeCheck
     ((y1, y2, vis, t)
@@ -1785,7 +1785,7 @@ removeEntry (u1, u2)
            eauto.
            unfold snd; erewrite <-max_removeEntry_cons,max_removeEntry3...
            destruct MIN as [MIN1 | MIN2]...
-           assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+           assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
             eapply in_g_in_domain,removeEntry_in...
             assert (nd_pf'' : NoDup (domain (((b1, b2, vis, s2)
           :: removeEntry (b1, b2)
@@ -1892,7 +1892,7 @@ removeEntry (u1, u2)
         eauto.
         erewrite <-max_removeEntry_cons,max_removeEntry3...
         destruct MIN as [MIN1 | MIN2]...
-        assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+        assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
         eapply removeEntry_in in INb.
         eapply in_g_in_domain...
         eauto.
@@ -1981,7 +1981,7 @@ removeEntry (u1, u2)
            eauto.
            unfold snd; erewrite <-max_removeEntry_cons,max_removeEntry3...
            destruct MIN as [MIN1 | MIN2]...
-           assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+           assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
            eapply in_g_in_domain,removeEntry_in...
            (* cons
     (vis_proj
@@ -2052,7 +2052,7 @@ removeEntry (u1, u2)
            eauto.
            unfold snd; erewrite <-max_removeEntry_cons,max_removeEntry3...
            destruct MIN as [MIN1 | MIN2]...
-           assert (b2 <= max (domain g)). eapply in_preserves_max... omega.
+           assert (b2 <= max (domain g)). eapply in_preserves_max... lia.
             eapply in_g_in_domain,removeEntry_in...
 
             (*  cons
@@ -2136,21 +2136,9 @@ removeEntry (u1, u2)
             right...
             eauto. 
             Unshelve.
-            eapply no_dup_isMap;
-              unfold ill_proj; fold ill_proj;
-              eapply no_dup_vis_ill_proj...
-            eauto.
-            eauto.
-            eapply no_dup_isMap;
-              unfold ill_proj; fold ill_proj;
-              eapply no_dup_vis_ill_proj...
-            eauto.
-            eauto.
-             eapply no_dup_isMap;
-               unfold ill_proj; fold ill_proj;
-                 eapply no_dup_vis_ill_proj...
-             all:eauto.
-             Grab Existential Variables.
-             all:eauto.
+            all: try solve [ eapply no_dup_isMap;
+                               unfold ill_proj; fold ill_proj;
+                               eapply no_dup_vis_ill_proj; eauto ].
+            all: eauto.
   Qed.
   

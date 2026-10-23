@@ -1,5 +1,6 @@
+Require Export compat.
 Require Import
-        Bool List Omega PeanoNat Classical.
+        Bool List Lia PeanoNat Classical.
 
 
 Lemma ex_falso: forall T:Type, False -> T.

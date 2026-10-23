@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -18,12 +18,12 @@ Require Import
 Require Import CpdtTactics LibTactics.
 Import ListNotations.
 
-Hint Resolve no_dup_split_no_dup_r no_dup_split_no_dup_l.
+#[global] Hint Resolve no_dup_split_no_dup_r no_dup_split_no_dup_l.
 
-Hint Resolve beq_nat_refl.
+#[global] Hint Resolve beq_nat_refl.
 
 
-      Hint Constructors flag_plus.
+      #[global] Hint Constructors flag_plus.
 
 
 
@@ -174,8 +174,8 @@ Qed.
  Qed.
 
  
-Hint Constructors type_sub.
-Hint Constructors type_plus.
+#[global] Hint Constructors type_sub.
+#[global] Hint Constructors type_plus.
 Lemma type_remove_super: forall s s1 s2 t t2,
   type_remove s t t2  ->
   type_plus s1 s s2 ->
@@ -304,9 +304,9 @@ Lemma split_rewrite_pf: forall g1 g2 g pf1 pf2 pf pf',
     subst g'''; specialize IHTS with pfk...
   Qed.
 
-  Hint Resolve split_rewrite_pf.
+  #[global] Hint Resolve split_rewrite_pf.
 
- Hint Resolve removeEntry_iff_cons.
+ #[global] Hint Resolve removeEntry_iff_cons.
 (*      fimpl_removeEntry_l
       fimpl_removeEntry_r.
  *)
@@ -2061,7 +2061,7 @@ Proof with eauto.
       intros ABS.
       eapply payload_occurs in LTS1 as [FN | SL].
       unfold wf in WF; destruct WF as (ND &DIS2).
-      eapply disjoint_absurd...
+      eapply disjoint_absurd with (1 := DIS2)...
       simpl; eapply in_app_iff; left...
       simpl; eapply in_app_iff; left...
       simpl in NDSL; try eapply no_dup_iff in NDSL as (_ &_ &DIS3).
@@ -2154,10 +2154,10 @@ Proof with eauto.
     elim H0.
     subst.
     exists k'. apply open with (t := tb0) (pf1 := pfk0).
-    assert (flagOf g0 (b1, b2) hid).
+    assert (FLHID: flagOf g0 (b1, b2) hid).
     specialize fsub_hid with g g2 g0 pf1 pf2 pf3 b1 b2 t as FHID.
       intuition.
-    inversion H7; subst.
+    inversion FLHID; subst.
     assert (f1 = hid /\ tb0 = t0).
     apply in_isMap with (x := (b1, b2)) (g := g0)...
     intuition; subst...

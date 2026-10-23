@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality
+  Bool List Lia PeanoNat Program.Equality
   ListAddOns Max Domain RemoveEntry NewEntries Replication
   header
   operations pi_syntax 
@@ -24,7 +24,7 @@ Require Import
   substitution_prelim
   split_cons_remove.
 
-Hint Resolve split_comm.
+#[global] Hint Resolve split_comm.
 
 Lemma split_sub: forall g1 g2 g pf1 pf2 pf b1 b2 f tb,
     tEnv_split g1 g2 g pf1 pf2 pf ->
@@ -68,12 +68,12 @@ Proof with eauto.
   eapply in_implies_InB in IN as INB.
   assert (forall p, ~ InB (a1, a2 + max (domain g)) g = (p, true)).
   intros p1 ABS;  eapply inB_implies_In in ABS as (ff &tt & ABS1); eapply in_g_in_domain,proposition27.in_preserves_max in ABS1.
-  assert (a2 = 0) by omega.
+  assert (a2 = 0) by lia.
   unfold pos in *; specialize SLP with a1 a2; assert (In (a1, a2) ((a1, a2) :: l))... intuition.
   case_eq (InB (a1, a2 + max (domain g)) g). intros.
   case_eq b; intros.
   specialize H0 with p; subst; intuition.
-  assert (EQ: a2 + max (domain g) - max (domain g) = a2) by omega.
+  assert (EQ: a2 + max (domain g) - max (domain g) = a2) by lia.
   subst; rewrite EQ, INB; simpl; rewrite IHl...
   intros. specialize HID with a0 a3.
   assert (In (a0, a3) ((a1, a2) :: l)). right...
@@ -86,12 +86,12 @@ Proof with eauto.
   eapply in_implies_InB in IN as INB.
   assert (forall p, ~ InB (a1, a2 + max (domain g)) g = (p, true)).
   intros p1 ABS;  eapply inB_implies_In in ABS as (ff &tt & ABS1); eapply in_g_in_domain,proposition27.in_preserves_max in ABS1.
-  assert (a2 = 0) by omega.
+  assert (a2 = 0) by lia.
   unfold pos in *; specialize SLP with a1 a2; assert (In (a1, a2) ((a1, a2) :: l))... intuition.
   case_eq (InB (a1, a2 + max (domain g)) g). intros.
   case_eq b; intros.
   specialize H0 with p; subst; intuition.
-  assert (EQ: a2 + max (domain g) - max (domain g) = a2) by omega.
+  assert (EQ: a2 + max (domain g) - max (domain g) = a2) by lia.
   subst; rewrite EQ, INB; simpl; rewrite IHl...
   intros. specialize HID with a0 a3.
   assert (In (a0, a3) ((a1, a2) :: l)). right...
@@ -130,12 +130,12 @@ Proof with eauto.
     case_eq ( InB (a1, a2) g); intros. case_eq b; intros...
     assert (forall p, ~ InB (a1, a2 + max (domain g)) g = (p, true)).
     intros p1 ABS;  eapply inB_implies_In in ABS as (ff &tt & ABS1); eapply in_g_in_domain,proposition27.in_preserves_max in ABS1.
-    assert (a2 = 0) by omega.
+    assert (a2 = 0) by lia.
     specialize SLP with a1 a2; assert (In (a1, a2) ((a1, a2) :: l))... intuition.
     case_eq (InB (a1, a2 + max (domain g)) g). intros.
     case_eq b0; intros.
     specialize H1 with p1; subst; intuition.
-    assert (EQ: a2 + max (domain g) - max (domain g) = a2) by omega.
+    assert (EQ: a2 + max (domain g) - max (domain g) = a2) by lia.
     subst; rewrite EQ, H.
     apply inB_implies_In_2 in H.
     specialize K with (n := (a1, a2)) (pf := pf). assert (In (a1, a2) ((a1, a2) :: l))... intuition. destruct H4 as (t0 &IN). inversion IN. inversion H3.
@@ -151,7 +151,7 @@ Proof with eauto.
 
 
 
-Hint Constructors cons.
+#[global] Hint Constructors cons.
 
 Lemma gcons_lin_entry: forall f a1 a2 t pf,  cons ((a1, a2, f, Chan lin empty t) :: nil) pf.
 Proof with eauto. 

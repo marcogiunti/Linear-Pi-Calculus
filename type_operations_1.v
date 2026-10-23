@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         RemoveEntry Domain
         header
         operations
@@ -7,19 +7,19 @@ Require Import
         pairEq type_system semantics
         disjoint_newEntries.
 
-Hint Resolve nonRecTypes.
+#[global] Hint Resolve nonRecTypes.
 
-Hint Constructors piType.
-Hint Resolve Pp_emptyL.
-Hint Resolve Pp_emptyR.
-Hint Resolve Pp_inpL.
-Hint Resolve Pp_inpR.
-Hint Resolve Tp_Base.
-Hint Resolve Tp_LinPlus.
-Hint Resolve Tp_UnPlus.
-Hint Resolve T_Entry.
-Hint Resolve F_Entry.
-Hint Resolve type_plus_comm.
+#[global] Hint Constructors piType.
+#[global] Hint Resolve Pp_emptyL.
+#[global] Hint Resolve Pp_emptyR.
+#[global] Hint Resolve Pp_inpL.
+#[global] Hint Resolve Pp_inpR.
+#[global] Hint Resolve Tp_Base.
+#[global] Hint Resolve Tp_LinPlus.
+#[global] Hint Resolve Tp_UnPlus.
+#[global] Hint Resolve T_Entry.
+#[global] Hint Resolve F_Entry.
+#[global] Hint Resolve type_plus_comm.
 
 
 
@@ -49,7 +49,7 @@ Proof.
     apply F_Entry in H; assumption.
     intros PNEQ. assert (PEQ2 := PNEQ).
     rewrite <-pairEq_neq in PNEQ.
-    assert (COMM : a <> (a0, b)); auto...
+    assert (COMM : a <> (a0, b)); auto.
     apply in_inv in H1. apply in_inv in H0.
     intuition. 
     inversion H; inversion H0.
@@ -77,7 +77,7 @@ Proof.
      apply T_Entry in H; assumption.
      intros PNEQ. assert (PEQ2 := PNEQ).
      rewrite <-pairEq_neq in PNEQ.
-     assert (COMM : a <> (a0, b)); auto...
+     assert (COMM : a <> (a0, b)); auto.
      apply in_inv in H1. apply in_inv in H0.
      intuition. 
      inversion H; inversion H0.
@@ -93,15 +93,15 @@ Proof.
 Qed.
 
 
-Hint Resolve isMap_cons.
-Hint Resolve cons_isMap.
+#[global] Hint Resolve isMap_cons.
+#[global] Hint Resolve cons_isMap.
 
 
 
 
 
-Hint Resolve removeEntry_head.
-Hint Resolve in_removeEntry.
+#[global] Hint Resolve removeEntry_head.
+#[global] Hint Resolve in_removeEntry.
 
      
 
@@ -218,8 +218,8 @@ Proof.
 Qed.
 
 
-Hint Resolve split_in_ex.
-Hint Resolve split_in_ex_2.
+#[global] Hint Resolve split_in_ex.
+#[global] Hint Resolve split_in_ex_2.
 
 
 Lemma split_not_in_not_ex: forall g1 g2 g pf1 pf2 pf a,
@@ -235,7 +235,7 @@ Proof.
   apply split_in_ex_2 with
       g1 g2 g pf1 pf2 pf a f1 t1
     in H as IN.
-  eauto...
+  eauto.
   assumption.
 Qed.
 
@@ -261,7 +261,7 @@ Qed.
 
 
 
-Hint Resolve no_dup_domain_cons.
+#[global] Hint Resolve no_dup_domain_cons.
 
 Lemma no_dup_isMap: forall g,
     NoDup(domain g) ->
@@ -320,11 +320,11 @@ Proof with eauto.
   intuition.
 Qed.
 
-Hint Resolve type_of_map.
-Hint Resolve flag_of_map.
-Hint Resolve isMap_cons.
-Hint Resolve cons_isMap.
-Hint Resolve no_dup_isMap.
+#[global] Hint Resolve type_of_map.
+#[global] Hint Resolve flag_of_map.
+#[global] Hint Resolve isMap_cons.
+#[global] Hint Resolve cons_isMap.
+#[global] Hint Resolve no_dup_isMap.
 
 Lemma nonRecActions1:
   forall g p a1 a2 b1 b2 g' p' pf,
@@ -411,9 +411,9 @@ Lemma nonRecActions2:
 Proof.
   intros.
   unfold not; intros ABS.
-  apply no_dup_isMap in pf as pf1...
+  apply no_dup_isMap in pf as pf1.
   dependent induction H.
-  specialize IHlts with a1 a2 b1 b2...
+  specialize IHlts with a1 a2 b1 b2.
   intuition.
   
   assert (H2 := H1).

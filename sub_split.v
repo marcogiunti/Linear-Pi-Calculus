@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         RemoveEntry Domain ListAddOns
         header
         operations pi_syntax
@@ -8,26 +8,26 @@ Require Import
         type_operations_1
         split_exists_neutral.
 
-Hint Constructors piType.
-Hint Resolve Pp_emptyL.
-Hint Resolve Pp_emptyR.
-Hint Resolve Pp_inpL.
-Hint Resolve Pp_inpR.
-Hint Resolve Tp_Base.
-Hint Resolve Tp_LinPlus.
-Hint Resolve Tp_UnPlus.
-Hint Resolve T_Entry.
-Hint Resolve F_Entry.
-Hint Resolve type_plus_comm.
-Hint Resolve type_of_map.
-Hint Resolve flag_of_map.
-Hint Resolve isMap_cons.
-Hint Resolve cons_isMap.
-Hint Resolve removeEntry_head.
-Hint Resolve in_removeEntry.
-Hint Resolve split_in_ex.
-Hint Resolve split_in_ex_2.
-Hint Resolve split_exists_neutral.
+#[global] Hint Constructors piType.
+#[global] Hint Resolve Pp_emptyL.
+#[global] Hint Resolve Pp_emptyR.
+#[global] Hint Resolve Pp_inpL.
+#[global] Hint Resolve Pp_inpR.
+#[global] Hint Resolve Tp_Base.
+#[global] Hint Resolve Tp_LinPlus.
+#[global] Hint Resolve Tp_UnPlus.
+#[global] Hint Resolve T_Entry.
+#[global] Hint Resolve F_Entry.
+#[global] Hint Resolve type_plus_comm.
+#[global] Hint Resolve type_of_map.
+#[global] Hint Resolve flag_of_map.
+#[global] Hint Resolve isMap_cons.
+#[global] Hint Resolve cons_isMap.
+#[global] Hint Resolve removeEntry_head.
+#[global] Hint Resolve in_removeEntry.
+#[global] Hint Resolve split_in_ex.
+#[global] Hint Resolve split_in_ex_2.
+#[global] Hint Resolve split_exists_neutral.
 
 Lemma tsub_un :
   forall g1 g2 g pf1 pf2 pf a1 a2 f p t,
@@ -62,7 +62,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply T_Entry in H3; assumption.
     assumption.
@@ -84,7 +84,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply T_Entry in H2; assumption.
     assumption.
@@ -104,7 +104,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H5.
     apply T_Entry in H5; assumption.
     assumption.
@@ -143,7 +143,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply T_Entry in H3; assumption.
     assumption.
@@ -165,7 +165,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply T_Entry in H2; assumption.
     assumption.
@@ -185,7 +185,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H5.
     apply T_Entry in H5; assumption.
     assumption.
@@ -217,7 +217,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) (Chan lin p t) (Chan m inp t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -249,7 +249,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) (Chan un p t) (Chan m inp t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -281,7 +281,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) Top (Chan m inp t) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
     specialize removeEntry_in with
@@ -329,7 +329,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) (Chan lin q t) (Chan m inp t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -361,7 +361,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) (Chan un p t) (Chan m inp t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H1; subst; auto...
+    inversion H1; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -393,7 +393,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) Top (Chan m inp t) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H1; subst; auto...
+    inversion H1; subst; auto.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
     specialize removeEntry_in with
@@ -441,7 +441,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) (Chan lin p t) (Chan m out t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -473,7 +473,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) (Chan un p t) (Chan m out t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -505,7 +505,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) Top (Chan m out t) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
     specialize removeEntry_in with
@@ -553,7 +553,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) (Chan lin q t) (Chan m out t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -585,7 +585,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) (Chan un p t) (Chan m out t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -617,7 +617,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) Top (Chan m out t) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
     specialize removeEntry_in with
@@ -666,7 +666,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) (Chan lin p t) (Chan m empty t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     exists p'; split; apply T_Entry in H2; assumption.
     exists empty; split; apply T_Entry in H2; assumption.
     assumption.
@@ -696,7 +696,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) (Chan un p t) (Chan m empty t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H1; subst; auto...
+    inversion H1; subst; auto.
     exists empty; split; apply T_Entry in H2; assumption.
     apply T_Entry in H0; assumption.
     assumption.
@@ -770,7 +770,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) (Chan lin q t) (Chan m empty t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     exists empty; split; apply T_Entry in H1; assumption.
     exists p'; split; apply T_Entry in H1; assumption.
     assumption.
@@ -800,7 +800,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) (Chan un p t) (Chan m empty t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H1; subst; auto...
+    inversion H1; subst; auto.
     exists empty; split; apply T_Entry in H0; assumption.
     apply T_Entry in H0; assumption.
     assumption.
@@ -872,7 +872,7 @@ Proof.
     apply type_of_map with
         g1 (a1, a2) (Chan lin p t) (Chan m io t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -894,7 +894,7 @@ Proof.
     apply T_Entry in IN.
     apply type_of_map with
         g1 (a1, a2) (Chan un p t) (Chan m io t0) in TYP.
-    inversion TYP; subst; auto...
+    inversion TYP; subst; auto.
     apply T_Entry in H0; assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -916,7 +916,7 @@ Proof.
     apply T_Entry in IN.
     apply type_of_map with
         g1 (a1, a2)  Top (Chan m io t) in TYP.
-    inversion TYP; subst; auto...
+    inversion TYP; subst; auto.
     apply T_Entry in H0; assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -955,7 +955,7 @@ Proof.
     apply type_of_map with
         g2 (a1, a2) (Chan lin q t) (Chan m io t0) in TYP.
     inversion TYP; subst. clear TYP IN.
-    inversion H0; subst; auto...
+    inversion H0; subst; auto.
     assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -977,7 +977,7 @@ Proof.
     apply T_Entry in IN.
     apply type_of_map with
         g2 (a1, a2) (Chan un p t) (Chan m io t0) in TYP.
-    inversion TYP; subst; auto...
+    inversion TYP; subst; auto.
     apply T_Entry in H0; assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -999,7 +999,7 @@ Proof.
     apply T_Entry in IN.
     apply type_of_map with
         g2 (a1, a2)  Top (Chan m io t) in TYP.
-    inversion TYP; subst; auto...
+    inversion TYP; subst; auto.
     apply T_Entry in H0; assumption.
     assumption.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
@@ -1042,7 +1042,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply T_Entry in H3; assumption.
     assumption.
@@ -1063,7 +1063,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply T_Entry in H2; assumption.
     assumption.
@@ -1072,14 +1072,14 @@ Proof.
     specialize IHTSPLIT with f0 a2 a1.
     subst g'''.
     case_eq (pair_eq n (a1, a2)).
-    intro PEQ; rewrite <-pairEq_eq in PEQ; subst n; auto...
+    intro PEQ; rewrite <-pairEq_eq in PEQ; subst n; auto.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
     specialize removeEntry_in with
         (a1, a2) f0  Top n  g1 as INREM.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply T_Entry in H2; assumption.
     assumption.
@@ -1114,7 +1114,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply T_Entry in H3; assumption.
     assumption.
@@ -1135,7 +1135,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply T_Entry in H2; assumption.
     assumption.
@@ -1144,32 +1144,32 @@ Proof.
     specialize IHTSPLIT with f0 a2 a1.
     subst g'''.
     case_eq (pair_eq n (a1, a2)).
-    intro PEQ; rewrite <-pairEq_eq in PEQ; subst n; auto...
+    intro PEQ; rewrite <-pairEq_eq in PEQ; subst n; auto.
     intro PNEQ; rewrite <-pairEq_neq in PNEQ.
     specialize removeEntry_in with
         (a1, a2) f0  Top n  g2 as INREM.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply T_Entry in H2; assumption.
     assumption.
 Qed.
 
 
-Hint Resolve tsub_un.
-Hint Resolve tsub_empty.
-Hint Resolve tsub_in.
-Hint Resolve tsub_out.
-Hint Resolve tsub_io.
-Hint Resolve tsub_top.
-Hint Resolve tsub_un_r.
-Hint Resolve tsub_empty_r.
-Hint Resolve tsub_in_r.
-Hint Resolve tsub_out_r.
-Hint Resolve tsub_io_r.
-Hint Resolve tsub_top_r.
+#[global] Hint Resolve tsub_un.
+#[global] Hint Resolve tsub_empty.
+#[global] Hint Resolve tsub_in.
+#[global] Hint Resolve tsub_out.
+#[global] Hint Resolve tsub_io.
+#[global] Hint Resolve tsub_top.
+#[global] Hint Resolve tsub_un_r.
+#[global] Hint Resolve tsub_empty_r.
+#[global] Hint Resolve tsub_in_r.
+#[global] Hint Resolve tsub_out_r.
+#[global] Hint Resolve tsub_io_r.
+#[global] Hint Resolve tsub_top_r.
 
 Lemma tsub_payload :
   forall g1 g2 g pf1 pf2 pf a1 a2 f m p t,
@@ -1578,7 +1578,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f hid in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H.
     inversion H3.
     apply F_Entry in H1; assumption.
@@ -1589,7 +1589,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; assumption.
     assumption.
@@ -1601,7 +1601,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f hid in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H2. 
     inversion H2.
     apply F_Entry in H0; assumption.
@@ -1612,7 +1612,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.
@@ -1624,7 +1624,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f hid in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H2. 
     inversion H2.
     apply F_Entry in H0; assumption.
@@ -1635,7 +1635,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.
@@ -1661,7 +1661,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g hid in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H6.
     inversion H6.
     apply F_Entry in H2; assumption.
@@ -1672,7 +1672,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; assumption.
     assumption.
@@ -1684,7 +1684,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g hid in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H5. 
     inversion H5.
     apply F_Entry in H1; assumption.
@@ -1695,7 +1695,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.
@@ -1707,7 +1707,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g hid in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H5. 
     inversion H5.
     apply F_Entry in H1; assumption.
@@ -1718,7 +1718,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.
@@ -1746,7 +1746,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f ill in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H3.
     apply F_Entry in H1; assumption.
     apply F_Entry in IN; assumption.
@@ -1757,10 +1757,10 @@ Proof.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
     destruct PNEQ2 as [PNEQ2 | PNEQ2].
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; left; assumption.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; right; assumption.
     assumption.
@@ -1772,7 +1772,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f ill in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H2. 
     apply F_Entry in H0; assumption.
     apply F_Entry in IN; assumption.
@@ -1783,10 +1783,10 @@ Proof.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
     destruct PNEQ2 as [PNEQ2 | PNEQ2].
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; left; assumption.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; right; assumption.
     assumption.
@@ -1798,7 +1798,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f ill in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H2. 
     apply F_Entry in H0; assumption.
     apply F_Entry in IN; assumption.
@@ -1809,10 +1809,10 @@ Proof.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
     destruct PNEQ2 as [PNEQ2 | PNEQ2].
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; left; assumption.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; right; assumption.
     assumption.
@@ -1839,7 +1839,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g ill in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H6.
     apply F_Entry in H2; assumption.
     apply F_Entry in IN; assumption.
@@ -1850,10 +1850,10 @@ Proof.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
     destruct PNEQ2 as [PNEQ2 | PNEQ2].
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; left; assumption.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; right; assumption.
     assumption.
@@ -1865,7 +1865,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g ill in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H5. 
     apply F_Entry in H1; assumption.
     apply F_Entry in IN; assumption.
@@ -1876,10 +1876,10 @@ Proof.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
     destruct PNEQ2 as [PNEQ2 | PNEQ2].
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; left; assumption.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; right; assumption.
     assumption.
@@ -1891,7 +1891,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g ill in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H5. 
     apply F_Entry in H1; assumption.
     apply F_Entry in IN; assumption.
@@ -1902,10 +1902,10 @@ Proof.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
     destruct PNEQ2 as [PNEQ2 | PNEQ2].
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; left; assumption.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; right; assumption.
     assumption.
@@ -1931,7 +1931,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f vis in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H3.
     inversion H3.
     inversion H3.
@@ -1943,7 +1943,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; assumption.
     assumption.
@@ -1955,7 +1955,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f vis in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H2.
     inversion H2.
     inversion H2.
@@ -1967,7 +1967,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.
@@ -1979,7 +1979,7 @@ Proof.
     assert (FYP := pf1).
     apply flag_of_map with
         g1 (a1, a2) f vis in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H2.
     inversion H2.
     inversion H2.
@@ -1991,7 +1991,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.
@@ -2017,7 +2017,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g vis in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H6.
     inversion H6.
     inversion H6.
@@ -2029,7 +2029,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H3.
     apply F_Entry in H3; assumption.
     assumption.
@@ -2041,7 +2041,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g vis in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H5.
     inversion H5.
     inversion H5.
@@ -2053,7 +2053,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.
@@ -2065,7 +2065,7 @@ Proof.
     assert (FYP := pf2).
     apply flag_of_map with
         g2 (a1, a2) g vis in FYP.
-    inversion H; subst; auto...
+    inversion H; subst; auto.
     inversion H5.
     inversion H5.
     inversion H5.
@@ -2077,7 +2077,7 @@ Proof.
     assert (PNEQ2 : (a1, a2) <> n). auto.
     apply INREM in PNEQ2.
     apply IHTSPLIT in PNEQ2.
-    inversion PNEQ2; subst; auto...
+    inversion PNEQ2; subst; auto.
     apply in_removeEntry in H2.
     apply F_Entry in H2; assumption.
     assumption.

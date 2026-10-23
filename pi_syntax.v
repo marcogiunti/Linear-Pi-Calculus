@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat
+        Bool List Lia PeanoNat
         ListAddOns
         header operations.
 
@@ -104,7 +104,7 @@ Section ProcessDefinitions.
     intuition. 
     specialize in_or_app with
         (l := secLabs q) (m := secLabs p) (a := (x1, x2))
-      as IOA; eauto...
+      as IOA; eauto.
   Qed.
 
   Lemma sl_pos_par_r: forall p q,
@@ -117,7 +117,7 @@ Section ProcessDefinitions.
     intuition. 
     specialize in_or_app with
         (l := secLabs q) (m := secLabs p) (a := (x1, x2))
-      as IOA; eauto...
+      as IOA; eauto.
   Qed.
 
   Lemma sl_pos_inp: forall a1 a2 x1 x2 p,

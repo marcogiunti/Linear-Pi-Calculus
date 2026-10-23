@@ -1,4 +1,5 @@
-Require Import List PeanoNat Bool Classical Omega Program.Equality.
+Require Export compat.
+Require Import List PeanoNat Bool Classical Lia Program.Equality.
 
 Require Import CpdtTactics LibTactics.
 
@@ -267,7 +268,7 @@ Section ListAddOns.
       simpl in CO;case_eq (eq_dec a a); introv ID;
         rewrite ID in *; try contradiction...
     assert (count_occ eq_dec l1 a = 0 /\
-            count_occ eq_dec l2 a =0) by omega.
+            count_occ eq_dec l2 a =0) by lia.
     repeat erewrite count_occ_not_In...
   Qed.
 
@@ -571,7 +572,7 @@ Section ListAddOns.
     erewrite length_zero_iff_nil in H1.
     subst. inversion H...
     intros. destruct l2.
-    assert (NIL: Datatypes.length (nil : list A) = 0)... erewrite NIL in H0. simpl in H0. omega.
+    assert (NIL: Datatypes.length (nil : list A) = 0)... erewrite NIL in H0. simpl in H0. lia.
     assert ( x = y /\ l1 = l2); inversion H...
     repeat (subst; intuition auto).
   Qed.
@@ -595,7 +596,7 @@ Section ListAddOns.
     rewrite app_length,app_length in LEN. 
     assert (EQ: Datatypes.length (x :: a :: l3) = S (Datatypes.length (a :: l3))). simpl...
     rewrite EQ, H0 in LEN.
-    simpl in LEN. omega. 
+    simpl in LEN. lia. 
   Qed.
 
 
@@ -612,8 +613,8 @@ Section ListAddOns.
     assert (Datatypes.length l4 = 0)...
     erewrite length_zero_iff_nil in H1.
     subst... rewrite app_nil_r,app_nil_r in H...
-    destruct l4. simpl in H0. omega.
-    simpl in H0. assert ((Datatypes.length l3) = (Datatypes.length l4)) by omega.
+    destruct l4. simpl in H0. lia.
+    simpl in H0. assert ((Datatypes.length l3) = (Datatypes.length l4)) by lia.
     eapply length_inv_tl...
   Qed.
 
@@ -633,13 +634,13 @@ Section ListAddOns.
     assert (LEN:Datatypes.length ((a :: l1) ++ l3) = Datatypes.length  (l2 ++ nil)). rewrite H...
     erewrite app_length,app_length in LEN;simpl in LEN.
     erewrite <-H0 in LEN.
-    assert (Datatypes.length l3 = 0) by omega.
+    assert (Datatypes.length l3 = 0) by lia.
     eapply length_zero_iff_nil ...
     eapply IHl1 with (l2 := tl l2) (l4 := a0 :: l4)...
-    destruct l2. simpl in H0. omega .
+    destruct l2. simpl in H0. lia .
     inversion H...
     simpl in H0...
-    destruct l2. simpl in H0. omega .
+    destruct l2. simpl in H0. lia .
     simpl...
   Qed.
 
@@ -650,12 +651,12 @@ Section ListAddOns.
   Proof with eauto.
     intros. generalize dependent a; generalize dependent b.  generalize dependent c. dependent induction l1...
     intros. assert (LEN: List.length (a :: b :: nil) = List.length (l2 ++ c :: nil)). rewrite H...
-    erewrite app_length in LEN;destruct l2;simpl in LEN. omega. 
-    assert (LEN2:List.length l2 = 0) by omega.
+    erewrite app_length in LEN;destruct l2;simpl in LEN. lia. 
+    assert (LEN2:List.length l2 = 0) by lia.
     erewrite length_zero_iff_nil in LEN2; subst; inversion H...
 
     intros. assert (LEN:  List.length (a0 :: b :: a :: l1) = List.length(l2 ++ c :: nil)). rewrite H...
-    erewrite app_length in LEN;destruct l2. simpl in LEN; omega. 
+    erewrite app_length in LEN;destruct l2. simpl in LEN; lia. 
     right.
     rewrite <-app_comm_cons in H.
     specialize @length_inv_2 with (l1 := a0 :: nil) (l2 := (a1 ::nil)) as K.

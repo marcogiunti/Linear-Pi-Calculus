@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max Domain RemoveEntry NewEntries Replication
         header
         operations pi_syntax 
@@ -70,7 +70,7 @@ Proof with eauto.
  intuition.
 Qed.
 
-Hint Resolve gcons_ill.
+#[global] Hint Resolve gcons_ill.
 
 Lemma typeCheck_ill: forall n t g pf p,
     typeCheck g pf p ->

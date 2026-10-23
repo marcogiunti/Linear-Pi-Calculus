@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality Classical
+  Bool List Lia PeanoNat Program.Equality Classical
   ListAddOns Max RemoveEntry Domain Replication
   pairEq
   sne_premises
@@ -35,17 +35,17 @@ Require Import
 
 Require Import CpdtTactics LibTactics.
 
-Hint Constructors Permutation.
+#[global] Hint Constructors Permutation.
 
-Hint Resolve in_removeEntry_cons_iff
+#[global] Hint Resolve in_removeEntry_cons_iff
   in_removeEntry_cons_iff_2.
 
-Hint Constructors NoDup.
-Hint Resolve in_hid_proj.
-Hint Resolve isMap_not_in incl_cons inB_implies_In_2.
-Hint Resolve in_g_in_domain.
-Hint Resolve split_pf.
-Hint Constructors tEnv_split.
+#[global] Hint Constructors NoDup.
+#[global] Hint Resolve in_hid_proj.
+#[global] Hint Resolve isMap_not_in incl_cons inB_implies_In_2.
+#[global] Hint Resolve in_g_in_domain.
+#[global] Hint Resolve split_pf.
+#[global] Hint Constructors tEnv_split.
 
 (* github *)
 Lemma Permutation_app_swap_app: forall A (l1 l2 l3: list A),

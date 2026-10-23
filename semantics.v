@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat
+        Bool List Lia PeanoNat
         header operations pi_syntax 
         pairEq type_system.
 

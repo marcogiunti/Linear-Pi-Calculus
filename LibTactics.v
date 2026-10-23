@@ -55,14 +55,14 @@ Tactic Notation "inv" hyp(H) := inversion H; subst; clear H.
 
 Set Implicit Arguments.
 
-Require Import List.
+From Stdlib Require Import List.
 
 (* Very important to remove hint trans_eq_bool from LibBool,
    otherwise eauto slows down dramatically:
   Lemma test : forall b, b = false.
   time eauto 7. (* takes over 4 seconds  to fail! *) *)
 
-Remove Hints Bool.trans_eq_bool.
+#[global] Remove Hints Bool.trans_eq_bool : core.
 
 
 (* ********************************************************************** *)
@@ -112,6 +112,7 @@ Inductive ltac_No_arg : Set :=
 Inductive ltac_Wild : Set :=
   | ltac_wild : ltac_Wild.
 
+Declare Scope ltac_scope.
 Notation "'__'" := ltac_wild : ltac_scope.
 
 (** [ltac_wilds] is another constant that is typically used to
@@ -168,6 +169,9 @@ Ltac intro_until_mark :=
     Coq values in ltac. Notation is [>> v1 v2 ... vN] for building
     a list containing the values [v1] through [vN]. *)
 
+(* The [>> v1 .. vN] notations are deliberately at level 0 and not
+   closed; silence the corresponding parsing warning for this block. *)
+Set Warnings "-level-0-notation-not-closed".
 Notation "'>>'" :=
   (@nil Boxer)
   (at level 0)
@@ -253,6 +257,7 @@ Notation "'>>' v1 v2 v3 v4 v5 v6 v7 v8 v9 v10 v11 v12 v13" :=
    v8 at level 0, v9 at level 0, v10 at level 0, v11 at level 0,
    v12 at level 0, v13 at level 0)
   : ltac_scope.
+Set Warnings "level-0-notation-not-closed".
 
 
 (** The tactic [list_boxer_of] inputs a term [E] and returns a term
@@ -374,7 +379,7 @@ Ltac fast_rm_inside E :=
 
 (* COQ-8.4:
    Require Coq.Numbers.BinNums Coq.ZArith.BinInt. *)
-Require BinPos Coq.ZArith.BinInt.
+From Stdlib Require BinPos ZArith.BinInt.
 
 Definition ltac_nat_from_int (x:BinInt.Z) : nat :=
   match x with
@@ -607,7 +612,7 @@ Tactic Notation "protects" constr(E) "do" tactic(Tac) "/" :=
 
 Definition eq' := @eq.
 
-Hint Unfold eq'.
+#[global] Hint Unfold eq' : core.
 
 Notation "x '='' y" := (@eq' _ x y)
   (at level 70, y at next level).
@@ -1534,7 +1539,7 @@ Ltac equates_several E cont :=
   let rec go pos :=
      match pos with
      | nil => cont tt
-     | (boxer ?n)::?pos' => equates_one n; [ instantiate; go pos' | ]
+     | (boxer ?n)::?pos' => equates_one n; [ idtac; go pos' | ]
      end in
   go all_pos.
 
@@ -1570,7 +1575,7 @@ Tactic Notation "applys_eq" constr(H) constr(n1) constr(n2) constr(n3) constr(n4
     anything else *)
 
 Tactic Notation "false_goal" :=
-  elimtype False.
+  exfalso.
 
 (** [false_post] is the underlying tactic used to prove goals
     of the form [False]. In the default implementation, it proves
@@ -1601,7 +1606,7 @@ Tactic Notation "tryfalse" :=
 
 Ltac false_then E cont :=
   false_goal; first
-  [ applys E; instantiate
+  [ applys E; idtac
   | forwards_then E ltac:(fun M =>
       pose M; jauto_set_hyps; intros; false) ];
   cont tt.
@@ -2401,7 +2406,7 @@ Tactic Notation "subst_eq" constr(E) :=
 (* ================================================================= *)
 (** ** Tactics to Work with Proof Irrelevance *)
 
-Require Import ProofIrrelevance.
+From Stdlib Require Import ProofIrrelevance.
 
 (** [pi_rewrite E] replaces [E] of type [Prop] with a fresh
     unification variable, and is thus a practical way to
@@ -2522,10 +2527,18 @@ Tactic Notation "invert" hyp(H) "as" simple_intropattern(I1)
 (* --we do not import Eqdep because it imports nasty hints automatically
     Require Import Eqdep. *)
 
-Axiom inj_pair2 :  (* is in fact derivable from the axioms in LibAxiom.v *)
+(* NOTE (Rocq 9.2 port): [inj_pair2] used to be an [Axiom] here. It is
+   now proved from Stdlib's [Eq_rect_eq.eq_rect_eq] (via
+   [Eqdep.EqdepTheory.inj_pair2]), an axiom the development already
+   depends on, so it no longer appears as a separate axiom in
+   [make validate]. [Eqdep] is only [Require]d, not imported, so its
+   hints stay out of scope (see the comment above). *)
+From Stdlib Require Eqdep.
+
+Lemma inj_pair2 :
   forall (U : Type) (P : U -> Type) (p : U) (x y : P p),
        existT P p x = existT P p y -> x = y.
-(* Proof using. apply Eqdep.EqdepTheory.inj_pair2. Qed.*)
+Proof using. exact Stdlib.Logic.Eqdep.EqdepTheory.inj_pair2. Qed.
 
 Ltac inverts_tactic H i1 i2 i3 i4 i5 i6 :=
   let rec go i1 i2 i3 i4 i5 i6 :=
@@ -2984,7 +2997,7 @@ Tactic Notation "cases_if'" :=
     [inductions E gen X1 .. XN] is a shorthand for
     [dependent induction E generalizing X1 .. XN]. *)
 
-Require Import Coq.Program.Equality.
+From Stdlib Require Import Program.Equality.
 
 Ltac inductions_post :=
   unfold eq' in *.
@@ -3035,14 +3048,14 @@ Tactic Notation "induction_wf" ":" constr(E) ident(X) :=
     judgment that includes a counter for the maximal height
     (see LibTacticsDemos for an example) *)
 
-Require Import Compare_dec Omega.
+From Stdlib Require Import Compare_dec Lia.
 
 Lemma induct_height_max2 : forall n1 n2 : nat,
   exists n, n1 < n /\ n2 < n.
 Proof using.
   intros. destruct (lt_dec n1 n2).
-  exists (S n2). omega.
-  exists (S n1). omega.
+  exists (S n2). lia.
+  exists (S n1). lia.
 Qed.
 
 Ltac induct_height_step x :=
@@ -3081,8 +3094,8 @@ Ltac clear_coind :=
 
 (** Tactic [abstracts tac] is like [abstract tac] except that
     it clears the coinduction hypotheses so that the productivity
-    check will be happy. For example, one can use [abstracts omega]
-    to obtain the same behavior as [omega] but with an auxiliary
+    check will be happy. For example, one can use [abstracts lia]
+    to obtain the same behavior as [lia] but with an auxiliary
     lemma being generated. *)
 
 Tactic Notation "abstracts" tactic(tac) :=
@@ -4667,7 +4680,7 @@ Ltac skip_with_existential :=
 Parameter skip_axiom : False.
   (* To obtain a safe development, change to [skip_axiom : True] *)
 Ltac skip_with_axiom :=
-  elimtype False; apply skip_axiom.
+  exfalso; apply skip_axiom.
 
 Tactic Notation "skip" :=
    skip_with_axiom.

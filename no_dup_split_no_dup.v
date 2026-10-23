@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         RemoveEntry Domain
         header
         operations pi_syntax 
@@ -28,7 +28,7 @@ Proof.
   specialize type_remove_lin with
       t3 t t2 as TRL2.
   destruct p; intuition.
-  all:subst; auto...
+  all:subst; auto.
   inversion H1.
   inversion H.
   inversion H5.
@@ -42,25 +42,25 @@ Proof.
   specialize type_remove_un with
       t3 t t2 as TRL2.
   destruct p; intuition.
-  all:subst; auto...
+  all:subst; auto.
   inversion TS4. inversion TS2.
   destruct H0; inversion H0.
   destruct H2; inversion H2.
   tauto.
 Qed.
 
-Hint Resolve unique_remove.
+#[global] Hint Resolve unique_remove.
 
 
 
 
-Hint Resolve no_dup_not_in_removeEntry.
+#[global] Hint Resolve no_dup_not_in_removeEntry.
 
 
 
 
-Hint Resolve no_dup_removeEntry_no_dup.
-Hint Resolve nonRecTypes.
+#[global] Hint Resolve no_dup_removeEntry_no_dup.
+#[global] Hint Resolve nonRecTypes.
 
 Lemma cons_removeEntry: forall g a f t,
     NoDup (domain g) ->
@@ -144,12 +144,12 @@ Proof.
   destruct ABS as [f [t ABS]].
   apply in_inv in ABS.
   destruct ABS as [ABS1 | ABS2].
-  inversion ABS1; subst...
+  inversion ABS1; subst.
   eauto.
   apply no_dup_not_in_removeEntry with
       g1 a f t 
     in nd_pf1 as ND1.
-  eauto...
+  eauto.
   unfold not; intros ABS.
   destruct ABS as [f [t ABS]].
   apply in_removeEntry with
@@ -157,7 +157,7 @@ Proof.
   apply no_dup_not_in_removeEntry with
       g b f t 
     in nd_pf as ND1.
-  eauto...
+  eauto.
 Qed.
 
 Lemma no_dup_cons_removeEntry: forall g b f1 t1,
@@ -218,10 +218,10 @@ Proof with eauto.
   assumption.
 Qed.
 
-Hint Resolve no_dup_isMap.
-Hint Resolve cons_isMap.
-Hint Resolve cons_removeEntry.
-Hint Resolve cons_removeEntry_app.
+#[global] Hint Resolve no_dup_isMap.
+#[global] Hint Resolve cons_isMap.
+#[global] Hint Resolve cons_removeEntry.
+#[global] Hint Resolve cons_removeEntry_app.
 
 
 
@@ -248,13 +248,13 @@ Proof with eauto.
   rewrite removeEntry_head.
   unfold domain; fold domain.
   rewrite count_occ_cons_eq...
-  omega.
+  lia.
   intuition...
   unfold domain; fold domain.
   case_eq (pair_eq b a). intros PEQ.
   rewrite count_occ_cons_eq...
   unfold removeEntry. rewrite PEQ.
-  omega.
+  lia.
   apply pairEq_eq...
   intros PNEQ.
   rewrite count_occ_cons_neq...
@@ -312,12 +312,11 @@ Proof with eauto.
   - apply no_dup_removeEntry_no_dup
       with (a := n) in nd_pf as nd_pf0. 
     subst; intuition.
-    rewrite NoDup_count_occ'.
+    rewrite (NoDup_count_occ' nat_pair_eq_dec).
     intros x IN.
     case_eq (pair_eq n x).
     intro PEQ; rewrite <-pairEq_eq in PEQ; subst x.
     (*$ Show Existentials. $*)
-    Existential 3:=nat_pair_eq_dec.
     apply count_occ_removeEntry  in IN.
 
     assert (count_occ nat_pair_eq_dec
@@ -484,12 +483,11 @@ Proof with eauto.
   - apply no_dup_removeEntry_no_dup
       with (a := n) in nd_pf as nd_pf0. 
     subst; intuition.
-    rewrite NoDup_count_occ'.
+    rewrite (NoDup_count_occ' nat_pair_eq_dec).
     intros x IN.
     case_eq (pair_eq n x).
     intro PEQ; rewrite <-pairEq_eq in PEQ; subst x.
     (*$ Show Existentials.$*)
-    Existential 3:=nat_pair_eq_dec.
     apply count_occ_removeEntry  in IN.
 
     assert (count_occ nat_pair_eq_dec

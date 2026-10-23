@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality Classical
+        Bool List Lia PeanoNat Program.Equality Classical
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax
@@ -11,7 +11,7 @@ Require Import
 Require Import CpdtTactics LibTactics.
 
 
-Hint Resolve in_eq.
+#[global] Hint Resolve in_eq.
 
 Lemma disjoint_removeEntry_eqd g g1 g2 b1 b2 (nd_pf2 : NoDup (domain g2)):
    domain g1 = domain g2 ->
@@ -82,7 +82,7 @@ Qed.
 
 
 
-Hint Resolve pairEq_eq_true.
+#[global] Hint Resolve pairEq_eq_true.
 
 
 
@@ -102,12 +102,12 @@ Proof.
   intuition.
 Qed.
 
-Hint Resolve sl_par.
+#[global] Hint Resolve sl_par.
 
 
 
 
-Hint Resolve max_cons.
+#[global] Hint Resolve max_cons.
 
 
  Lemma type_of_map : forall g x t1 t2,
@@ -115,8 +115,8 @@ Hint Resolve max_cons.
     t1 = t2.
 Proof.
   intros. unfold isMap in H. inversion H0. inversion H1.
-  subst; auto...
-  specialize H with x f t1 f0 t2; subst; auto...
+  subst; auto.
+  specialize H with x f t1 f0 t2; subst; auto.
   intuition.
 Qed.
 
@@ -125,13 +125,13 @@ Lemma flag_of_map : forall g x f1 f2,
     f1 = f2.
 Proof.
   intros. unfold isMap in H. inversion H0. inversion H1.
-  subst; auto...
-  specialize H with x f1 t f2 t0; subst; auto...
+  subst; auto.
+  specialize H with x f1 t f2 t0; subst; auto.
   intuition.
 Qed.
 
-Hint Resolve type_of_map.
-Hint Resolve flag_of_map.
+#[global] Hint Resolve type_of_map.
+#[global] Hint Resolve flag_of_map.
 
 Lemma isMap_cons: forall a g,
     isMap (a :: g) -> isMap g.
@@ -158,7 +158,7 @@ Proof.
   apply T_Entry in H1; assumption.
 Qed.
 
-Hint Resolve isMap_cons.
+#[global] Hint Resolve isMap_cons.
     
   Lemma in_implies_InB: forall a f t g (pf : isMap g),
       In (a, f, t) g -> InB a g = ((f, t), true).
@@ -199,7 +199,7 @@ Proof with eauto.
   intuition.
 Qed.
 
-Hint Resolve inB_implies_In.
+#[global] Hint Resolve inB_implies_In.
 
 
 Lemma new_entries_disjoint : forall g p pf,
@@ -261,7 +261,7 @@ Proof with eauto.
   rewrite <-surjective_pairing in H.
   specialize in_eq with (a := a) (l := l); intuition. 
   clear H2. assert (H2 := H3); clear H3.
-  assert (snd a + max (domain g) - max (domain g) = snd a) by omega.
+  assert (snd a + max (domain g) - max (domain g) = snd a) by lia.
   rewrite H3.
   destruct (InB (fst a, snd a) g).
   case_eq b.
@@ -287,11 +287,11 @@ Proof with eauto.
     intuition.
     apply disjoint_2_comm.
     assert (max l <= max (domain g)).
-    specialize max_cons with a l as MC. omega.
+    specialize max_cons with a l as MC. lia.
     eauto.
 Qed.
 
-Hint Resolve in_eq.
+#[global] Hint Resolve in_eq.
 
 Lemma disjoint_2_app_l : forall A (l1 l2 m : list A),
     disjoint_2 (l1 ++ l2) m -> disjoint_2 l1 m.

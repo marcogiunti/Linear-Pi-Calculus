@@ -1,5 +1,6 @@
+Require Export compat.
 Require Import
-        Bool List Omega PeanoNat.
+        Bool List Lia PeanoNat.
 
 Notation name  := nat.
 

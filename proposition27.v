@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality Classical
+        Bool List Lia PeanoNat Program.Equality Classical
         ListAddOns
         operations pi_syntax 
         header.
@@ -159,7 +159,7 @@ Qed.
   Theorem n_lt_m__Sn_lt_Sm : forall n m,
       n < m -> S n < S m.
   Proof.
-    intros. induction H; omega.
+    intros. induction H; lia.
   Qed.
 
   Theorem blt_nat_n_m_false__blt_nat_Sn_Sm : forall n m,
@@ -174,7 +174,7 @@ Qed.
   Proof. 
     split; generalize dependent m.
     unfold not. intros. unfold blt_nat in H.
-    apply Nat.leb_nle in H. omega.
+    apply Nat.leb_nle in H. lia.
     induction n. 
     intros. destruct m. unfold blt_nat. simpl. reflexivity.
     unfold not in H. intuition. 

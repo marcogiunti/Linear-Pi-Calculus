@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -74,28 +74,28 @@ Proof with eauto.
   
  - eapply inB_implies_In_2 in H.
    eapply in_g_in_domain,proposition27.in_preserves_max in H.
-   assert (a2 = 0). omega.
+   assert (a2 = 0). lia.
   assert (In (a1, a2) ((a1, a2) :: l))...
   specialize SLP with a1 a2; intuition auto.
-  omega.
+  lia.
  - 
    assert (K := H). clear H.
   case_eq (InB (a1, a2 + max (domain g1)) ((b1, b2, f1, t1) :: removeEntry (b1, b2) g1)).
   intros. case_eq b; intros; subst.
    eapply inB_implies_In_2 in H.
   inversion H. inversion H0.
-  assert (a2 = 0). omega.
+  assert (a2 = 0). lia.
   assert (In (a1, a2) ((a1, a2) :: l))...
   specialize SLP with a1 a2; intuition auto.
-  omega.
+  lia.
   eapply in_g_in_domain,proposition27.in_preserves_max in H0.
   assert (max (domain (removeEntry (b1, b2) g1)) <= max (domain g1)). eapply max_removeEntry2...
-  assert (a2 = 0). omega.
+  assert (a2 = 0). lia.
    assert (In (a1, a2) ((a1, a2) :: l))...
   specialize SLP with a1 a2; intuition auto.
-  omega.
+  lia.
   assert (EQ3: a2 + max (domain g1) - max (domain g1) = a2).
-  omega. 
+  lia. 
   erewrite EQ3,inB_removeEntry.
   assert ((forall x1 x2 : name, In (x1, x2) l -> x2 > 0) ).
   eapply pos_cons...
@@ -157,9 +157,9 @@ Proof with eauto using in_preserves_max,not_in_cons.
   assert (IN:In (a1, a2) ((a1, a2) :: l))...
   eapply SLP in IN.
   destruct a2; 
-      try omega.
+      try lia.
   assert (PNEQ: pair_eq (a1, a2 + M) (x1, x2)= false).
-  rewrite <-pairEq_neq; intros ABS; inv ABS; try omega.
+  rewrite <-pairEq_neq; intros ABS; inv ABS; try lia.
   repeat erewrite PNEQ...
   case_eq (InB (a1, a2 + M) g1); introv INB1;
     case_eq b; intros; subst b.
@@ -169,7 +169,7 @@ Proof with eauto using in_preserves_max,not_in_cons.
     eapply SLP; try right...
   erewrite INB1 in *;
     try erewrite INB2,IHl...
-  assert (EQ: a2 + M - M = a2) by omega.
+  assert (EQ: a2 + M - M = a2) by lia.
   repeat erewrite EQ.
   assert (PNEQ:  pair_eq (a1, a2) (x1, x2) = false).
   rewrite <-pairEq_neq; intros ABS; inv ABS; intuition.

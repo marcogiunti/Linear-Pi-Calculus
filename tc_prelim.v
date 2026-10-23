@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain Classical
         NewEntries
         Coq.Logic.Classical_Prop
@@ -29,13 +29,13 @@ Require Import
 
 Require Import CpdtTactics LibTactics.
 
-Hint Resolve typeCheck_rewrite_pf.
+#[global] Hint Resolve typeCheck_rewrite_pf.
 
 
 
 
 
-Hint Resolve removeEntry_iff.
+#[global] Hint Resolve removeEntry_iff.
 
 
 
@@ -70,7 +70,7 @@ Proof with eauto.
 Qed.  
 
 
-Hint Resolve isMap_not_in map_nil_eq.
+#[global] Hint Resolve isMap_not_in map_nil_eq.
 
 Lemma gcons_iff: forall g1 g2 pf1 pf2 (nd_pf1 : NoDup (domain g1)) (nd_pf2 : NoDup(domain g2)),
     cons g1 pf1 ->
@@ -119,7 +119,7 @@ Lemma gcons_iff: forall g1 g2 pf1 pf2 (nd_pf1 : NoDup (domain g1)) (nd_pf2 : NoD
       Unshelve.  all:eauto.
   Qed.
 
-  Hint Resolve gcons_iff.
+  #[global] Hint Resolve gcons_iff.
 
   Lemma cons_lin: forall a1 a2 f p t g pf,
       cons g pf -> In (a1, a2, f, Chan lin p t) g -> p = empty.
@@ -234,7 +234,7 @@ Qed.
     intuition.     
 Qed. 
 
-Hint Constructors cons.
+#[global] Hint Constructors cons.
 
 
 Lemma gcons_removeEntry: forall a1 a2 g pf pf1,
@@ -573,7 +573,7 @@ Proof with eauto using ill_proj_in.
       eapply proj_in, H,in_ill_proj in H0...
   Qed. 
 
-  Hint Resolve no_dup_vis_proj no_dup_ill_proj
+  #[global] Hint Resolve no_dup_vis_proj no_dup_ill_proj
        vis_proj_iff ill_proj_iff.
 
 
@@ -857,12 +857,9 @@ Proof with eauto using ill_proj_in.
        eapply in_isMap...
        
        
-       try assert ( K := pf2); eapply isMap_distr in K as (K1 &K2); eauto.
-       eapply no_dup_isMap, no_dup_vis_proj;eauto.
-       try assert ( K := pf2); eapply isMap_distr in K as (K1 &K2); eauto.
-       try assert ( K := pf2); eapply isMap_distr in K as (K1 &K2); eauto.
-       eapply no_dup_isMap, no_dup_ill_proj;eauto.
-       try assert ( K := pf2); eapply isMap_distr in K as (K1 &K2); eauto.
+       all: try solve [ try assert ( K := pf2); eapply isMap_distr in K as (K1 &K2); eauto
+                      | eapply no_dup_isMap, no_dup_vis_proj; eauto
+                      | eapply no_dup_isMap, no_dup_ill_proj; eauto ].
        eapply no_dup_isMap; simpl; eapply NoDup_cons_iff; split...
        intros ABS. eapply in_domain_in_g in ABS as (ff &tt &ABS).
        eapply IFF,in_g_in_domain in ABS; contradiction.
@@ -916,14 +913,14 @@ Proof with eauto using ill_proj_in.
     destruct K2 as [f2 [t2 ABS]].
     assert ( b2 + max (domain g) <= max (domain g)).
     apply in_preserves_max with (x := b1)...
-    assert (b2 = 0). omega.
+    assert (b2 = 0). lia.
     unfold sl_pos in SLP; fold sl_pos in SLP.
     unfold pos in SLP; unfold secLabs in SLP; fold secLabs in SLP; fold pos in SLP.
     specialize SLP with b1 b2. assert (In (b1, b2) (secLabs p ++ (b1, b2) :: nil)). apply in_app_iff... intuition.
 
     intros. subst.
     assert (b2 + max (domain g) - max (domain g) = b2).
-    omega. rewrite H3.
+    lia. rewrite H3.
     apply in_implies_InB in H as K. rewrite K.
     intuition.
     assumption.

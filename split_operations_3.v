@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain Classical
         header
         operations pi_syntax 
@@ -16,7 +16,7 @@ Require Import
         split_operations_2
         disjoint_newEntries.
 
-Hint Resolve no_dup_split_no_dup_r no_dup_split_no_dup_l.
+#[global] Hint Resolve no_dup_split_no_dup_r no_dup_split_no_dup_l.
 
 Lemma split_new_un_top :
                    forall g1 g2 g pf1 pf2 pf 

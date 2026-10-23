@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain NewEntries
         header
         operations pi_syntax semantics type_system.
@@ -45,7 +45,7 @@ Lemma replication_diff: forall q q1,
 Proof with eauto.  intros. induction q; inversion H...
 Qed.
 
-Hint Resolve replication_diff.
+#[global] Hint Resolve replication_diff.
 
 Lemma replication_unique: forall g p a g1 p1 nd_pf q1 q2,
     lts g p a g1 p1 nd_pf ->

@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat
+        Bool List Lia PeanoNat
         header operations.
 
 Require Import CpdtTactics LibTactics.
@@ -38,7 +38,7 @@ Section PairEq.
       rewrite pairEq_eq in H0.
       assert ({pair_eq p1 p2 = true} + {pair_eq p1 p2 = false}); intuition.
     - intros. assert (not (not (pair_eq  p1 p2 = false))) by auto.
-      specialize pairEq_eq with p1 p2; intros; auto...
+      specialize pairEq_eq with p1 p2; intros; auto.
       assert ( p1 = p2-> False); intros.
       apply H1 in H2. rewrite H2 in H. inversion H.
       auto.

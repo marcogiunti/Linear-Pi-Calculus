@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax
@@ -71,7 +71,7 @@ Proof with eauto.
   destruct (InB (n, n0 - M)); simpl in ABS; repeat intuition.
 Qed.
 
-Hint Resolve not_in_newEntries.
+#[global] Hint Resolve not_in_newEntries.
   
   
 Lemma newEntries_no_dup: forall g q,
@@ -101,10 +101,10 @@ Proof.
   auto.
 Qed.
 
-Hint Resolve no_dup_sl_par.
+#[global] Hint Resolve no_dup_sl_par.
 
   
-Hint Resolve max_sl_par max_sl_bang max_sl_nu sl_pos_nu.
+#[global] Hint Resolve max_sl_par max_sl_bang max_sl_nu sl_pos_nu.
 
 
 Lemma distr_no_dup : forall A (l m : list A),
@@ -137,7 +137,7 @@ Proof with eauto.
   intros. simpl in H...
 Qed.
 
-Hint Resolve no_dup_sl_bang.
+#[global] Hint Resolve no_dup_sl_bang.
 
 
 
@@ -215,7 +215,7 @@ Proof with eauto.
     eapply NoDup_count_occ with (decA := nat_pair_eq_dec) (x := x) in ND2.
     assert (IN1 := IN2).
     erewrite count_occ_In with (eq_dec :=nat_pair_eq_dec) (x := x) in IN2.
-    assert (EQ: count_occ nat_pair_eq_dec (p :: l) x = 1) by omega.
+    assert (EQ: count_occ nat_pair_eq_dec (p :: l) x = 1) by lia.
     rewrite EQ.
     assert (IN3: In x (domain g)).
     eapply INCL...
@@ -225,14 +225,14 @@ Proof with eauto.
     right. eapply in_domain_in_g in IN3 as (ff &tt &IN3).
     eapply in_g_in_domain,removeEntry_in...
     erewrite count_occ_In with (eq_dec :=nat_pair_eq_dec) (x := x) in IN4.
-    assert (EQ2: count_occ nat_pair_eq_dec ((b1, b2) :: domain (removeEntry (b1, b2) g)) x = 1) by omega.
+    assert (EQ2: count_occ nat_pair_eq_dec ((b1, b2) :: domain (removeEntry (b1, b2) g)) x = 1) by lia.
     rewrite EQ2...
     Unshelve. all:eauto.
 Qed.
 
 
 
-Hint Resolve max_removeEntry_cons max_removeEntry_cons_app
+#[global] Hint Resolve max_removeEntry_cons max_removeEntry_cons_app
      in_g_in_domain.
 
  (* Lemma ex_falso: forall T:Type, False -> T.
@@ -368,7 +368,7 @@ Proof with eauto.
     (domain
        ((a1, a2, vis, Chan lin inp t)
           :: (b1, b2, vis, s1) :: removeEntry (a1, a2) (removeEntry (b1, b2) g))))...
-    omega.
+    lia.
     assert ( max (secLabs q1) <=
              max (domain ((a1, a2, vis, Chan lin inp t) :: (b1, b2, vis, s1) :: g0)) ); apply max_sl_par in MAX; intuition.
   - apply sl_pos_par_r in SLP.
@@ -379,14 +379,14 @@ Proof with eauto.
     (domain
        ((a1, a2, vis, Chan lin inp t)
           :: (b1, b2, ill, s1) :: removeEntry (a1, a2) (removeEntry (b1, b2) g))))...
-    omega.
+    lia.
     apply max_sl_par in MAX; 
       apply no_dup_sl_par in NDSL;
       intuition. 
   - apply sl_pos_par_r in SLP.
     assert (max (domain g) <= max (domain g')).
     subst g' g0.
-    assert (max (domain g) = max (domain ((b1, b2, vis, s1) :: removeEntry (b1, b2) g)))... omega. 
+    assert (max (domain g) = max (domain ((b1, b2, vis, s1) :: removeEntry (b1, b2) g)))... lia. 
     apply max_sl_par in MAX; 
       apply no_dup_sl_par in NDSL. intuition.
     assert (incl_ (secLabs q1) (domain g) /\ incl_ (secLabs p1) (domain g)).
@@ -399,7 +399,7 @@ Proof with eauto.
   - apply sl_pos_par_r in SLP.
     assert (max (domain g) <= max (domain g')).
     subst g' g0.
-    assert (max (domain g) = max (domain ((b1, b2, ill, s1) :: removeEntry (b1, b2) g)))... omega.
+    assert (max (domain g) = max (domain ((b1, b2, ill, s1) :: removeEntry (b1, b2) g)))... lia.
     apply max_sl_par in MAX; 
     apply no_dup_sl_par in NDSL.
     assert (incl_ (secLabs q1) (domain g')).
@@ -408,7 +408,7 @@ Proof with eauto.
     unfold secLabs in pf_incl; fold secLabs in pf_incl; eapply incl2_distr in pf_incl; intuition...
     intuition.
     assert (max (secLabs q1) <= max (domain g')).
-    omega.
+    lia.
     intuition.
     eapply no_dup_cons_removeEntry... 
   - assert (incl_ (secLabs p) (domain ((b1, b2, vis, t) :: removeEntry (b1, b2) g))).
@@ -425,7 +425,7 @@ Proof with eauto.
     assert (max (domain g) = max (domain ((b1, b2, vis, t) :: removeEntry (b1, b2) g))).
     eapply max_same_domain.
     eapply in_removeEntry_cons_iff...
-    omega.
+    lia.
   - repeat rewrite domain_distr in *; simpl in *; try eapply IHLTS; try eapply no_dup_iff in NDSL as [NDSL_]...
     eapply incl2_distr in pf_incl as [INCL1 INCL2];
       subst; rewrite domain_distr in *; simpl in *...

@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain NewEntries
         header
         operations pi_syntax 
@@ -16,52 +16,52 @@ Require Import
 Require Import CpdtTactics LibTactics.
 Import ListNotations.
 
-Hint Resolve pairEq_eq.
-Hint Resolve pairEq_neq.
-Hint Resolve nonRecTypes.
-Hint Resolve nonRecActions1.
-Hint Resolve nonRecActions2.
+#[global] Hint Resolve pairEq_eq.
+#[global] Hint Resolve pairEq_neq.
+#[global] Hint Resolve nonRecTypes.
+#[global] Hint Resolve nonRecActions1.
+#[global] Hint Resolve nonRecActions2.
 
-Hint Constructors piType.
-Hint Resolve Pp_emptyL.
-Hint Resolve Pp_emptyR.
-Hint Resolve Pp_inpL.
-Hint Resolve Pp_inpR.
-Hint Resolve Tp_Base.
-Hint Resolve Tp_LinPlus.
-Hint Resolve Tp_UnPlus.
-Hint Resolve T_Entry.
-Hint Resolve F_Entry.
-Hint Resolve type_plus_comm.
-Hint Resolve type_of_map.
-Hint Resolve flag_of_map.
-Hint Resolve isMap_cons.
-Hint Resolve cons_isMap.
-Hint Resolve removeEntry_head.
-Hint Resolve in_removeEntry.
-Hint Resolve typeOf_removeEntry.
-Hint Resolve split_in_ex.
-Hint Resolve split_in_ex_2.
-Hint Resolve split_exists_neutral.
-Hint Resolve tsub_payload.
-Hint Resolve tsub_io.
-Hint Resolve tsuper_payload.
-Hint Resolve tsuper_top.
-Hint Resolve fsub_hid.
-Hint Resolve fsub_ill.
-Hint Resolve fsub_vis.
-Hint Resolve fsub_hid_r.
-Hint Resolve fsub_ill_r.
-Hint Resolve fsub_vis_r.
+#[global] Hint Constructors piType.
+#[global] Hint Resolve Pp_emptyL.
+#[global] Hint Resolve Pp_emptyR.
+#[global] Hint Resolve Pp_inpL.
+#[global] Hint Resolve Pp_inpR.
+#[global] Hint Resolve Tp_Base.
+#[global] Hint Resolve Tp_LinPlus.
+#[global] Hint Resolve Tp_UnPlus.
+#[global] Hint Resolve T_Entry.
+#[global] Hint Resolve F_Entry.
+#[global] Hint Resolve type_plus_comm.
+#[global] Hint Resolve type_of_map.
+#[global] Hint Resolve flag_of_map.
+#[global] Hint Resolve isMap_cons.
+#[global] Hint Resolve cons_isMap.
+#[global] Hint Resolve removeEntry_head.
+#[global] Hint Resolve in_removeEntry.
+#[global] Hint Resolve typeOf_removeEntry.
+#[global] Hint Resolve split_in_ex.
+#[global] Hint Resolve split_in_ex_2.
+#[global] Hint Resolve split_exists_neutral.
+#[global] Hint Resolve tsub_payload.
+#[global] Hint Resolve tsub_io.
+#[global] Hint Resolve tsuper_payload.
+#[global] Hint Resolve tsuper_top.
+#[global] Hint Resolve fsub_hid.
+#[global] Hint Resolve fsub_ill.
+#[global] Hint Resolve fsub_vis.
+#[global] Hint Resolve fsub_hid_r.
+#[global] Hint Resolve fsub_ill_r.
+#[global] Hint Resolve fsub_vis_r.
 
-Remove Hints  cons.
+#[global] Remove Hints  cons.
 
-Hint Resolve incl_incl.
-
-
+#[global] Hint Resolve incl_incl.
 
 
-Hint Resolve max_in_domain
+
+
+#[global] Hint Resolve max_in_domain
      max_not_in_domain
      max_diff_domain
      split_domain_l
@@ -96,7 +96,7 @@ Proof with eauto.
   all:eauto.
 Qed.
 
-Hint Resolve fsuper_flag.
+#[global] Hint Resolve fsuper_flag.
 
 
 Lemma type_of_in_action :
@@ -109,20 +109,20 @@ Lemma type_of_in_action :
 Proof.
   intros g p x1 x2 y1 y2 p1 g' pf LTS.
   dependent induction LTS.
-  - specialize IHLTS with x1 x2 y1 y2; subst; auto...
-  - exists t; subst; auto...
+  - specialize IHLTS with x1 x2 y1 y2; subst; auto.
+  - exists t; subst; auto.
     left. apply T_Entry with (f := vis). tauto.
-  - exists t; subst; auto...
+  - exists t; subst; auto.
     right. destruct H as [PINP | PIO].
-    subst; auto...
+    subst; auto.
     left. apply T_Entry with (f := vis). tauto.
-    subst; auto...
+    subst; auto.
     right. apply T_Entry with (f := vis). tauto.
-  - exists t; subst; auto...
+  - exists t; subst; auto.
     right. destruct H as [PINP | PIO].
-    subst; auto...
+    subst; auto.
     left. apply T_Entry with (f := vis). tauto.
-    subst; auto...
+    subst; auto.
     right. apply T_Entry with (f := vis). tauto.
   - destruct H as (DIFF1 &_).
     specialize IHLTS with x1 x2 y1 y2; intuition.
@@ -220,7 +220,7 @@ Proof with eauto.
 Qed.
 
 
-Hint Resolve pol_cup_id.
+#[global] Hint Resolve pol_cup_id.
 
 Lemma split_exists_remove_l :
   forall g1 g2 g pf1 pf2 pf a1 a2 f t t1 t2,
@@ -252,45 +252,45 @@ Proof.
       specialize type_remove_lin with
           t t0 t2 as TREM2.
       destruct p.
-      * intuition; subst; auto...
+      * intuition; subst; auto.
         exists (Chan lin p' t). intuition.
         unfold type_remove.
         split. apply Ts_empty.
         split. apply Tp_LinPlus. apply Pp_emptyL.
-        unfold is_unrestricted; auto...
-      * intuition; subst; auto...
+        unfold is_unrestricted; auto.
+      * intuition; subst; auto.
         exists (Chan lin q t). intuition. 
         unfold type_remove.
         split. inversion H0; subst. apply Ts_id. apply Ts_inp.
         split. apply Tp_LinPlus. assumption.
-        unfold is_unrestricted; auto...
+        unfold is_unrestricted; auto.
         intuition.
         destruct H7 as [pp [tt ABS]]. inversion ABS.
         exists (Chan lin p' t). intuition.
         unfold type_remove.
         split. apply Ts_empty.
         split. apply Tp_LinPlus. apply Pp_emptyL.
-        unfold is_unrestricted; auto...
-      * intuition; subst; auto...
+        unfold is_unrestricted; auto.
+      * intuition; subst; auto.
         exists (Chan lin q t). intuition. 
         unfold type_remove.
         split. inversion H0; subst. apply Ts_id. apply Ts_out.
         split. apply Tp_LinPlus. assumption.
-        unfold is_unrestricted; auto...
+        unfold is_unrestricted; auto.
         intuition.
         destruct H6 as [pp [tt ABS]]. inversion ABS.
         exists (Chan lin p' t). intuition.
         unfold type_remove.
         split. apply Ts_empty.
         split. apply Tp_LinPlus. apply Pp_emptyL.
-        unfold is_unrestricted; auto...
-      * intuition; subst; auto...
+        unfold is_unrestricted; auto.
+      * intuition; subst; auto.
         exists (Chan lin empty t). intuition.
         unfold type_remove.
         split. inversion H0; subst. apply Ts_id. 
         split. apply Tp_LinPlus. inversion H0; subst.
         apply Pp_emptyR.
-        unfold is_unrestricted; auto...
+        unfold is_unrestricted; auto.
         intuition.
         destruct H3 as [pp [tt ABS]]. inversion ABS.
         inversion H0; subst.  
@@ -302,7 +302,7 @@ Proof.
       * assumption.
       * apply T_Entry in IN; assumption.
     + intros PNEQ. rewrite <-pairEq_neq in PNEQ.
-      assert (PNEQ2 :  (a1, a2) <> n); auto...
+      assert (PNEQ2 :  (a1, a2) <> n); auto.
       apply removeEntry_in
         with (a1, a2) f0 t1 n g1
         in PNEQ2.
@@ -321,8 +321,8 @@ Proof.
       assert (Ta := pf1).
       apply type_of_map with g1 (a1, a2) t1 ( Chan un p t)
         in Ta; subst.
-      inversion TREM; subst; auto...
-      inversion H2; subst; auto...
+      inversion TREM; subst; auto.
+      inversion H2; subst; auto.
       specialize type_remove_un_2 with t (Chan un p t) (Chan un p t) as TREM2.
       destruct p; intuition. 
       specialize type_remove_un_2 with t (Chan un empty t) (Chan un p t) as TREM2.
@@ -334,7 +334,7 @@ Proof.
       apply T_Entry in IN; assumption.
       apply T_Entry in H0; assumption.
     +  intros PNEQ. rewrite <-pairEq_neq in PNEQ.
-       assert (PNEQ2 :  (a1, a2) <> n); auto...
+       assert (PNEQ2 :  (a1, a2) <> n); auto.
        apply removeEntry_in
          with (a1, a2) f0 t1 n g1
          in PNEQ2.
@@ -354,14 +354,14 @@ Proof.
          assert (Ta := pf1).
          apply type_of_map with g1 (a1, a2) t1 Top
            in Ta; subst.
-         inversion TREM; subst; auto...
-         inversion H2; subst; auto...
+         inversion TREM; subst; auto.
+         inversion H2; subst; auto.
          specialize type_remove_top_2 with Top Top as TREM2.
          intuition. 
          apply T_Entry in IN; assumption.
          apply T_Entry in H0; assumption.
        +  intros PNEQ. rewrite <-pairEq_neq in PNEQ.
-          assert (PNEQ2 :  (a1, a2) <> n); auto...
+          assert (PNEQ2 :  (a1, a2) <> n); auto.
           apply removeEntry_in
             with (a1, a2) f0 t1 n g1
             in PNEQ2.
@@ -377,9 +377,9 @@ Proof.
 Qed.
 
 
-Hint Resolve type_of_in_action.
-Hint Resolve type_of_out_action.
-Hint Resolve split_exists_remove_l.
+#[global] Hint Resolve type_of_in_action.
+#[global] Hint Resolve type_of_out_action.
+#[global] Hint Resolve split_exists_remove_l.
 
 
 
@@ -396,7 +396,7 @@ Proof with eauto.
   intuition.
 Qed.
 
-Hint Resolve split_max.
+#[global] Hint Resolve split_max.
 
 Lemma max_dep_relabel:
   forall g1 g p nd_pf nd_pf1,
@@ -427,7 +427,7 @@ Proof with eauto.
     intuition. rewrite H0...
 Qed.
 
-Hint Resolve max_dep_relabel.
+#[global] Hint Resolve max_dep_relabel.
 
 Lemma split_dep_relabel:
   forall g1 g2 g pf1 pf2 pf p nd_pf nd_pf1,
@@ -458,7 +458,7 @@ Proof with eauto.
     intuition. rewrite H...
 Qed.
 
-Hint Resolve split_dep_relabel.
+#[global] Hint Resolve split_dep_relabel.
 
 Lemma no_dup_in_flag : forall a1 a2 b1 b2 t f s t1 g0,
     NoDup (domain ((a1, a2, vis, t) :: (b1, b2, f, s) :: g0))
@@ -475,7 +475,7 @@ Proof with eauto.
   intuition.
 Qed.
 
-Hint Resolve no_dup_in_flag.
+#[global] Hint Resolve no_dup_in_flag.
 
 
 Lemma lts_rewrite_pf : forall g a p g1 p1 pf (pf1 : NoDup (domain g)),
@@ -487,21 +487,21 @@ Proof with eauto.
   all:try econstructor...
   assert (DEPEQ : dep_relabel p (domain g) pf = dep_relabel p (domain g) pf1) by apply dep_relabel_rewrite_pf.
   subst q; rewrite DEPEQ.
-  apply uRin with (f := f) (t1 := t1) (pol0 := pol) (t := t)...
+  apply uRin with (f := f) (t1 := t1) (pol := pol) (t := t)...
 Qed.
 
-Hint Resolve lts_rewrite_pf.
+#[global] Hint Resolve lts_rewrite_pf.
 
 
-Hint Resolve in_eq.
-Hint Resolve in_isMap.
+#[global] Hint Resolve in_eq.
+#[global] Hint Resolve in_isMap.
 
 
-Hint Resolve in_second.
+#[global] Hint Resolve in_second.
 
 
 
-Hint Resolve removeEntry_twice.
+#[global] Hint Resolve removeEntry_twice.
 
 (*Lemma lts_out_vis_vis : forall a1 a2 b1 b2 t t' t1 s' f p p' g0 pf,  
    lts ((a1, a2, vis, t) :: (b1, b2, vis, t1) :: g0) p 
@@ -1137,7 +1137,7 @@ Proof with eauto.
   tauto.
 Qed.
 
-Hint Resolve type_plus_unique.
+#[global] Hint Resolve type_plus_unique.
 
 
 (*Fixpoint sethid x (g : typeEnv) :=
@@ -1166,8 +1166,8 @@ Proof with eauto using setHid_app_cons.
     rewrite domain_distr, count_occ_app in *; simpl in *.
   case_eq (nat_pair_eq_dec x x); introv EQ;
     rewrite EQ in *; try contradiction.
-  assert  (ZERO1 :count_occ nat_pair_eq_dec (domain g1) x=0) by omega.
-   assert (NIN1 : not (count_occ nat_pair_eq_dec (domain g1) x > 0)) by omega.
+  assert  (ZERO1 :count_occ nat_pair_eq_dec (domain g1) x=0) by lia.
+   assert (NIN1 : not (count_occ nat_pair_eq_dec (domain g1) x > 0)) by lia.
    erewrite <-count_occ_In in *...
 Qed.   
 *)
@@ -1252,7 +1252,7 @@ Proof with eauto.
     assert (C0: count_occ nat_pair_eq_dec (domain k)  (c1, c2) = 0)...
     erewrite count_occ_In
       with (eq_dec := nat_pair_eq_dec) in NIN0;
-      try omega...
+      try lia...
     assert (CNT := pf1). move CNT at bottom. 
     erewrite NoDup_count_occ'
       with (decA := nat_pair_eq_dec)in CNT...
@@ -1264,10 +1264,10 @@ Proof with eauto.
       (eq_dec :=nat_pair_eq_dec) in IN;
       simpl in IN;
       case_eq( nat_pair_eq_dec (c1, c2) (c1, c2)); introv BEQ; try rewrite BEQ in *; try contradiction...
-    assert (C1: count_occ nat_pair_eq_dec (domain h1) (c1, c2) = 0) by omega.
-    assert (C2: count_occ nat_pair_eq_dec (domain h2) (c1, c2) = 0) by omega.
-    assert (NIN1 : not (count_occ nat_pair_eq_dec (domain h1) (c1, c2) > 0)) by omega...
-    assert (NIN2 : not (count_occ nat_pair_eq_dec (domain h2) (c1, c2) > 0)) by omega...
+    assert (C1: count_occ nat_pair_eq_dec (domain h1) (c1, c2) = 0) by lia.
+    assert (C2: count_occ nat_pair_eq_dec (domain h2) (c1, c2) = 0) by lia.
+    assert (NIN1 : not (count_occ nat_pair_eq_dec (domain h1) (c1, c2) > 0)) by lia...
+    assert (NIN2 : not (count_occ nat_pair_eq_dec (domain h2) (c1, c2) > 0)) by lia...
     rewrite <-count_occ_In in *.
 
     eapply typeEnv_eq_change_flag_removeEntry...
@@ -1309,10 +1309,10 @@ Proof with eauto.
   dependent induction LTS.
   
   - specialize IHLTS with
-        (a3 := a1) (a4 := a2)
-        (b3 := b1) (b4 := b2)
-        (t0 := t)
-        (s2 := s1)  (f2 := f1). 
+        (a1 := a1) (a2 := a2)
+        (b1 := b1) (b2 := b2)
+        (t := t)
+        (s1 := s1)  (f1 := f1). 
     simpl; intros.
     eapply IHLTS in IH...
     apply parL...
@@ -1335,9 +1335,9 @@ Proof with eauto.
   - intros. assert (f = hid)... subst.
     assert (pf4 : NoDup (domain ((b1, b2, vis, s0) :: removeEntry (b1, b2) g1))). apply no_dup_cons_removeEntry...
     specialize IHLTS with
-        (a3 := a1) (a4 := a2)
-        (b3 := b1) (b4 := b2) (t1 := t)
-        (s2 := s1) (f2 := f1)
+        (a1 := a1) (a2 := a2)
+        (b1 := b1) (b2 := b2) (t := t)
+        (s1 := s1) (f1 := f1)
         (f := vis)
         (pf1 := pf4).
     
@@ -1582,9 +1582,9 @@ Proof with eauto.
   
   - simpl; intros.
     eapply IHLTS with
-        (a3 := a1) (a4 := a2)
-        (b3 := b1) (b4 := b2) (pf0 := pf)
-        (s2 := s1) (g0 := g) (f2 := f1) 
+        (a1 := a1) (a2 := a2)
+        (b1 := b1) (b2 := b2) (pf := pf)
+        (s1 := s1) (g := g) (f1 := f1) 
         (pf1 := pf1) in IH...
     apply parL...
      simpl in NDSL;
@@ -1596,7 +1596,7 @@ Proof with eauto.
    (* intros x ff1 ff2; specialize FIMPL with x ff1 ff2; intuition.*)
   -  contradiction.
   - intros.
-    apply uOut with (pol0 := pol0) (t := t) (t1 := s0).
+    apply uOut with (pol := pol0) (t := t) (t1 := s0).
     all:eauto.
     specialize type_of_map with
         g (a1, a2)  (Chan un pol0 t0) (Chan un pol t) as TYP.
@@ -1637,9 +1637,9 @@ Proof with eauto.
     
 
     eapply  IHLTS with
-        (f2 := f1)  (a3 := a1) (a4 := a2)
-        (b3 := b1) (b4 := b2) 
-        (s2 := s1)  (g0 := (b1, b2, vis, s) :: removeEntry (b1, b2) g)
+        (f1 := f1)  (a1 := a1) (a2 := a2)
+        (b1 := b1) (b2 := b2) 
+        (s1 := s1)  (g := (b1, b2, vis, s) :: removeEntry (b1, b2) g)
         (pf := pf1) (pf1 := pf1') in IH...
 
     

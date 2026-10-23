@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max Domain RemoveEntry NewEntries Replication
         header
         operations pi_syntax 
@@ -29,10 +29,10 @@ Require Import
 
 Require Import CpdtTactics LibTactics.
 
-Hint Resolve   split_comm.
-Hint Constructors cons.
-Hint Constructors type_sub.
-Hint Constructors type_plus.
+#[global] Hint Resolve   split_comm.
+#[global] Hint Constructors cons.
+#[global] Hint Constructors type_sub.
+#[global] Hint Constructors type_plus.
 
     
 
@@ -197,7 +197,7 @@ Qed.
 
 
 
-Hint Resolve pol_cup_type_sub.
+#[global] Hint Resolve pol_cup_type_sub.
 
 
 Lemma type_sub_tran:  forall t1 t2 t,
@@ -207,7 +207,7 @@ Proof with eauto.
   dependent induction TS1; inversion TS2; subst...
 Qed.
 
-Hint Resolve type_plus_distr2 type_plus_type_sub type_sub_tran.
+#[global] Hint Resolve type_plus_distr2 type_plus_type_sub type_sub_tran.
 
 Lemma type_plus_middle: forall s1 s2 s r1 r3 t,
     type_plus t r1 s1 ->

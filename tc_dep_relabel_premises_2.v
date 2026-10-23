@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max Domain RemoveEntry NewEntries Replication
         header
         operations pi_syntax 
@@ -39,7 +39,7 @@ Import ListNotations.
 
 
 
-Hint Resolve typeCheck_rewrite_pf in2_false_illECast
+#[global] Hint Resolve typeCheck_rewrite_pf in2_false_illECast
      pos_cons pos_remove in_iff_swap
      map_is_map var_not_in_map max_map
      in_g_in_domain.
@@ -71,9 +71,9 @@ Proof with eauto.
       intuition.
   Qed. *)
   
-Hint Resolve split_comm.
+#[global] Hint Resolve split_comm.
 
-Hint Resolve gcons_cons.
+#[global] Hint Resolve gcons_cons.
 
 Lemma cons_vis_proj_map:
   forall l M f g (nd_pf : NoDup (domain g)) pf1 pf2,
@@ -105,7 +105,7 @@ Proof with eauto using cons2_rewrite_pf.
   
   assert (MAX2:  max (domain g) <= M).
   assert (max (domain g) <= max ((a1, a2) :: domain g)). eauto.
-  unfold domain in MAX; fold domain in MAX; omega.
+  unfold domain in MAX; fold domain in MAX; lia.
 
   assert (nd_pfg : NoDup (domain g)).
   inversion nd_pf...
@@ -185,7 +185,7 @@ Qed.
 
 
 
-Hint Resolve gcons_cons.
+#[global] Hint Resolve gcons_cons.
 
 Lemma cons_ill_proj_map:
   forall l M f g (nd_pf : NoDup (domain g)) pf1 pf2,
@@ -217,7 +217,7 @@ Proof with eauto.
   
   assert (MAX2:  max (domain g) <= M).
   assert (max (domain g) <= max ((a1, a2) :: domain g)). eauto.
-  unfold domain in MAX; fold domain in MAX; omega.
+  unfold domain in MAX; fold domain in MAX; lia.
 
 (*  assert (nd_pf1 : NoDup (domain (map (fun x : name * name * flag * piType =>
                                          let (y, t0) := x in let (y0, f) := y in let (a0, a3) := y0 in if In2 (a0, a3) l then (a0, a3 + M, f, t0) else cast x) g))).
@@ -369,11 +369,11 @@ Proof with eauto.
       case_eq (pair_eq (a1, a2 + M) u); intros ABS...
       destruct u as [u1 u2]; rewrite <-pairEq_eq in ABS;
         inversion ABS; simpl in LE.
-      assert (a2 = 0) by omega.
+      assert (a2 = 0) by lia.
       assert (a2 > 0).
       rewrite in2_In_iff in *; unfold pos in *;
         specialize POS with a1 a2; eapply POS...
-      omega.
+      lia.
     + case_eq (pair_eq (a1, a2) u);
         intros ABS; try rewrite <-pairEq_eq in ABS;
         inversion ABS; try subst u; assert (EQ4: pair_eq (a1, a2) (a1, a2) = true); try eapply pairEq_eq; eauto; try rewrite EQ4 in *; erewrite IHg;try discriminate...
@@ -406,7 +406,7 @@ Proof with eauto.
     case_eq (In2 (a1, a2) l); intros EQ2; rewrite EQ2 in *; inversion EQ; subst b1 b2 ff1 tt1.
     + erewrite IHg...
       case_eq (pair_eq (a1, a2 + M) (u1, u2 + M)); intros ABS; try rewrite <-pairEq_eq in ABS; inversion ABS.
-      assert (a2 = u2) by omega.
+      assert (a2 = u2) by lia.
       subst u1 u2.
       assert (EQ3: pair_eq (a1, a2) (a1, a2) = true). eapply pairEq_eq... rewrite EQ3 in *; discriminate.
       tauto. intros; eapply MAX;simpl...
@@ -415,7 +415,7 @@ Proof with eauto.
       assert (u2 >0).
       unfold pos in POS; specialize POS with u1 u2; eapply POS...
       assert (a2 <= M ). specialize MAX with a1 a2; simpl in MAX. eapply MAX...
-      omega.
+      lia.
       all:intros; specialize MAX with x1 x2;
         eapply MAX;simpl;
           try erewrite in_app_iff;right...
@@ -437,7 +437,7 @@ Proof with eauto.
       intros;
       try rewrite Nat.ltb_nlt in *;
       try eapply  IHl2 in H1; intuition;
-      try omega...
+      try lia...
 Qed.  
 
 
@@ -500,7 +500,7 @@ Proof with eauto.
        assert (MPOS: M > 0).
        assert (max (domain g3) > 0).
        inversion H5; eapply max_pos with (u := (n1, n2)) (l1 := l),in_g_in_domain...
-       omega.
+       lia.
 
     eapply no_dup_removeEntry_no_dup with (a := (n1, n2)) in nd_pf as nd_pff.
     assert (nd_pf1 : NoDup (domain (removeEntry (n1, n2) g1))).
@@ -558,13 +558,13 @@ Proof with eauto.
     all: eauto.
     assert (LE: x2 <= max (domain g1));
       try eapply min_max...
-    omega.
+    lia.
     assert (LE: x2 <= max (domain g2));
       try eapply min_max...
-    omega.
+    lia.
      assert (LE: x2 <= max (domain g3));
       try eapply min_max...
-     omega.
+     lia.
      inversion H4; subst; econstructor; erewrite in_map_iff;
        exists (n1, n2, f', t0);erewrite IN2...
 
@@ -736,7 +736,7 @@ Proof with eauto.
        assert (MPOS: M > 0).
        assert (max (domain g3) > 0).
        inversion H4; eapply max_pos with (u := (n1, n2)) (l1 := l),in_g_in_domain...
-       omega.
+       lia.
 
        assert (nd_pfk1: NoDup (domain (removeEntry (n1, n2 + M)
       (map
@@ -975,7 +975,7 @@ eapply in_map_iff;
        assert (MPOS: M > 0).
        assert (max (domain g3) > 0).
        inversion H4; eapply max_pos with (u := (n1, n2)) (l1 := l),in_g_in_domain...
-       omega.
+       lia.
 
        assert (nd_pfk1: NoDup (domain (removeEntry (n1, n2 + M)
       (map
@@ -1211,13 +1211,13 @@ Proof with eauto.
             List.length
               (remove eq_dec n l1 ++ a :: remove eq_dec n l2)).
   rewrite NIN...
-  repeat rewrite app_length in LEN; simpl in LEN... omega.
+  repeat rewrite app_length in LEN; simpl in LEN... lia.
   all:rewrite remove_app in NIN2;
     eapply not_in_app_and in NIN2; destruct NIN2 as [_ NIN2];
       simpl in NIN2; rewrite H in *; intuition.
 Qed.  
   
-Hint Resolve eq_removeEntry remove_match.
+#[global] Hint Resolve eq_removeEntry remove_match.
 
 Lemma eq_map_no_dup: forall f k n n0 l M g (nd_pf: NoDup (domain g)), 
   f =
@@ -1278,11 +1278,11 @@ Proof with eauto.
      assert (ABS: b2 + max (domain g) <= max (domain g)).
      eapply in_g_in_domain in IN2;
        eapply in_preserves_max...
-     assert (b2 = 0) by omega.
+     assert (b2 = 0) by lia.
       assert (In (b1, b2) ((b1, b2) :: l))... rewrite H...
      unfold sl_pos,pos in SLP; specialize SLP with b1 b2;
        eauto; intuition.
-     assert (EQ : b2 + max (domain g) - max (domain g) = b2 ) by omega. rewrite EQ in *.
+     assert (EQ : b2 + max (domain g) - max (domain g) = b2 ) by lia. rewrite EQ in *.
      assert (IN2 : In (b1, b2) (domain g)). eapply INCL...
      eapply in_domain_in_g in IN2 as (ff &tt &IN2).
      eapply in_implies_InB in IN2;
@@ -1307,12 +1307,12 @@ Qed.
    induction l; simpl in IN; try contradiction.
    destruct (InB (fst a, snd a + m) g).
    destruct b...
-   assert (EQ: snd a + m - m = snd a) by omega.
+   assert (EQ: snd a + m - m = snd a) by lia.
    rewrite EQ in *.
    destruct (InB (fst a, snd a) g).
    destruct b.
    all: destruct IN as [A | B]; eauto;
-     inversion A; subst; omega.
+     inversion A; subst; lia.
  Qed.
 
  Lemma isMap_single : forall a,
@@ -1321,7 +1321,7 @@ Qed.
    intros [[[a1 a2] f] t]; unfold isMap; intros; destruct H; inversion H; inversion H0;inversion H1; inversion H2; subst; intuition.
  Qed.
 
- Hint Resolve isMap_single.
+ #[global] Hint Resolve isMap_single.
  
 Lemma isMap_single_removeEntry : forall a b,
      isMap (removeEntry b (a :: nil)).
@@ -1331,7 +1331,7 @@ Lemma isMap_single_removeEntry : forall a b,
        try inversion H0; try inversion H2; inversion H3; subst; intuition.
  Qed.
 
- Hint Resolve isMap_single_removeEntry.
+ #[global] Hint Resolve isMap_single_removeEntry.
 
  Lemma cons_map: forall g pf1 l mx pf2,
      NoDup (domain g) ->
@@ -1392,6 +1392,6 @@ Lemma isMap_single_removeEntry : forall a b,
  Qed.
 
 
- Hint Resolve cons_map.
+ #[global] Hint Resolve cons_map.
 
  

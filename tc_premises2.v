@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain NewEntries
         header
         operations pi_syntax 
@@ -126,7 +126,7 @@ Require Import
 
 
 
-  Hint Resolve beq_nat_refl.
+  #[global] Hint Resolve beq_nat_refl.
 
  
  

@@ -1,5 +1,5 @@
 Require Import
-         Bool List Omega PeanoNat Program.Equality
+         Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -175,7 +175,7 @@ Qed.
      repeat right...
    Qed.
 
-   Hint Constructors disjoint_2.
+   #[global] Hint Constructors disjoint_2.
      
  Lemma disjoint_iff: forall {A} (l1 l2 m : list A),
      disjoint l1 m ->

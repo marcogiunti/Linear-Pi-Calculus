@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality
+  Bool List Lia PeanoNat Program.Equality
   ListAddOns Max RemoveEntry Domain Classical
   Replication
   header
@@ -30,7 +30,7 @@ Require Import
   Require Import CpdtTactics LibTactics.
   Import ListNotations.
 
-  Hint Resolve in_g_in_domain
+  #[global] Hint Resolve in_g_in_domain
                no_dup_cons_removeEntry.
   
  
@@ -117,7 +117,7 @@ Qed.
        repeat eapply removeEntry_in...
     Qed.
 
-    Hint Rewrite cons_removeEntry_iff.
+    #[global] Hint Rewrite cons_removeEntry_iff.
 
     Lemma app_cons_removeEntry_iff k b1 b2 f2 t2 g g2
       (nd_pf : NoDup (domain g)) (nd_pf2 : NoDup (domain g2)): 
@@ -134,14 +134,14 @@ Qed.
      right; erewrite cons_removeEntry_iff ...
    Qed.
 
-   Hint Resolve sl_pos_par_l
+   #[global] Hint Resolve sl_pos_par_l
      sl_pos_par_r sl_pos_repl
      sl_pos_nu
      sl_pos_bang
      sl_pos_out
      sl_pos_inp.
 
-   Hint Resolve in_removeEntry_cons_iff_2.
+   #[global] Hint Resolve in_removeEntry_cons_iff_2.
 
   Lemma lts_iff a g1 g' g2 p p' pf1 pf2 (pf' : NoDup (domain g')):
     lts g1 p a g' p' pf1 ->
@@ -207,9 +207,9 @@ Qed.
     rewrite domain_distr; eapply distr_no_dup;
       try eapply newEntries_no_dup...
     try erewrite identif_seclabs_of_dep_relabel;
-    eapply FinFun.Injective_map_NoDup...
+    eapply Finite.Injective_map_NoDup...
     introv EQ; destruct x,y; inv EQ.
-    assert (n0 = n2) by omega.
+    assert (n0 = n2) by lia.
     subst...
     
     eapply disjoint_commute,disjoint_iff with (l1 := domain g2); try eapply new_entries_disjoint.

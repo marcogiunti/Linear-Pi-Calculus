@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain Classical
         header
         operations pi_syntax
@@ -21,109 +21,109 @@ Require Import
 
 Require Import CpdtTactics LibTactics.
 
-Hint Resolve nonRecTypes.
-Hint Resolve nonRecActions1.
-Hint Resolve nonRecActions2.
+#[global] Hint Resolve nonRecTypes.
+#[global] Hint Resolve nonRecActions1.
+#[global] Hint Resolve nonRecActions2.
 
 (* List Operations *)
 
-Hint Resolve projections_injective.
-Hint Resolve rec_In.
-Hint Resolve fold_In.
-Hint Resolve incl_distr.
-Hint Resolve rec_disjoint.
-Hint Resolve dis_nil.
-Hint Resolve dis_cons.
-Hint Resolve disjoint_cons_l.
-Hint Resolve disjoint_cons_r.
-Hint Resolve disjoint_l_cons.
-Hint Resolve disjoint_r_cons.
-Hint Resolve disjoint_commute.
-Hint Resolve disjoint_app_l.
-Hint Resolve disjoint_app_r.
-Hint Resolve disjoint_2_cons_l.
-Hint Resolve disjoint_2_l_cons.
-Hint Resolve disjoint_car.
-Hint Resolve disjoint_2_comm.
-Hint Resolve not_in_app_and.
-Hint Resolve no_dup_app_l.
-Hint Resolve no_dup_app_r.
-Hint Resolve no_dup_distr.
-Hint Resolve no_dup_disjoint.
-Hint Resolve no_dup_iff.
-Hint Resolve map_app.
+#[global] Hint Resolve projections_injective.
+#[global] Hint Resolve rec_In.
+#[global] Hint Resolve fold_In.
+#[global] Hint Resolve incl_distr.
+#[global] Hint Resolve rec_disjoint.
+#[global] Hint Resolve dis_nil.
+#[global] Hint Resolve dis_cons.
+#[global] Hint Resolve disjoint_cons_l.
+#[global] Hint Resolve disjoint_cons_r.
+#[global] Hint Resolve disjoint_l_cons.
+#[global] Hint Resolve disjoint_r_cons.
+#[global] Hint Resolve disjoint_commute.
+#[global] Hint Resolve disjoint_app_l.
+#[global] Hint Resolve disjoint_app_r.
+#[global] Hint Resolve disjoint_2_cons_l.
+#[global] Hint Resolve disjoint_2_l_cons.
+#[global] Hint Resolve disjoint_car.
+#[global] Hint Resolve disjoint_2_comm.
+#[global] Hint Resolve not_in_app_and.
+#[global] Hint Resolve no_dup_app_l.
+#[global] Hint Resolve no_dup_app_r.
+#[global] Hint Resolve no_dup_distr.
+#[global] Hint Resolve no_dup_disjoint.
+#[global] Hint Resolve no_dup_iff.
+#[global] Hint Resolve map_app.
 
-Hint Resolve NoDup_nil.
-Hint Resolve NoDup_cons.
-Hint Resolve NoDup_cons_iff.
+#[global] Hint Resolve NoDup_nil.
+#[global] Hint Resolve NoDup_cons.
+#[global] Hint Resolve NoDup_cons_iff.
 
 (* Type Operations *)
-Hint Constructors piType.
-Hint Resolve Pp_emptyL.
-Hint Resolve Pp_emptyR.
-Hint Resolve Pp_inpL.
-Hint Resolve Pp_inpR.
-Hint Resolve Tp_Base.
-Hint Resolve Tp_LinPlus.
-Hint Resolve Tp_UnPlus.
-Hint Resolve T_Entry.
-Hint Resolve F_Entry.
-Hint Resolve type_plus_comm.
-Hint Resolve type_of_map.
-Hint Resolve flag_of_map.
-Hint Resolve isMap_cons.
-Hint Resolve cons_isMap.
-Hint Resolve removeEntry_head.
-Hint Resolve in_removeEntry.
-Hint Resolve split_in_ex.
-Hint Resolve split_in_ex_2.
-Hint Resolve split_exists_neutral.
-Hint Resolve tsub_payload.
-Hint Resolve tsuper_payload.
-Hint Resolve tsuper_payload_r.
-Hint Resolve tsuper_top.
-Hint Resolve tsuper_top_r.
+#[global] Hint Constructors piType.
+#[global] Hint Resolve Pp_emptyL.
+#[global] Hint Resolve Pp_emptyR.
+#[global] Hint Resolve Pp_inpL.
+#[global] Hint Resolve Pp_inpR.
+#[global] Hint Resolve Tp_Base.
+#[global] Hint Resolve Tp_LinPlus.
+#[global] Hint Resolve Tp_UnPlus.
+#[global] Hint Resolve T_Entry.
+#[global] Hint Resolve F_Entry.
+#[global] Hint Resolve type_plus_comm.
+#[global] Hint Resolve type_of_map.
+#[global] Hint Resolve flag_of_map.
+#[global] Hint Resolve isMap_cons.
+#[global] Hint Resolve cons_isMap.
+#[global] Hint Resolve removeEntry_head.
+#[global] Hint Resolve in_removeEntry.
+#[global] Hint Resolve split_in_ex.
+#[global] Hint Resolve split_in_ex_2.
+#[global] Hint Resolve split_exists_neutral.
+#[global] Hint Resolve tsub_payload.
+#[global] Hint Resolve tsuper_payload.
+#[global] Hint Resolve tsuper_payload_r.
+#[global] Hint Resolve tsuper_top.
+#[global] Hint Resolve tsuper_top_r.
 
-Hint Resolve fsub_hid.
-Hint Resolve fsub_ill.
-Hint Resolve fsub_vis.
-Hint Resolve fsub_hid_r.
-Hint Resolve fsub_ill_r.
-Hint Resolve fsub_vis_r.
-Hint Resolve fsuper_vis.
+#[global] Hint Resolve fsub_hid.
+#[global] Hint Resolve fsub_ill.
+#[global] Hint Resolve fsub_vis.
+#[global] Hint Resolve fsub_hid_r.
+#[global] Hint Resolve fsub_ill_r.
+#[global] Hint Resolve fsub_vis_r.
+#[global] Hint Resolve fsuper_vis.
 
-Hint Resolve type_of_in_action.
-Hint Resolve type_of_out_action.
-Hint Resolve flag_of_split_l.
-Hint Resolve split_of_split.
-Hint Resolve split_exists_remove_l.
-Hint Resolve split_not_exists_lts.
-Hint Resolve split_lts_exists_remove_l.
+#[global] Hint Resolve type_of_in_action.
+#[global] Hint Resolve type_of_out_action.
+#[global] Hint Resolve flag_of_split_l.
+#[global] Hint Resolve split_of_split.
+#[global] Hint Resolve split_exists_remove_l.
+#[global] Hint Resolve split_not_exists_lts.
+#[global] Hint Resolve split_lts_exists_remove_l.
 (*Hint Resolve split_lts_exists_lts.*)
 
 
-Hint Resolve unique_remove.
-Hint Resolve no_dup_not_in_removeEntry.
-Hint Resolve no_dup_removeEntry_no_dup.
-Hint Resolve no_dup_isMap.
-Hint Resolve cons_isMap.
-Hint Resolve cons_removeEntry.
-Hint Resolve cons_removeEntry_app.
-Hint Resolve sl_pos_par_l.
-Hint Resolve sl_pos_par_r.
-Hint Resolve typeCheck_vis.
-Hint Resolve typeCheck_hid.
+#[global] Hint Resolve unique_remove.
+#[global] Hint Resolve no_dup_not_in_removeEntry.
+#[global] Hint Resolve no_dup_removeEntry_no_dup.
+#[global] Hint Resolve no_dup_isMap.
+#[global] Hint Resolve cons_isMap.
+#[global] Hint Resolve cons_removeEntry.
+#[global] Hint Resolve cons_removeEntry_app.
+#[global] Hint Resolve sl_pos_par_l.
+#[global] Hint Resolve sl_pos_par_r.
+#[global] Hint Resolve typeCheck_vis.
+#[global] Hint Resolve typeCheck_hid.
 
-Hint Resolve count_occ_removeEntry.
-Hint Resolve count_occ_removeEntry_neq.
-Hint Resolve no_dup_split_no_dup_l.
-Hint Resolve no_dup_split_no_dup_r.
-Hint Resolve super_in_sub.
+#[global] Hint Resolve count_occ_removeEntry.
+#[global] Hint Resolve count_occ_removeEntry_neq.
+#[global] Hint Resolve no_dup_split_no_dup_l.
+#[global] Hint Resolve no_dup_split_no_dup_r.
+#[global] Hint Resolve super_in_sub.
            
   
-Hint Unfold nonRec_typable.
-Hint Resolve typeCheck_object_neq_subject.
-Hint Resolve incl_nil_l incl_l_nil.
+#[global] Hint Unfold nonRec_typable.
+#[global] Hint Resolve typeCheck_object_neq_subject.
+#[global] Hint Resolve incl_nil_l incl_l_nil.
 
 
 Lemma no_dup_cons_removeEntry_app_1 : forall u x f1 t1 f2 t2 g (pf : NoDup(domain g)),
@@ -396,11 +396,11 @@ Qed.
   Qed.
 
   
-Hint Resolve cons2_rewrite_pf.
+#[global] Hint Resolve cons2_rewrite_pf.
 
 
 
-  Hint Resolve split_rewrite_pf.
+  #[global] Hint Resolve split_rewrite_pf.
     
 Lemma typeCheck_rewrite_pf : forall g p pf1 pf2,
     typeCheck g pf1 p -> typeCheck g pf2 p.
@@ -420,7 +420,7 @@ Proof with eauto.
 Qed.
 
 
- Hint Resolve typeCheck_rewrite_pf
+ #[global] Hint Resolve typeCheck_rewrite_pf
    in_g_in_domain.
 
  

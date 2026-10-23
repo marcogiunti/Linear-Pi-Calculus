@@ -1,5 +1,5 @@
 Require Import
-        Bool Arith ZArith List Eqdep Omega PeanoNat
+        Bool Arith ZArith List Eqdep Lia PeanoNat
         Relations EquivDec Program.Equality String
         operations pi_syntax pairEq type_system.
 

@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality
+  Bool List Lia PeanoNat Program.Equality
   ListAddOns Max Domain RemoveEntry NewEntries Replication
   header
   operations pi_syntax 
@@ -94,7 +94,7 @@ Notation no_dup_ill_proj := tc_prelim.no_dup_ill_proj.
 
 
 
-Hint Resolve cons_cons no_dup_cons_removeEntry
+#[global] Hint Resolve cons_cons no_dup_cons_removeEntry
   no_dup_split_no_dup_r no_dup_split_no_dup_l.
 
 

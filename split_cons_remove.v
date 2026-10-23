@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality
+  Bool List Lia PeanoNat Program.Equality
   ListAddOns Max RemoveEntry
   header
   operations pi_syntax 
@@ -22,7 +22,7 @@ Proof with eauto.
   destruct f, g;  inversion H; subst; econstructor...
 Qed.
 
-Hint Resolve flag_plus_comm.
+#[global] Hint Resolve flag_plus_comm.
 
 Lemma split_comm : forall g1 g2 g pf1 pf2 pf,
     tEnv_split g1 g2 g pf1 pf2 pf <->

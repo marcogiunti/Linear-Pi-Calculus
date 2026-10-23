@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -36,10 +36,10 @@ Import ListNotations.
 (********* 2DO: CHECK ALL DUPLICATED LEMMAS ********)
 
 
-Hint Resolve   split_comm.
-Hint Constructors cons.
-Hint Constructors type_sub.
-Hint Constructors type_plus.
+#[global] Hint Resolve   split_comm.
+#[global] Hint Constructors cons.
+#[global] Hint Constructors type_sub.
+#[global] Hint Constructors type_plus.
 
     
  
@@ -110,7 +110,7 @@ Proof with eauto.
 Qed.
 
 
-Hint Constructors cons.
+#[global] Hint Constructors cons.
 
 
 
@@ -419,7 +419,7 @@ Proof with eauto.
   intros; destruct p, q, p'; try inversion H...
 Qed.
 
-Hint Resolve pol_cup_type_sub.
+#[global] Hint Resolve pol_cup_type_sub.
 
 Lemma type_plus_type_sub:
   forall s1 s s2,  type_plus s1 s s2 ->
@@ -459,10 +459,10 @@ Qed.
     
 
 
-Hint Resolve   split_comm.
-Hint Constructors cons.
-Hint Constructors type_sub.
-Hint Constructors type_plus.
+#[global] Hint Resolve   split_comm.
+#[global] Hint Constructors cons.
+#[global] Hint Constructors type_sub.
+#[global] Hint Constructors type_plus.
 
 
 Lemma type_plus_distr2: forall   t r1 s1 s2 s,

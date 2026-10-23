@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max RemoveEntry Domain
         ListAddOns Max RemoveEntry Domain
         header
@@ -23,7 +23,7 @@ Import ListNotations.
     forall g p a g' nd_pf,
       ~ lts g p a g' p nd_pf.
 
- Hint Resolve nonDivergentProcesses length_zero_iff_nil.
+ #[global] Hint Resolve nonDivergentProcesses length_zero_iff_nil.
 
 
 
@@ -106,7 +106,7 @@ Qed.
 
 
 
-  Hint Resolve
+  #[global] Hint Resolve
        length_inv removeEntry_length
        max_app_l max_app_r.
 
@@ -115,7 +115,7 @@ Qed.
   
   
 
-  Remove Hints in_g_in_domain.
+  #[global] Remove Hints in_g_in_domain.
 
 
  

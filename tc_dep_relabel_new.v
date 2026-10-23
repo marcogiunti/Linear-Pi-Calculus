@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max Domain RemoveEntry NewEntries Replication
         header
         operations pi_syntax 
@@ -52,7 +52,7 @@ Proof with eauto.
     inv IN; destruct a; simpl; intuition;
       try destruct b0; try right...
 Qed.
-Hint Constructors NoDup.
+#[global] Hint Constructors NoDup.
 
 Lemma nin_illEProj: forall a1 a2 g l,
   ~In (a1, a2) (domain g) ->
@@ -136,15 +136,15 @@ Proof with eauto using incl_illEP_illEC.
   case_eq ( In2 (x1, x2) (secLabs p)); intros; rewrite H0 in *; inv EQ...
   assert (INCL: incl (illEProj g (secLabs p)) (illECast g))...
   unfold incl in INCL; specialize INCL with (a1, x2 + M, f2, t2); intuition. eapply in_g_in_domain in H1; erewrite illEC_eq_domain in *.
-  eapply in_preserves_max in H1. assert (x2 = 0) by omega.
+  eapply in_preserves_max in H1. assert (x2 = 0) by lia.
   eapply in2_implies_in in H0; unfold sl_pos, pos in POS;
     specialize POS with a1 x2; intuition.
   destruct H0; subst x1 x2.
 
   case_eq (In2 (a1, a2) (secLabs p)); intros ISHID; rewrite ISHID in *.
-  + inv EQ; assert (M = 0) by omega;
+  + inv EQ; assert (M = 0) by lia;
     eapply in_g_in_domain,in_preserves_max in ABS1;
-    assert (a2 = 0) by omega;
+    assert (a2 = 0) by lia;
     unfold sl_pos,pos in POS; specialize POS with a1 a2;
       eapply in2_implies_in in ISHID; intuition.
   + eapply illEProj_inv in ABS2 as (IN2 &(t'' &ABS2 &_));
@@ -153,7 +153,7 @@ Proof with eauto using incl_illEP_illEC.
 Qed.
 
 
-Hint Resolve in_hid_proj illEProj_app.
+#[global] Hint Resolve in_hid_proj illEProj_app.
 
 Lemma isMap_illEProj: forall g l,
     isMap g ->
@@ -262,17 +262,17 @@ Proof with eauto using in_eq.
   - assert (False).
     eapply inB_implies_In_2  in H0.
     eapply in_g_in_domain, in_preserves_max in H0.
-    assert (a2 = 0) by omega.
+    assert (a2 = 0) by lia.
     assert (In (a1, a2) ((a1, a2) :: l)). eapply in_eq.
     unfold pos in POS2; specialize POS2 with a1 a2; intuition.
     contradiction.
-  - assert (EQ: a2 + M - M = a2) by omega.
+  - assert (EQ: a2 + M - M = a2) by lia.
     simpl; rewrite H0, EQ; clear EQ; destruct (InB (a1, a2) g );
       simpl; econstructor; try intros ABS.
     rewrite domain_distr in ABS; eapply in_app_iff in ABS as [ABS1 | ABS2].
     + eapply not_in_newEntries with (a := (a1, a2 + M)); try intros ABS; try eapply in_map_iff in ABS ...
       destruct ABS as ([x1 x2] &ABS); simpl in ABS; intuition.
-      inversion H1; assert (x2 = a2 ) by omega;
+      inversion H1; assert (x2 = a2 ) by lia;
       subst; intuition.
     + rewrite illEC_eq_domain in *. eapply in_domain_in_g in ABS2 as (ff &tt &ABS2); eapply in_implies_InB in ABS2; try rewrite ABS2 in *; try discriminate...
     + assumption.
@@ -294,16 +294,16 @@ Proof with eauto using no_dup_ne_ic0, typeCheck_no_dup.
   unfold incl; intros; eapply typeCheck_hid with (g := g)in H as (tt &H)...
 Qed.
 
-  Hint Resolve isMap_not_in incl_cons inB_implies_In_2.
+  #[global] Hint Resolve isMap_not_in incl_cons inB_implies_In_2.
 
 
 
 
-  Hint Resolve in_removeEntry_cons_iff_2.
+  #[global] Hint Resolve in_removeEntry_cons_iff_2.
 
  
 
-Hint Resolve incl_incl fn_disjoint_sl bv_disjoint_sl
+#[global] Hint Resolve incl_incl fn_disjoint_sl bv_disjoint_sl
      isMap_illEProj cons_illEProj in2_implies_in no_dup_ne_ic
      incl_hid_proj.
 

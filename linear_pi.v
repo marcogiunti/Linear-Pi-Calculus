@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max Domain RemoveEntry NewEntries Replication
         header
         operations pi_syntax 
@@ -710,7 +710,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
                  eapply typeCheck_no_dup with (pf := pf0)...
                  eapply incl_iff with (m1 := domain g0)...
-                erewrite split_max with (pf := pf1). omega.
+                erewrite split_max with (pf := pf1). lia.
                 eapply split_comm...
                 eapply disjoint_iff with (l1  := domain g3), in_removeEntry_cons_iff,in_g_in_domain...
                 
@@ -842,7 +842,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                    eapply in_bv_lt_max with (pf := pf3) in ABS1;
                    eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                    eapply newEntries_gte_max in ABS2;
-                   try omega;
+                   try lia;
                    try eassumption.
                  
                  all:eauto.
@@ -1188,7 +1188,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                             k0 = ne ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g0)...
 
                  
-                 erewrite split_max in MAX0...
+                 erewrite split_max with (g := g1) in MAX0...
                  assert (K1EQ: exists ne : list (name * name * flag * piType),
             k1 = ne ++ (b1, b2, vis, r') :: removeEntry (b1, b2) g1)...
                  
@@ -1287,7 +1287,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  eapply removeEntry_in...
 (*                 case_eq (pair_eq (a, b3) (b1, b2)).
                  intros PEQ. rewrite <-pairEq_eq in PEQ; inversion PEQ;  subst.*)
-                 inversion H9. inversion H10; subst...
+                 destruct H6 as [H10|H10]. inversion H10; subst...
                  eapply in_removeEntry...
 
                   (* REPLICATED INPUT *)
@@ -1345,7 +1345,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
                  eapply typeCheck_no_dup with (pf := pf0)...
                  eapply incl_iff with (m1 := domain g0)...
-                erewrite split_max with (pf := pf1). omega.
+                erewrite split_max with (pf := pf1). lia.
                 eapply split_comm...
                 eapply disjoint_iff with (l1  := domain g3), in_removeEntry_cons_iff,in_g_in_domain...
 
@@ -1493,7 +1493,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                    eapply in_bv_lt_max with (pf := pf3) in ABS1;
                    eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                    eapply newEntries_gte_max in ABS2;
-                   try omega;
+                   try lia;
                    try eassumption.
 
                  all:eauto.
@@ -1845,7 +1845,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  assert (K0EQ: exists ne : list (name * name * flag * piType),
                             k0 = ne ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g0)...
 
-                 erewrite split_max in MAX0...
+                 erewrite split_max with (g := g1) in MAX0...
                  assert (K1EQ: exists ne : list (name * name * flag * piType),
             k1 = ne ++ (b1, b2, vis, r') :: removeEntry (b1, b2) g1)...
                  
@@ -1993,7 +1993,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
                  eapply typeCheck_no_dup with (pf := pf0)...
                  eapply incl_iff with (m1 := domain g0)...
-                erewrite split_max with (pf := pf1). omega.
+                erewrite split_max with (pf := pf1). lia.
                 eapply split_comm...
                 eapply disjoint_iff with (l1  := domain g3), in_removeEntry_cons_iff,in_g_in_domain...
                 
@@ -2128,7 +2128,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                    eapply in_bv_lt_max with (pf := pf3) in ABS1;
                    eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                    eapply newEntries_gte_max in ABS2;
-                   try omega;
+                   try lia;
                    try eassumption.
 
                  all:eauto.
@@ -2422,7 +2422,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  assert (K0EQ: exists ne : list (name * name * flag * piType),
                             k0 = ne ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g0)...
 
-                 erewrite split_max in MAX0...
+                 erewrite split_max with (g := g1) in MAX0...
                  assert (K1EQ: exists ne : list (name * name * flag * piType),
             k1 = ne ++ (b1, b2, vis, r') :: removeEntry (b1, b2) g1)...
                  
@@ -2559,7 +2559,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
                  eapply typeCheck_no_dup with (pf := pf0)...
                  eapply incl_iff with (m1 := domain g0)...
-                erewrite split_max with (pf := pf1). omega.
+                erewrite split_max with (pf := pf1). lia.
                 eapply split_comm...
                 eapply disjoint_iff with (l1  := domain g3), in_removeEntry_cons_iff,in_g_in_domain...
 
@@ -2676,7 +2676,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                    eapply in_bv_lt_max with (pf := pf3) in ABS1;
                    eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                    eapply newEntries_gte_max in ABS2;
-                   try omega;
+                   try lia;
                    try eassumption.
 
                  all:eauto.
@@ -2860,7 +2860,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                 assert (K0EQ:  exists ne : list (name * name * flag * piType),
                            k0 = ne ++ (b1, b2, vis, Top) :: removeEntry (b1, b2) g0). intuition.
 
-                erewrite split_max in MAX0...
+                erewrite split_max with (g := g1) in MAX0...
                 assert (K1EQ: exists ne : list (name * name * flag * piType),
                            k1 = ne ++ (b1, b2, vis, Top) :: removeEntry (b1, b2) g1). intuition.
                  destruct K0EQ as [ne0 K0EQ].
@@ -3043,7 +3043,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                  eapply incl_iff with (m1 := domain g0);
                    try eassumption.
                  eauto.
-                erewrite split_max with (pf := pf1). omega.
+                erewrite split_max with (pf := pf1). lia.
                 eapply split_comm...
                 eapply tsub_top with (pf := pf1) in TYPb as TYP1b.
                 inversion TYP1b. subst g4 n3 t.
@@ -3211,7 +3211,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                    eapply in_bv_lt_max with (pf := pf3) in ABS1;
                    eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                    eapply newEntries_gte_max in ABS2;
-                   try omega;
+                   try lia;
                    try eassumption.
                  
                  all:eauto.
@@ -3917,7 +3917,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
         assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -3953,7 +3953,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
         
@@ -4015,7 +4015,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
         eapply in_app_removeEntry_iff_0...
@@ -4291,7 +4291,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
          assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -4326,7 +4326,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
          assert (MAX2: max(domain g0) >= max (secLabs q)).
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... 
         eapply typeCheck_no_dup with (pf := pf0)...
-        omega.
+        lia.
          assert (NIN: ~In (b1, b2) (domain ne0)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g0)).
@@ -4356,7 +4356,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        omega.
+        lia.
          assert (NIN: ~In (b1, b2) (domain ne1)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g1)).
@@ -4530,7 +4530,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply in_removeEntry_cons_iff,in_g_in_domain...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
@@ -4595,7 +4595,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
 
@@ -4843,7 +4843,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
         assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -4921,7 +4921,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
         
@@ -4983,7 +4983,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
         eapply in_app_removeEntry_iff_0...
@@ -5172,7 +5172,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
         assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -5294,7 +5294,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
         
@@ -5356,7 +5356,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
         eapply in_app_removeEntry_iff_0...
@@ -6006,7 +6006,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                   eapply in_bv_lt_max with (pf := pf3) in ABS1;
                   eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                   eapply newEntries_gte_max in ABS2;
-                  try omega;
+                  try lia;
                   try eassumption.
 
           (***) (* typeCheck
@@ -6628,7 +6628,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                   eapply in_bv_lt_max with (pf := pf3) in ABS1;
                   eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                   eapply newEntries_gte_max in ABS2;
-                  try omega;
+                  try lia;
                   try eassumption.
 
                 eauto.
@@ -6637,9 +6637,9 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                 simpl in INCLH. eapply incl_app_inv...
                 eapply typeCheck_no_dup with (pf := pf0)...
                 assert (IN := IN0a).
-                eapply tsub_un in IN0a; try inv IN0a;
+                eapply tsub_un with (g := g1) in IN0a; try inv IN0a;
                   try eassumption.
-                eapply fsub_vis in IN;
+                eapply fsub_vis with (g := g1) in IN;
                    try inv IN;
                   try eassumption.
                 assert (f = vis).
@@ -7140,7 +7140,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
         assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -7176,7 +7176,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
         
@@ -7238,7 +7238,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
         eapply in_app_removeEntry_iff_0...
@@ -7514,7 +7514,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
          assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -7549,7 +7549,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
          assert (MAX2: max(domain g0) >= max (secLabs q)).
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... 
         eapply typeCheck_no_dup with (pf := pf0)...
-        omega.
+        lia.
          assert (NIN: ~In (b1, b2) (domain ne0)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g0)).
@@ -7579,7 +7579,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        omega.
+        lia.
          assert (NIN: ~In (b1, b2) (domain ne1)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g1)).
@@ -7753,7 +7753,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply in_removeEntry_cons_iff,in_g_in_domain...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
@@ -7818,7 +7818,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
 
@@ -8066,7 +8066,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
         assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -8144,7 +8144,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
         
@@ -8206,7 +8206,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
         eapply in_app_removeEntry_iff_0...
@@ -8395,7 +8395,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_iff with (m1 := domain g0);
           try eassumption.
         intros; eapply split_domain_m...  
-        omega.
+        lia.
         assert (NIN: ~In (b1, b2) (domain ne3)).
         intros ABS.
         assert (INB: In (b1, b2) (domain g3)).
@@ -8517,7 +8517,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply incl_preserves_max, incl_tran with (m := secLabs p1)... assert(  incl (secLabs p1) (domain g0)).
         eapply typeCheck_no_dup with (pf := pf0)...
         eapply incl_iff with (m1 := domain g0)...
-        erewrite split_max with (pf := pf1). omega.
+        erewrite split_max with (pf := pf1). lia.
         eapply split_comm...
         eapply no_dup_isMap in nd_pfne3g3 as pfne3g3.
         
@@ -8579,7 +8579,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         
         eapply in_app_removeEntry_iff_0...
@@ -9233,7 +9233,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                   eapply in_bv_lt_max with (pf := pf3) in ABS1;
                   eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                   eapply newEntries_gte_max in ABS2;
-                  try omega;
+                  try lia;
                   try eassumption.
 
           (***) (* typeCheck
@@ -9859,7 +9859,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                   eapply in_bv_lt_max with (pf := pf3) in ABS1;
                   eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
                   eapply newEntries_gte_max in ABS2;
-                  try omega;
+                  try lia;
                   try eassumption.
 
                 eauto.
@@ -9868,9 +9868,9 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                 simpl in INCLH. eapply incl_app_inv...
                 eapply typeCheck_no_dup with (pf := pf0)...
                 assert (IN := IN0a).
-                eapply tsub_un in IN0a; try inv IN0a;
+                eapply tsub_un with (g := g1) in IN0a; try inv IN0a;
                   try eassumption.
-                eapply fsub_hid in IN;
+                eapply fsub_hid with (g := g1) in IN;
                    try inv IN;
                   try eassumption.
                 assert (f = hid).
@@ -10080,11 +10080,11 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply typeCheck_no_dup...
         intuition.
         eapply incl_incl2...
-      + eapply typeCheck_no_dup...
+      + eapply typeCheck_no_dup with (pf := pf0)...
       + assert (max (domain g0) >= max (secLabs p1)).
         eapply incl_preserves_max...
         eapply typeCheck_no_dup...
-        omega.
+        lia.
       + inversion LTSPAR. assumption.
         apply lts_finite in H13.
         contradiction.
@@ -10511,7 +10511,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
 
       (* new version of newEntries_remove *)
       erewrite max_dep_relabel...
-      simpl; case_eq (x2 <? max (domain g1)); intros; try omega...
+      simpl; case_eq (x2 <? max (domain g1)); intros; try lia...
       intros ABS;
         eapply typeCheck_no_dup in TYP as [INCL _];
         try simpl in INCL;
@@ -10522,11 +10522,11 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         eapply in_map_iff in IN as (y &EQ &IN); subst x;
           eapply in_map_iff in IN as ([z1 z2] &EQ &IN); subst y;
             unfold fst, snd.
-      assert (EQ: z2 + max (domain ((x1, x2, vis, t) :: g1)) - max (domain ((x1, x2, vis, t) :: g1)) = z2)by omega.
+      assert (EQ: z2 + max (domain ((x1, x2, vis, t) :: g1)) - max (domain ((x1, x2, vis, t) :: g1)) = z2)by lia.
       rewrite EQ. eapply typeCheck_no_dup...
       intros ABS.
       erewrite identif_seclabs_of_dep_relabel,MAX,in_map_iff in ABS;
-        destruct ABS as (e &ABS &_); inversion ABS; subst x2; omega. *)  
+        destruct ABS as (e &ABS &_); inversion ABS; subst x2; lia. *)  
      
       eapply no_dup_isMap in nd_pf'' as pf''.
        
@@ -10535,11 +10535,11 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                   (cast (x1, x2, vis, t) :: (newEntries g1 (secLabs (dep_relabel p (domain k) nd_pfk)) (max (domain k)) ++
                                                         illECast g1)) pf'' (dep_relabel p (domain k) nd_pfk)).
       assert (NIN: ~ In (x1, x2) (secLabs (dep_relabel p (domain k) nd_pfk))).
-      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; omega.
+      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; lia.
       eapply typeCheck_impl with (pf1 := pf'),ne_illEC_var...
       intros z INSL; rewrite identif_seclabs_of_dep_relabel in INSL. eapply in_map_iff in INSL as ((z1 & z2) & EQ & INSL). subst z. simpl.
       assert (INDOM: incl (secLabs (dBang u1 u2 x1 x2 p)) (domain g1)). eapply typeCheck_no_dup...
-      simpl in INDOM. assert (MAXEQ: z2 + max (domain k) - max (domain k) = z2) by omega. rewrite MAXEQ; simpl; apply INDOM...
+      simpl in INDOM. assert (MAXEQ: z2 + max (domain k) - max (domain k) = z2) by lia. rewrite MAXEQ; simpl; apply INDOM...
       
 
          assert (NIND:  ~
@@ -10548,7 +10548,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
        (newEntries g1 (secLabs (dep_relabel p (domain g1) nd_pf1)) (max (domain g1)) ++
                    illECast g1))).
     rewrite domain_distr, illEC_eq_domain;
-        intro IN; eapply in_app_iff in IN; inversion IN as [ABS | ABS]. erewrite identif_seclabs_of_dep_relabel in ABS; eapply incl_newEntries_domain in ABS;erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; omega. intuition auto.
+        intro IN; eapply in_app_iff in IN; inversion IN as [ABS | ABS]. erewrite identif_seclabs_of_dep_relabel in ABS; eapply incl_newEntries_domain in ABS;erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; lia. intuition auto.
 
       revert dependent pf''.
       erewrite MAX, max_dep_relabel with (nd_pf1 := nd_pf1); unfold cast,castF,flag_eq;simpl;
@@ -10814,7 +10814,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
       erewrite identif_seclabs_of_dep_relabel,in_map_iff in ABS2; destruct ABS2 as [[b1' b2'] [ABS2 ABS3]]. simpl in ABS2, ABS3. inversion ABS2.
       assert (b2 <= max (domain g1)).
       eapply in_preserves_max, in_g_in_domain...
-      assert (b2' = 0). omega.
+      assert (b2' = 0). lia.
       eapply sl_pos_bang in SLP.
       unfold sl_pos, pos in SLP; specialize SLP with b1' b2'; intuition.
       
@@ -10880,7 +10880,7 @@ eapply no_dup_cons_removeEntry.
           eapply in_bv_lt_max with (pf := pf3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
         try eassumption.
       eapply disjoint_commute,disjoint_iff; try eapply disjoint_commute; try eassumption.
       eauto.
@@ -11012,7 +11012,7 @@ eapply no_dup_cons_removeEntry.
       intros x; specialize EQ with x; intuition auto.
 
       assert (NIN: ~ In (x1, x2) (secLabs (dep_relabel p (domain k) nd_pfk))).
-      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; omega.
+      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; lia.
 
        assert (NIND:  ~
   In (x1, x2)
@@ -11020,7 +11020,7 @@ eapply no_dup_cons_removeEntry.
        (newEntries g' (secLabs (dep_relabel p (domain g1) nd_pf1)) (max (domain g1)) ++
                    illECast g'))).
     rewrite domain_distr, illEC_eq_domain;
-      intro IN; eapply in_app_iff in IN; inversion IN as [ABS | ABS]. erewrite identif_seclabs_of_dep_relabel in ABS; eapply incl_newEntries_domain in ABS;erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; omega. rewrite Heqg' in ABS; unfold domain in ABS; fold domain in ABS; inversion ABS. inversion H4; subst b1 b2; eapply in_g_in_domain in H24; intuition auto.
+      intro IN; eapply in_app_iff in IN; inversion IN as [ABS | ABS]. erewrite identif_seclabs_of_dep_relabel in ABS; eapply incl_newEntries_domain in ABS;erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; lia. rewrite Heqg' in ABS; unfold domain in ABS; fold domain in ABS; inversion ABS. inversion H4; subst b1 b2; eapply in_g_in_domain in H24; intuition auto.
     eapply in_domain_in_g in H4; destruct H4 as [ss [tt ABS2]]; eapply in_removeEntry,in_g_in_domain in ABS2; intuition auto.
 
       
@@ -11059,7 +11059,7 @@ eapply no_dup_cons_removeEntry.
 
        (* new version of newEntries_remove *)
       erewrite max_dep_relabel...
-      rewrite MAX2; try omega...
+      rewrite MAX2; try lia...
       intros ABS;
         eapply typeCheck_no_dup in TYP as [INCL _];
         try simpl in INCL;
@@ -11073,12 +11073,12 @@ eapply no_dup_cons_removeEntry.
                   (cast (x1, x2, vis, t) :: (newEntries g' (secLabs (dep_relabel p (domain k) nd_pfk)) (max (domain k)) ++
                                                         illECast g')) pf'' (dep_relabel p (domain k) nd_pfk)).
       (*assert (NIN: ~ In (x1, x2) (secLabs (dep_relabel p (domain k) nd_pfk))).
-      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; omega.*)
+      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; lia.*)
       eapply typeCheck_impl with (pf1 := pf'),ne_illEC_var...
       intros z INSL; rewrite identif_seclabs_of_dep_relabel in INSL. eapply in_map_iff in INSL as ((z1 & z2) & EQ & INSL). subst z. simpl.
       assert (INDOM: incl (secLabs (dBang u1 u2 x1 x2 p)) (domain g1)). eapply typeCheck_no_dup...
       eapply incl_iff in INDOM.
-       simpl in INDOM. assert (MAXEQ: z2 + max (domain k) - max (domain k) = z2) by omega. rewrite MAXEQ; simpl; eapply INDOM... eauto.
+       simpl in INDOM. assert (MAXEQ: z2 + max (domain k) - max (domain k) = z2) by lia. rewrite MAXEQ; simpl; eapply INDOM... eauto.
 
       
 
@@ -11389,10 +11389,10 @@ eapply no_dup_cons_removeEntry.
         try rewrite pairEq_eq_true in ABS1;
          eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
         eapply newEntries_gte_max in ABS2;
-        try omega;
+        try lia;
         try eassumption.
       rewrite max_same_domain with (l := domain g1) in ABS1;
-        try omega.
+        try lia.
       intros. rewrite <-in_removeEntry_cons_iff; try tauto.
       eapply in_g_in_domain...
       eauto.
@@ -11507,7 +11507,7 @@ eapply no_dup_cons_removeEntry.
                      (((x1, x2, vis, t)
                          :: (newEntries g' (secLabs (dep_relabel p (domain k) nd_pfk)) (max (domain k)) ++ illECast g'))))).*)
       assert (NIN: ~ In (x1, x2) (secLabs (dep_relabel p (domain k) nd_pfk))).
-      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; omega.
+      erewrite identif_seclabs_of_dep_relabel, MAX; intro ABS; erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; lia.
 
        assert (NIND:  ~
   In (x1, x2)
@@ -11515,7 +11515,7 @@ eapply no_dup_cons_removeEntry.
        (newEntries g' (secLabs (dep_relabel p (domain g1) nd_pf1)) (max (domain g1)) ++
                    illECast g'))).
     rewrite domain_distr, illEC_eq_domain;
-      intro IN; eapply in_app_iff in IN; inversion IN as [ABS | ABS]. erewrite identif_seclabs_of_dep_relabel in ABS; eapply incl_newEntries_domain in ABS;erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; omega. rewrite Heqg' in ABS; unfold domain in ABS; fold domain in ABS; inversion ABS. inversion H4; subst b1 b2; eapply in_g_in_domain in H24; intuition auto.
+      intro IN; eapply in_app_iff in IN; inversion IN as [ABS | ABS]. erewrite identif_seclabs_of_dep_relabel in ABS; eapply incl_newEntries_domain in ABS;erewrite in_map_iff in ABS; destruct ABS as [y [ABS _]]; inversion ABS; lia. rewrite Heqg' in ABS; unfold domain in ABS; fold domain in ABS; inversion ABS. inversion H4; subst b1 b2; eapply in_g_in_domain in H24; intuition auto.
     eapply in_domain_in_g in H4; destruct H4 as [ss [tt ABS2]]; eapply in_removeEntry,in_g_in_domain in ABS2; intuition auto.
 
       
@@ -11555,7 +11555,7 @@ eapply no_dup_cons_removeEntry.
 
         (* new version of newEntries_remove *)
       erewrite max_dep_relabel...
-      rewrite MAX; try omega...
+      rewrite MAX; try lia...
       intros ABS;
         eapply typeCheck_no_dup in TYP as [INCL _];
         try simpl in INCL;
@@ -11566,12 +11566,12 @@ eapply no_dup_cons_removeEntry.
         eapply in_map_iff in IN as (y &EQ &IN); subst x;
           eapply in_map_iff in IN as ([z1 z2] &EQ &IN); subst y;
             unfold fst, snd.
-      assert (EQ: z2 + max (domain ((x1, x2, vis, t) :: g')) - max (domain ((x1, x2, vis, t) :: g')) = z2)by omega.
+      assert (EQ: z2 + max (domain ((x1, x2, vis, t) :: g')) - max (domain ((x1, x2, vis, t) :: g')) = z2)by lia.
       rewrite EQ. subst g'; eapply cons_removeEntry_iff.
       eauto. eapply in_g_in_domain...  eapply typeCheck_no_dup...
       intros ABS.
       erewrite identif_seclabs_of_dep_relabel,MAX,in_map_iff in ABS;
-        destruct ABS as (e &ABS &_); inversion ABS; subst x2; omega.
+        destruct ABS as (e &ABS &_); inversion ABS; subst x2; lia.
        *)
       eapply no_dup_isMap in nd_pf'' as pf''.
       
@@ -11583,7 +11583,7 @@ eapply no_dup_cons_removeEntry.
       intros z INSL; rewrite identif_seclabs_of_dep_relabel in INSL. eapply in_map_iff in INSL as ((z1 & z2) & EQ & INSL). subst z. simpl.
       assert (INDOM: incl (secLabs (dBang u1 u2 x1 x2 p)) (domain g1)). eapply typeCheck_no_dup...
       eapply incl_iff in INDOM.
-       simpl in INDOM. assert (MAXEQ: z2 + max (domain k) - max (domain k) = z2) by omega. rewrite MAXEQ; simpl; eapply INDOM... eauto.
+       simpl in INDOM. assert (MAXEQ: z2 + max (domain k) - max (domain k) = z2) by lia. rewrite MAXEQ; simpl; eapply INDOM... eauto.
 
       
        revert dependent pf''.
@@ -11910,10 +11910,10 @@ eapply no_dup_cons_removeEntry.
         try rewrite pairEq_eq_true in ABS1;
          eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
         eapply newEntries_gte_max in ABS2;
-        try omega;
+        try lia;
         try eassumption.
       rewrite max_same_domain with (l := domain g1) in ABS1;
-        try omega.
+        try lia.
       intros. rewrite <-in_removeEntry_cons_iff; try tauto.
       eapply in_g_in_domain...
       eauto.
@@ -14353,7 +14353,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
      eapply incl_iff with (m1 := domain g4);
        try eassumption.
      eapply split_domain_l_2,split_comm...
-     erewrite split_max with (pf := pf1). omega.
+     erewrite split_max with (pf := pf1). lia.
      eapply split_comm...
      eapply in_removeEntry_cons_iff,in_g_in_domain...
      eauto.
@@ -14622,7 +14622,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
         eapply incl_iff with (m1 := domain g4);
           try eassumption.
         intros; eapply split_domain_m,split_comm... 
-        omega.
+        lia.
         eapply disjoint_iff with (l1  := domain g3), in_removeEntry_cons_iff,in_g_in_domain...
         eapply no_dup_isMap in nd_pfnek3 as pfnek3.
 
@@ -14710,10 +14710,10 @@ g0, a : Chan lin empty t, b : s > p2' *)
           eapply in_bv_lt_max with (pf := pfk3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         erewrite max_same_domain with (l := domain g3) in ABS1;
-          try omega.
+          try lia.
         intros. erewrite <-in_removeEntry_cons_iff; try tauto.
         eauto.
         eapply TPar with
@@ -15317,7 +15317,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
      eapply incl_iff with (m1 := domain g4);
        try eassumption.
      eapply split_domain_l_2,split_comm...
-     erewrite split_max with (pf := pf1). omega.
+     erewrite split_max with (pf := pf1). lia.
      eapply split_comm...
      eapply in_removeEntry_cons_iff,in_g_in_domain...
      eauto.
@@ -15621,7 +15621,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
         eapply incl_iff with (m1 := domain g4);
           try eassumption.
         eapply split_domain_l_2, split_comm...
-        omega.
+        lia.
         subst b; eapply in_removeEntry_cons_iff...
          assert (nd_pfgnu : NoDup (domain gnu)).
        subst gnu.
@@ -15671,7 +15671,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
         eapply incl_iff with (m1 := domain g4);
           try eassumption.
         intros; eapply split_domain_m,split_comm... 
-        omega.
+        lia.
         eapply disjoint_iff with (l1  := domain g3),in_removeEntry_cons_iff,in_g_in_domain... 
         eapply no_dup_isMap in nd_pfnek3 as pfnek3.
 
@@ -15759,10 +15759,10 @@ g0, a : Chan lin empty t, b : s > p2' *)
           eapply in_bv_lt_max with (pf := pfk3) in ABS1;
           eapply in_domain_in_g in ABS2 as (ff &tt &ABS2);
           eapply newEntries_gte_max in ABS2;
-          try omega;
+          try lia;
           try eassumption.
         rewrite max_same_domain with (l := domain g3) in ABS1;
-          try omega.
+          try lia.
         intros. rewrite <-in_removeEntry_cons_iff; try tauto.
         eauto.
         

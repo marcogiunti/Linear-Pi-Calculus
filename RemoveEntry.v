@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Program.Equality
+        Bool List Lia PeanoNat Program.Equality
         ListAddOns Max Domain
         header pairEq
         operations pi_syntax type_system.
@@ -51,7 +51,7 @@ Proof.
   intros PNEQ. assert (PEQ2 := PNEQ).
   rewrite <-pairEq_neq in PNEQ.
   unfold removeEntry in H.
-  assert (COMM : a <> y); auto...  
+  assert (COMM : a <> y); auto.  
   rewrite pairEq_neq in COMM; rewrite COMM in H.
   fold removeEntry in H.
   apply in_inv in H.
@@ -93,11 +93,11 @@ Proof.
      + intros PEQ. assert (PEQ2 := PEQ).
        rewrite <-pairEq_eq in PEQ; subst.
        unfold removeEntry; rewrite PEQ2; fold removeEntry.
-       apply in_inv in IN; intuition; eauto...
+       apply in_inv in IN; intuition; eauto.
        inversion H; intuition.
      + intros PNEQ.
        unfold removeEntry. rewrite PNEQ; fold removeEntry.
-       apply in_inv in IN; intuition; eauto...
+       apply in_inv in IN; intuition; eauto.
        inversion H; intuition.
 Qed.
 
@@ -182,19 +182,19 @@ Lemma domain_distr : forall g1 g2,
     domain (g1 ++ g2) = domain g1 ++ domain g2.
 Proof.
   intros. induction g1, g2.
-  unfold domain. fold domain. auto...
+  unfold domain. fold domain. auto.
   rewrite app_nil_l with (l := p :: g2).
-  unfold domain at 2; auto...
+  unfold domain at 2; auto.
   rewrite app_nil_r with (l := a :: g1).
   unfold domain at 3.
-  rewrite app_nil_r with (l := domain (a :: g1)); auto...
-  assert ((a :: g1) ++ p :: g2 = a :: g1 ++ p :: g2) by auto...
+  rewrite app_nil_r with (l := domain (a :: g1)); auto.
+  assert ((a :: g1) ++ p :: g2 = a :: g1 ++ p :: g2) by auto.
   rewrite H. 
   unfold domain at 1. fold domain.
   induction a.
   induction a.
   unfold domain at 2; fold domain.
-  rewrite IHg1; auto...
+  rewrite IHg1; auto.
 Qed.
 
 Lemma removeEntry_head : forall a f t g,
@@ -259,7 +259,7 @@ Proof with eauto.
   intuition.
 Qed.
 
-Hint Resolve in_eq.
+#[global] Hint Resolve in_eq.
 
 Lemma removeEntry_app_notIn:
   forall b1 b2 f t f2 s g k,
@@ -353,7 +353,7 @@ Proof with eauto.
   right; eapply removeEntry_length_1,in2_nIn_iff...
 Qed.
 
-Hint Resolve removeEntry_length_01.
+#[global] Hint Resolve removeEntry_length_01.
 
 Lemma removeEntry_app_shift2:
   forall (b1 b2 : name) (k : typeEnv) (g : list (name * name * flag * piType)),
@@ -385,7 +385,7 @@ Proof with eauto using in2_implies_in,in2_nIn_iff. intros.
                                                    eapply in2_nIn_iff...
 Qed.              
 
-Hint Resolve removeEntry_length_02.
+#[global] Hint Resolve removeEntry_length_02.
 
 
 
@@ -415,7 +415,7 @@ Proof with eauto.
   eapply removeEntry_in...
 Qed.
 
-Hint Resolve removeEntry_iff.
+#[global] Hint Resolve removeEntry_iff.
 
 
 

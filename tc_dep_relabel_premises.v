@@ -1,4 +1,4 @@
-Require Import List PeanoNat Bool Classical Omega Program.Equality Classical
+Require Import List PeanoNat Bool Classical Lia Program.Equality Classical
         ListAddOns Max RemoveEntry Domain
         header
         operations pi_syntax 
@@ -26,7 +26,7 @@ Require Import List PeanoNat Bool Classical Omega Program.Equality Classical
 Require Import CpdtTactics LibTactics. 
 
 
-Hint Resolve typeCheck_rewrite_pf.
+#[global] Hint Resolve typeCheck_rewrite_pf.
 
 
 
@@ -76,7 +76,7 @@ Proof with eauto.
     simpl...
   Qed. 
 
-Hint Resolve in2_false_illECast.
+#[global] Hint Resolve in2_false_illECast.
 
 Lemma illEC_eq_domain: forall g,
     domain (illECast g) = domain g.
@@ -93,7 +93,7 @@ Qed.
 
 
 
-Hint Resolve pos_cons.
+#[global] Hint Resolve pos_cons.
 
   
 Lemma no_dup_shift: forall l g (nd_pf : NoDup (domain g)) n,
@@ -131,15 +131,15 @@ Proof with eauto.
       intuition.
       case_eq (In2 (b1, b2) l); intros.
       rewrite H6 in H4.
-      inversion H4. assert (b2 = a2). omega. subst.
+      inversion H4. assert (b2 = a2). lia. subst.
       apply in_g_in_domain in H5...
       rewrite H6 in H4. inversion H4.
       destruct (castF f3 t3); inversion H8; subst.  
       apply in_g_in_domain, in_preserves_max in H5.
       subst;
         assert (a2 = 0).
-      case_eq (a2 <? max (domain g)); intros; rewrite H8 in H. omega.
-      rewrite Nat.ltb_ge in H8. omega.
+      case_eq (a2 <? max (domain g)); intros; rewrite H8 in H. lia.
+      rewrite Nat.ltb_ge in H8. lia.
       rewrite in2_In_iff in H2;
         unfold pos in POS; specialize POS with a1 a2; intuition.
       (*assert (pos (domain g)). eapply pos_cons...*)
@@ -163,7 +163,7 @@ Proof with eauto.
       case_eq (In2 (b1, b2) l); intros.
       rewrite H3 in EQ. inversion EQ.
       assert (a2 <= n). eapply cons_max...
-      assert (b2 = 0). omega.
+      assert (b2 = 0). lia.
       rewrite in2_In_iff in H3;
         unfold pos in POS; specialize POS with b1 b2; intuition.
       assert (a2 <= n). eapply cons_max...
@@ -237,10 +237,10 @@ Qed.
 
 
 
-Hint Resolve pos_remove.
+#[global] Hint Resolve pos_remove.
 
 
-Hint Resolve in_iff_swap.
+#[global] Hint Resolve in_iff_swap.
 
 Lemma map_is_map: forall g l M,
     pos l ->
@@ -267,12 +267,12 @@ Proof with eauto using max_cont.
   intro  ABS;
     try eapply in_domain_in_g in ABS as (ff &tt &ABS); try erewrite in_map_iff in ABS;
       try destruct ABS as ([[[x1 x2] fx1]ft1] &ABSEQ &ABS).
-  case_eq (In2 (x1, x2) l); intros; rewrite H0 in *; inv ABSEQ. assert (x2 = a2). omega. subst.
+  case_eq (In2 (x1, x2) l); intros; rewrite H0 in *; inv ABSEQ. assert (x2 = a2). lia. subst.
   simpl in nd_pf; inv nd_pf...
   assert (a2+M <= max (domain g)).
   eapply in_preserves_max...
   eapply max_cont in MAX.
-  assert (a2 = 0) by omega.
+  assert (a2 = 0) by lia.
   rewrite in2_In_iff in *; unfold pos in *.
   specialize POS with a1 a2; intuition.
   
@@ -284,7 +284,7 @@ Proof with eauto using max_cont.
     try eapply in_domain_in_g in ABS as (ff &tt &ABS); try erewrite in_map_iff in ABS;
       try destruct ABS as ([[[x1 x2] fx1]ft1] &ABSEQ &ABS).
       case_eq (In2 (x1, x2) l); intros; rewrite H1 in *; inv ABSEQ.
-  assert (x2 = 0) by omega.
+  assert (x2 = 0) by lia.
   rewrite in2_In_iff in *; unfold pos in *.
   specialize POS with a1 x2; intuition.
   inv nd_pf...
@@ -310,7 +310,7 @@ Qed.
     eapply in_domain_in_g in ABS as (f &t &ABS).
     rewrite in_map_iff in ABS.
     destruct ABS as ([[[x1 x2] ff] tt] &ABS &IN).
-    case_eq (In2 (x1, x2) l); intros; rewrite H in *; inversion ABS; subst; simpl in *; try omega.
+    case_eq (In2 (x1, x2) l); intros; rewrite H in *; inversion ABS; subst; simpl in *; try lia.
     eapply in_g_in_domain in IN; contradiction.
   Qed.
   
@@ -328,7 +328,7 @@ Lemma max_map : forall g l M,
 Proof with eauto.
   intros.
   case_eq( max (domain g) =? 0); intros.
-  rewrite Nat.eqb_eq in *; rewrite H; omega.
+  rewrite Nat.eqb_eq in *; rewrite H; lia.
   rewrite Nat.eqb_neq in *.
   assert (IN: exists y, In (y, max (domain g)) (domain g)).
   eapply max_in_domain...
@@ -344,18 +344,18 @@ Proof with eauto.
   eapply in_g_in_domain in IN.
   assert (max (domain g) <= p2).
   case_eq (In2 (a1, max (domain g)) l); intros EQ;
-  rewrite EQ in *; inversion H0; subst; omega...       
+  rewrite EQ in *; inversion H0; subst; lia...       
   eapply in_preserves_max in IN.
-  omega.
+  lia.
 Qed.
 
 
   
 
-    Hint Resolve incl_cons inB_implies_In_2.
+    #[global] Hint Resolve incl_cons inB_implies_In_2.
 
   
-Hint Resolve in2_implies_in.
+#[global] Hint Resolve in2_implies_in.
 
 Lemma incl_illEP_illEC : forall g l,
     incl (illEProj g l) (illECast g).

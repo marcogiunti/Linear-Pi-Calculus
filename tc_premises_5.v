@@ -1,5 +1,5 @@
 Require Import
-  Bool List Omega PeanoNat Program.Equality
+  Bool List Lia PeanoNat Program.Equality
   ListAddOns Max Domain RemoveEntry NewEntries Replication
   header
   operations pi_syntax 
@@ -52,13 +52,13 @@ Proof with eauto.
   
 Qed.
 
-Hint Resolve
+#[global] Hint Resolve
   lts_operations.lts_lin_output_action
   lts_operations.lts_lin_input_action
   lts_operations.lts_un_output_action
   lts_un_input_action.
 
-Hint Constructors replication.
+#[global] Hint Constructors replication.
 
 Lemma lts_after_tau_lin: forall g  p1 p2 a1 a2 t g' nd_pf,
     lts g p1 (aTau a1 a2) g' p2 nd_pf ->
@@ -201,7 +201,7 @@ Proof with eauto.
 Qed.
 
 
-Hint Resolve hid_proj_flagOf.
+#[global] Hint Resolve hid_proj_flagOf.
 
 Lemma lts_open_in_secLabs: forall a1 a2 b1 b2 s g1 g2 pf p1 p2,
     In (b1, b2, hid, s) g1 ->
@@ -226,7 +226,7 @@ Proof with eauto || simpl.
   repeat right...
 Qed.
 
-Hint Resolve lts_open_in_secLabs.
+#[global] Hint Resolve lts_open_in_secLabs.
 
 
 
@@ -255,17 +255,17 @@ Proof with eauto.
   subst ff; simpl.
 
   case_eq (pair_eq (fst a, snd a + M) (x1, x2) ). intros ABS; rewrite <-pairEq_eq in ABS; inv ABS.
-  assert (snd a = 0). omega.
+  assert (snd a = 0). lia.
   destruct a as [a1 a2].
   assert (a2 > 0).
   eapply POS...
-  simpl in *; omega.
+  simpl in *; lia.
   
   intros PNEQ; destruct a as [a1 a2]; simpl.
   case_eq (InB (a1, a2 + M) g1); introv INB.
   case_eq b; intros; subst; simpl...
   try rewrite INB...
-  assert (EQ: a2 + M - M = a2). omega.
+  assert (EQ: a2 + M - M = a2). lia.
   rewrite EQ...
 
   case_eq (pair_eq (a1, a2) (x1, x2)). intros ABS;
@@ -461,11 +461,11 @@ Proof with eauto using no_dup_app_shift,iff_shift.
      simpl...
      split. eapply newEntries_no_dup;
        try erewrite identif_seclabs_of_dep_relabel...
-     eapply FinFun.Injective_map_NoDup;
-       unfold FinFun.Injective;
+     eapply Finite.Injective_map_NoDup;
+       unfold Finite.Injective;
        try intros [x1 x2] [y1 y2] INJ;
        try simpl in INJ; try inv INJ;
-     try assert (x2 = y2); try   omega;
+     try assert (x2 = y2); try   lia;
        try subst...
      eapply replication_no_dup...
 
@@ -588,11 +588,11 @@ Proof with eauto using no_dup_app_shift,iff_shift.
        assert (d2 <= max (domain (h1 ++ (d1, d2, vis, tt) :: h2))).
        eapply min_max; rewrite domain_distr;
          rewrite in_app_iff; right...
-       assert (x2 = 0). omega.
+       assert (x2 = 0). lia.
        subst.
        eapply INCL, SLP2 in ABS2...
-       omega.
-       omega.
+       lia.
+       lia.
 
        contradiction.
 
@@ -716,11 +716,11 @@ Proof with eauto using no_dup_app_shift,iff_shift.
      simpl...
      split. eapply newEntries_no_dup;
        try erewrite identif_seclabs_of_dep_relabel...
-     eapply FinFun.Injective_map_NoDup;
-       unfold FinFun.Injective;
+     eapply Finite.Injective_map_NoDup;
+       unfold Finite.Injective;
        try intros [x1 x2] [y1 y2] INJ;
        try simpl in INJ; try inv INJ;
-     try assert (x2 = y2); try   omega;
+     try assert (x2 = y2); try   lia;
        try subst...
      eapply replication_no_dup...
 
@@ -919,7 +919,7 @@ Proof with eauto using no_dup_app_shift,iff_shift.
       eapply incl_preserves_max in HID.
     assert (MAX : max (domain g) =  max (domain ((b1, b2, vis, s1) :: removeEntry (b1, b2) g))).
     eapply max_same_domain,in_removeEntry_cons_iff,in_g_in_domain...
-    rewrite <-MAX; try omega...
+    rewrite <-MAX; try lia...
   -  clear IHLTS1 IHLTS2.
      assert (EQ0: Chan un io t = Chan un io t0).
      eapply type_of_map with (g := g)...
@@ -970,7 +970,7 @@ Proof with eauto using no_dup_app_shift,iff_shift.
        eapply incl_preserves_max in HID.
      assert (MAX : max (domain g) =  max (domain ((b1, b2, ill, s1) :: removeEntry (b1, b2) g))).
      eapply max_same_domain,in_removeEntry_cons_iff,in_g_in_domain...
-     rewrite <-MAX; try omega...
+     rewrite <-MAX; try lia...
 
      Unshelve.
      all:eauto.
@@ -1010,7 +1010,7 @@ Proof with eauto.
   eapply inB_implies_In_2,in_g_in_domain in H.
   inversion EQ.
   unfold sl_pos, pos in SLP; specialize SLP with c1 c2; intuition. eapply proposition27.in_preserves_max in H.
-  omega.
+  lia.
   rewrite H in NE.
   destruct (InB (b1, b2 - max (domain g)) g).
   inversion NE.
@@ -1092,7 +1092,7 @@ Proof with eauto.
   eapply lts_no_dup.in_removeEntry_cons_iff...
 Qed.
 
-Hint Resolve cons_removeEntry_iff.
+#[global] Hint Resolve cons_removeEntry_iff.
 
 Lemma lts_un_tau_action_newEntries_1 p g a1 a2 c1 c2 t r p1 pf q:
    sl_pos p ->
@@ -1239,13 +1239,13 @@ Lemma lts_un_tau_action_newEntries_1 p g a1 a2 c1 c2 t r p1 pf q:
         assert (LEN: List.length (k ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g) =
                   List.length(removeEntry (c1, c2) g)).
         rewrite x...
-        rewrite app_length in LEN; simpl in LEN; try omega.
+        rewrite app_length in LEN; simpl in LEN; try lia.
         assert (LEN: List.length ((b1, b2, f1, t1) :: removeEntry (c1, c2) (k ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g)) =
                   List.length(removeEntry (c1, c2) g)).
         rewrite x...
         rewrite removeEntry_app_shift in LEN;
           simpl in LEN; try rewrite pairEq_eq_true in LEN; simpl in LEN;
-          try rewrite app_length in LEN;  try omega.
+          try rewrite app_length in LEN;  try lia.
 
         intros ABS2.
         eapply disjoint_absurd with (x0 := (c1, c2))...
@@ -1375,9 +1375,9 @@ Lemma lts_un_tau_action_newEntries_1 p g a1 a2 c1 c2 t r p1 pf q:
        try erewrite typeEnv_eq_change_flag_removeEntry...
  Qed.
  
- Hint Resolve removeEntry_length_01.
+ #[global] Hint Resolve removeEntry_length_01.
  
-Hint Resolve removeEntry_length_02.
+#[global] Hint Resolve removeEntry_length_02.
  
  Lemma lts_un_tau_action_newEntries_1h:
   forall (g : typeEnv) (p : dproc) (a1 a2 c1 c2 : name) (r t : piType) 
@@ -1461,7 +1461,7 @@ Hint Resolve removeEntry_length_02.
         assert (LEN3 : length (removeEntry (c1, c2) g) =
                          length (removeEntry (b1, b2) g))...
         repeat rewrite app_length,LEN3 in LEN1; simpl in LEN1;repeat rewrite app_length,LEN3 in LEN1; simpl in LEN1. 
-        assert (NIL: length k' = 0) by omega.
+        assert (NIL: length k' = 0) by lia.
         assert (k'=nil);eapply length_zero_iff_nil...
         subst k'.
         inv EQ'...
@@ -1508,7 +1508,7 @@ Hint Resolve removeEntry_length_02.
         intros EQ; rewrite EQ in x.
         assert (LEN : List.length (l ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g) = List.length (removeEntry (c1, c2) g)). rewrite x...
         erewrite app_length  in LEN; simpl in LEN.
-        omega.
+        lia.
         intros NEQ;  rewrite NEQ in x.
         assert (LEN : List.length ((d1, d2, f, t2)
                                      :: removeEntry (c1, c2) (l ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g)) = List.length (removeEntry (c1, c2) g)). rewrite x...
@@ -1524,9 +1524,9 @@ Hint Resolve removeEntry_length_02.
                   List.length( removeEntry (c1, c2)((c1, c2, vis, r) :: removeEntry (c1, c2) g)))...
         destruct LEN2 as [ABS1 | ABS2].
         simpl in ABS1; rewrite ABS1 in LEN.
-        omega.
+        lia.
         simpl in ABS2; rewrite ABS2,pairEq_eq_true in LEN.
-        omega.
+        lia.
         subst...
         simpl in ND; eapply no_dup_iff in ND; intuition.
         simpl...
@@ -1685,7 +1685,7 @@ Hint Resolve removeEntry_length_02.
      all:eauto.
  Qed.
  
- Hint Resolve lts_un_tau_action_newEntries_1
+ #[global] Hint Resolve lts_un_tau_action_newEntries_1
       lts_un_tau_action_newEntries_1h.
 
  
@@ -1717,7 +1717,7 @@ Hint Resolve removeEntry_length_02.
     eapply proposition27.incl_preserves_max in INCL.
     assert (INCL2: incl (domain (hid_proj g)) (domain g)) by eapply hid_proj_incl...
     eapply proposition27.incl_preserves_max in INCL2.
-    omega.
+    lia.
     
 
     
@@ -1728,7 +1728,7 @@ Hint Resolve removeEntry_length_02.
     repeat rewrite removeEntry_length_0; try assumption;
       try eapply in_g_in_domain...
 
-        assert (LEN: length (removeEntry (c1, c2) g) = length (removeEntry (b1, b2) g)) by omega.
+        assert (LEN: length (removeEntry (c1, c2) g) = length (removeEntry (b1, b2) g)) by lia.
 
     
     destruct EQ as [OPT1 | OPT2].
@@ -1754,7 +1754,7 @@ Hint Resolve removeEntry_length_02.
     assert (OPT' := OPT1).
     rewrite OPT'...
     repeat rewrite app_length in LEN2; simpl in LEN2...
-    assert (List.length k = 0) by omega.
+    assert (List.length k = 0) by lia.
     eapply length_zero_iff_nil...
     subst.
 
@@ -1828,7 +1828,7 @@ Hint Resolve removeEntry_length_02.
     assert (LEN: List.length ( (c1, c2, hid, tb) :: nil) = List.length (k ++ (b1, b2, vis, r) :: nil)).
     rewrite ABS...
     erewrite app_length in LEN;simpl in LEN.
-    assert (EQ: Datatypes.length k = 0) by omega.
+    assert (EQ: Datatypes.length k = 0) by lia.
     rewrite length_zero_iff_nil in EQ; subst.
     inversion ABS.
     assert (TAIL: ne = nil /\ p0 = (b1, b2, vis, r) \/
@@ -1884,12 +1884,12 @@ Hint Resolve removeEntry_length_02.
       rewrite removeEntry_app_shift2 in LEN2;
         try eapply in2_in...
       rewrite app_length in LEN2; simpl in LEN2.
-      omega.
+      lia.
       rewrite removeEntry_app_shift in LEN2;
         try eapply in2_nIn_iff;
         simpl in LEN2; try rewrite pairEq_eq_true in LEN2...
       rewrite app_length in LEN2.
-      assert (LEN3: length k = 0) by omega.
+      assert (LEN3: length k = 0) by lia.
       rewrite length_zero_iff_nil in LEN3; subst k.
 
    
@@ -1906,12 +1906,12 @@ Hint Resolve removeEntry_length_02.
       rewrite removeEntry_app_shift2 in LEN2;
         try eapply in2_in...
       rewrite app_length in LEN2; simpl in LEN2.
-      omega.
+      lia.
       rewrite removeEntry_app_shift in LEN2;
         try eapply in2_nIn_iff;
         simpl in LEN2; try rewrite pairEq_eq_true in LEN2...
       rewrite app_length in LEN2.
-      assert (LEN3: length k = 0) by omega.
+      assert (LEN3: length k = 0) by lia.
       rewrite length_zero_iff_nil in LEN3; subst k.
     erewrite lts_un_tau_action_newEntries_1h;
     try eapply in_g_in_domain...

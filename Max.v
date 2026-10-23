@@ -1,5 +1,5 @@
 Require Import
-        Bool List Omega PeanoNat Classical
+        Bool List Lia PeanoNat Classical
         ListAddOns
         pairEq pi_syntax type_system.
 
@@ -9,7 +9,7 @@ Require Import CpdtTactics LibTactics.
 
 Lemma ltb_nlt: forall n m, (n <? m) = false -> m <= n.
 Proof.
-  induction n; destruct m; intros ; auto using (Le.le_n_S); discriminate.
+  induction n; destruct m; intros ; auto using le_n_S; discriminate.
 Qed.
 
 Lemma cons_max: forall a1 a2 l n,
@@ -20,7 +20,7 @@ Proof with eauto.
     case_eq(a2 <? max l ); intros;
   try rewrite H in *;
   try rewrite Nat.ltb_lt in *;
-  omega...
+  lia...
 Qed.
 
 
@@ -30,12 +30,12 @@ Lemma max_cons: forall a l,
 Proof with eauto.
   intros.
   induction l.
-  unfold max... omega.
+  unfold max... lia.
   unfold max... fold max.
   destruct a, a0.
   case_eq (n2 <? max l); intros. 
   case_eq (n0 <? max l); intros.
-  omega.
+  lia.
   unfold max at 2 in IHl; fold max in IHl.
   rewrite H0 in IHl...
   unfold max at 2 in IHl; fold max in IHl.
@@ -55,14 +55,14 @@ Proof with eauto.
   introv MAX;
   simpl in MAX; case_eq (a2<?max (domain g));
     intros EQ3; try rewrite EQ3 in *...
-  eapply ltb_nlt in EQ3; omega...
+  eapply ltb_nlt in EQ3; lia...
 Qed.
 
 
 Lemma rewrite_max_var : forall x v t g,
     snd x < max (domain g) ->
     max (domain g) = max (domain ((x, v, t) :: g)).
-Proof with omega.
+Proof with lia.
   introv LT; induction g; destruct x as [x1 x2];
     simpl in *; intuition;
       try destruct a as [[[a1 a2]f1]t1].
@@ -87,14 +87,14 @@ Proof with eauto.
   intros; rewrite H0...
   intros.
   case_eq (a2 <? max l1). intros; rewrite H...
-  rewrite Nat.ltb_ge in H0; rewrite Nat.ltb_lt in H1;rewrite Nat.ltb_lt in H; omega.
+  rewrite Nat.ltb_ge in H0; rewrite Nat.ltb_lt in H1;rewrite Nat.ltb_lt in H; lia.
   intros; rewrite H0...
 
   intros.
   case_eq (a2 <? max l1). intros; rewrite H...
   intros. 
   case_eq (a2 <? max l2 ). intros.
-  rewrite Nat.ltb_ge in H0; rewrite Nat.ltb_lt in H1;rewrite Nat.ltb_ge in H; omega.
+  rewrite Nat.ltb_ge in H0; rewrite Nat.ltb_lt in H1;rewrite Nat.ltb_ge in H; lia.
   eauto.
 Qed.
 
@@ -105,7 +105,7 @@ Lemma max_app_l: forall l1 l2 l,
     intros.
     rewrite max_app in H.
     case_eq (max l1 <? max l2); intros MIN; rewrite MIN in H...
-    rewrite Nat.ltb_lt in MIN; omega.
+    rewrite Nat.ltb_lt in MIN; lia.
   Qed.
 
   
@@ -116,7 +116,7 @@ Lemma max_app_l: forall l1 l2 l,
     intros.
     rewrite max_app in H.
     case_eq (max l1 <? max l2); intros MIN; rewrite MIN in H...
-    rewrite Nat.ltb_ge in MIN; omega.
+    rewrite Nat.ltb_ge in MIN; lia.
   Qed.
 
 Lemma max_sl_par : forall p q n,
@@ -128,9 +128,9 @@ Proof with eauto.
   simpl in H. erewrite max_app in H.
   case_eq (max (secLabs q) <? max (secLabs p)); intros...
   rewrite H0 in H; split...
-  rewrite Nat.ltb_lt in H0; omega.
+  rewrite Nat.ltb_lt in H0; lia.
   rewrite H0 in H.
-  rewrite Nat.ltb_nlt in H0; omega.
+  rewrite Nat.ltb_nlt in H0; lia.
 Qed.
 
 
@@ -149,9 +149,9 @@ Proof with eauto.
   intros; simpl in H. erewrite max_app in H...
   case_eq ( max (secLabs p) <? max ((a1, a2) :: nil)); intros.
   rewrite H0 in H.
-  rewrite Nat.ltb_lt in H0; omega.
+  rewrite Nat.ltb_lt in H0; lia.
   rewrite H0 in H.
-  rewrite Nat.ltb_nlt in H0; omega.
+  rewrite Nat.ltb_nlt in H0; lia.
 Qed.
 
 
@@ -187,7 +187,7 @@ Proof with eauto.
   case_eq (x <? max l); intros MIN; rewrite MIN in H.
   intuition.
   apply Nat.ltb_lt in MIN; intuition.
-  omega.
+  lia.
   destruct a; unfold max in H; fold max in H.
   case_eq (n0 <? max l); intros MIN; rewrite MIN in H.
   intuition...
@@ -195,7 +195,7 @@ Proof with eauto.
   intuition.
 Qed.
 
-Hint Resolve max_not_in_domain.
+#[global] Hint Resolve max_not_in_domain.
 
 Lemma max_diff_domain : forall m l,
     max m <> max l ->
@@ -213,7 +213,7 @@ Proof with eauto.
   destruct H1.
   exists  (x, max l)...
   apply ltb_nlt in MLEFT.
-  assert (MSTRICT : max l < max m) by omega.
+  assert (MSTRICT : max l < max m) by lia.
   apply max_not_in_domain in MSTRICT as NOTIN.
   specialize max_in_domain with
       (x := max m) (l := m) as IN.
@@ -223,7 +223,7 @@ Proof with eauto.
 Qed.
 
 
-Hint Resolve max_diff_domain.
+#[global] Hint Resolve max_diff_domain.
 
 Lemma max_same_domain : forall m l,
     (forall x, In x m <-> In x l) ->
@@ -255,13 +255,13 @@ Proof with eauto.
   simpl.
   case_eq (a2 <? max (domain (removeEntry (b1, b2) g1))); intros.
   case_eq (a2 <? max (domain g1)); intros...
-  eapply Nat.ltb_lt in H; eapply Nat.ltb_ge in H0; omega.
+  eapply Nat.ltb_lt in H; eapply Nat.ltb_ge in H0; lia.
   case_eq (a2 <? max (domain g1)); intros...
-  eapply Nat.ltb_ge in H; eapply Nat.ltb_lt in H0; omega.
+  eapply Nat.ltb_ge in H; eapply Nat.ltb_lt in H0; lia.
 Qed.
 
 
-Hint Resolve max_removeEntry2.
+#[global] Hint Resolve max_removeEntry2.
 
 Lemma max_removeEntry3 : forall x1 x2 g,
     x2 < max (domain g) ->
@@ -278,12 +278,12 @@ Proof with eauto.
     + unfold removeEntry; fold removeEntry;
         rewrite PEQ; simpl; rewrite H, H0...
   - case_eq (pair_eq (a1, a2) (x1, x2)); intros PEQ.
-    rewrite <-pairEq_eq in PEQ; inversion PEQ; subst; omega.
+    rewrite <-pairEq_eq in PEQ; inversion PEQ; subst; lia.
     assert (REM2: max (domain (removeEntry (x1, x2) ((a1, a2, f, t) :: g))) <=
                   max (domain ((a1, a2, f, t) :: g)))...
     assert ( max (domain (removeEntry (x1, x2) ((a1, a2, f, t) :: g))) <  max (domain ((a1, a2, f, t) :: g)) -> False).
     intros ABS; simpl in ABS; rewrite PEQ in ABS; simpl in ABS.
-    case_eq (a2 <? max (domain (removeEntry (x1, x2) g))); intros; rewrite H0,H1 in *... rewrite Nat.ltb_lt in H1; omega.
-    all:omega.
+    case_eq (a2 <? max (domain (removeEntry (x1, x2) g))); intros; rewrite H0,H1 in *... rewrite Nat.ltb_lt in H1; lia.
+    all:lia.
 Qed.
 
