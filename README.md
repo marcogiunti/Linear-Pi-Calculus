@@ -65,6 +65,7 @@ CONTEXT SUMMARY
 * [interpreter.v](interpreter.v)  contains the interpreter, which fires the left and right rules according to a schedule, its soundness for `lts` (Theorem elts_sound), and the code for its extraction in OCaml
 * [interpreter.ml](interpreter.ml) contains the extraction in OCaml
 * [interpreter.ml.types](interpreter.ml.types) contains the type and values of [interpreter.ml](interpreter.ml)
+* [interpreter_examples.ml](interpreter_examples.ml) contains execution examples for [interpreter.ml](interpreter.ml); run them with `ocamlc -w -a -c interpreter.ml && ocaml interpreter.cmo interpreter_examples.ml`
 * [pi_syntax.v](pi_syntax.v) contains the syntax of the language
 * [semantics.v](semantics.v) contains the semantics of the language
 * [type_system.v](type_system.v) contains the type algebra of the language
