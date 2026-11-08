@@ -216,7 +216,7 @@ Qed.
 
  
 (*Lemma lts_type_plus_lin_in: forall g0 p1 a1 a2 b1 b2 t f1 s1 p2 pf0 s f s0 s01 g1 pf1,
-    lts g0 p1
+    ltsL g0 p1
        (aIn a1 a2 b1 b2)
        ((a1, a2, vis, Chan lin empty t) :: (b1, b2, f1, s1) :: (removeEntry (a1, a2) (removeEntry (b1, b2) g0))) p2 pf0 ->
    In (a1, a2, vis, Chan lin inp t) g0 ->
@@ -224,7 +224,7 @@ Qed.
    type_plus s0 t s01 ->
    In (a1, a2, vis, Chan lin inp t) g1 ->
    In (b1, b2, f, s0) g1 ->
-  lts g1 p1
+  ltsL g1 p1
        (aIn a1 a2 b1 b2)
        ((a1, a2, vis, Chan lin empty t) :: (b1, b2, f1, s01) :: (removeEntry (a1, a2) (removeEntry (b1, b2) g1))) p2 pf1.
   Proof with
@@ -241,8 +241,8 @@ eauto.
         (t0 := t)
         (s2 := s1) (f2 := f1). 
     intuition.
-    apply parL...
-  - intros. apply lIn with (t1 := s0) (f := f0).
+    apply L_parL...
+  - intros. apply L_lIn with (t1 := s0) (f := f0).
     eauto.
     assert (f = f0).
     apply  flag_of_map with g (b1, b2)...

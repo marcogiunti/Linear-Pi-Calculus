@@ -267,7 +267,7 @@ QQed.
 Lemma lts_no_dup :
   forall g p a g' p' nd_pf
          (pf_incl : incl_ (secLabs p) (domain g)),
-    lts g p a g' p' nd_pf ->
+    ltsL g p a g' p' nd_pf ->
     sl_pos p ->
     NoDup (secLabs p) ->
     max (secLabs p) <= max (domain g) ->

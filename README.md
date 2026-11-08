@@ -17,20 +17,19 @@ A docker artefact of a previous (Coq 8.8.2) version of the repository can be fou
 the artefact does not include the interpreter and [Barendregt's preservation result](barendregt.v).
 
 ## Compilation
-The compilation is done by executing the command below, and can take up to 45 minutes.
+The compilation is done by executing the command below, and can take around 10 minutes.
 
 ```
 make
 ```
 
 ## Evaluation
-The repository does not contain axioms or admissions. It does contain two parameters to rule out divergent defining equations of
-the form T = p[T]^m and P = u!v.P .
-```
-Parameter nonRecTypes: (∀ m p t, t = Chan m p t → False) ∧
-(∀ m m1 m2 p p1 p2 t, Chan m1 p1 t = Chan m p (Chan m2 p2 t) → False).
-Parameter nonDivergentProcesses : ∀ g p a g’ nd_pf, ¬ lts g p a g’ p nd_pf.
-```
+The repository does not contain admissions. The Subject reduction theorem (`sr`) relies only on the standard library axioms `classic` and `eq_rect_eq`,
+and `type_safety` relies on those two plus `proof_irrelevance`. The other entries listed by `make validate` below are not used by either theorem. Divergent defining equations of the form T = p[T]^m and P = u!v.P are ruled out
+by two theorems, `nonRecTypes` in [semantics.v](semantics.v) and `nonDivergentProcesses_lts` in [right_rules.v](right_rules.v).
+
+The transition relation `lts` has left and right rules. The development is carried out on its left-only fragment `ltsL`, and [par_equiv.v](par_equiv.v) and [right_rules.v](right_rules.v) lift the results to `lts`:
+`lts_to_left` shows that every `lts` step is an `ltsL` step up to swapping parallel components, swapping preserves typing, and `lts_par_symmetric` checks that the parallel rules are closed under exchanging the two components.
 
 A successful compilation (`make`) indicates that all Lemmas, Propositions, Theorems and Corollaries are Qed by Rocq 9.2.
 
@@ -46,13 +45,10 @@ CONTEXT SUMMARY
   
 * Axioms:
     SR.LibTactics.skip_axiom
-    SR.semantics.nonRecTypes
     Stdlib.Logic.ProofIrrelevance.proof_irrelevance
-    SR.LibTactics.inj_pair2
     Stdlib.Logic.FunctionalExtensionality.functional_extensionality_dep
     Stdlib.Logic.Eqdep.Eq_rect_eq.eq_rect_eq
     Stdlib.Logic.Classical_Prop.classic
-    SR.lts_payload_un_inp.nonDivergentProcesses
   
 * Constants/Inductives relying on type-in-type: <none>
   
@@ -62,8 +58,11 @@ CONTEXT SUMMARY
 ```
 
 ## Structure
-* [linear_pi.v](linear_pi.v) contains the Subject reduction theorem (Theorem sr)
-* [interpreter.v](interpreter.v)  contains the interpreter and the code for its extraction in OCaml
+* [linear_pi.v](linear_pi.v) contains the Subject reduction theorem for the left-only fragment (Theorem sr_left)
+* [right_rules.v](right_rules.v) lifts it to the full transition relation (Theorem sr)
+* [type_safety.v](type_safety.v) contains the Type safety theorem (Theorem type_safety)
+* [par_equiv.v](par_equiv.v) relates `lts` to its left-only fragment `ltsL`
+* [interpreter.v](interpreter.v)  contains the interpreter, which fires the left and right rules according to a schedule, its soundness for `lts` (Theorem elts_sound), and the code for its extraction in OCaml
 * [interpreter.ml](interpreter.ml) contains the extraction in OCaml
 * [interpreter.ml.types](interpreter.ml.types) contains the type and values of [interpreter.ml](interpreter.ml)
 * [pi_syntax.v](pi_syntax.v) contains the syntax of the language
@@ -73,4 +72,4 @@ CONTEXT SUMMARY
 * [compat.v](compat.v) contains the compatibility layer for Rocq 9.2
 * [CpdtTactics.v](CpdtTactics.v) contains tactics written by Adam Chlipala
 * [LibTactics.v](LibTactics.v) contains tactics written by Arthur Chargueraud
-* The remaining `*.v` files contain the preliminary results needed by the Subject reduction theorem (Theorem sr)
+* The remaining `*.v` files contain the preliminary results needed by the Subject reduction theorem (Theorem sr_left)

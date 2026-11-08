@@ -37,10 +37,10 @@ Lemma split_lts_exists_lts :
   forall g1 g2 g p a g' p' pf1 pf2 pf nd_pf nd_pf1,
     tEnv_split g1 g2 g pf1 pf2 pf ->
     typeCheck g1 pf1 p ->
-    lts g p a g' p' nd_pf ->
+    ltsL g p a g' p' nd_pf ->
     sl_pos p ->
     exists k1,
-      lts g1 p a k1 p' nd_pf1.
+      ltsL g1 p a k1 p' nd_pf1.
 Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
   intros g1 g2 g p a g' p' pf1 pf2 pf nd_pf nd_pf1 TSPLIT TCHECK LTS SLP.
   generalize dependent g1.
@@ -48,7 +48,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
   dependent induction LTS.
   remember pf0 as nd_pf. subst pf0.
 
-  - Case parL. 
+  - Case L_parL. 
     intros.
 
     
@@ -71,7 +71,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     clear IHLTS.
     destruct TSPLIT2 as [k0 LTS2].
     + assert (exists k1,
-                 lts g1 p1 a k1 p2 nd_pf1).
+                 ltsL g1 p1 a k1 p2 nd_pf1).
 
       apply Peirce. intros ABSURD.
       specialize  split_not_exists_lts
@@ -186,12 +186,12 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
       
       destruct H as [k1 LTS3].
       exists k1.
-      eapply parL in LTS3...
+      eapply L_parL in LTS3...
     + eauto. 
     + eauto.
     + eauto.
     + assumption.
-  - Case lOut. 
+  - Case L_lOut. 
     intros.
     inversion TCHECK; subst.
     destruct u as [a1 a2].
@@ -210,7 +210,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
         ((a1, a2), vis, Chan lin empty t)
           :: ((b1, b2), vis, t4)
           ::  removeEntry (a1, a2) (removeEntry (b1, b2) g1)).
-    apply lOut with (t1 := t').
+    apply L_lOut with (t1 := t').
     eauto.
     eauto.
     eauto.
@@ -236,7 +236,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     destruct u. simpl in H0.
     eapply in_isMap... destruct H5. inversion H6.
     eauto.
-  - Case uOut. 
+  - Case L_uOut. 
     intros.
     inversion TCHECK; subst.
 
@@ -253,11 +253,11 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     exists (
         ((b1, b2), vis, t3)
           ::  (removeEntry (b1, b2) g1)).
-    eapply uOut.
+    eapply L_uOut.
     instantiate (1 := p0). intuition.
     instantiate (1 := t0). instantiate (1 := t'). assumption.
     eauto. eauto.
-  -  Case lIn. 
+  -  Case L_lIn. 
      intros.
 
      specialize split_lts_exists_remove_l with
@@ -285,7 +285,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                  :: ((b1, b2), vis, t')
                  :: (removeEntry (a1, a2) (removeEntry (b1, b2) g1)))).
      inversion TYPx1; subst. 
-     apply lIn with (f := f0) (t1 := ty).
+     apply L_lIn with (f := f0) (t1 := ty).
      apply type_plus_comm...
      assert (f = f0).
      apply fsuper_flag with 
@@ -318,7 +318,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
      eapply in_isMap... destruct H6. inversion H7.
      eauto.
      
-  - Case uIn.
+  - Case L_uIn.
     intros.
     inversion TCHECK; subst.
 
@@ -352,7 +352,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     exists ( (( ((b1, b2), vis, t')
                   :: removeEntry (b1, b2) g1))).
     inversion TYPx1; subst. 
-    apply uIn with (f := f0) (t1 := ty) (pol := pol2) (t := t).
+    apply L_uIn with (f := f0) (t1 := ty) (pol := pol2) (t := t).
     intuition.
     apply type_plus_comm...
     assert (f = f0).
@@ -363,7 +363,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     eauto. 
     eauto.
     eauto.
-  - Case uRin.
+  - Case L_uRin.
     intros.
 
     
@@ -391,7 +391,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     exists ((newEntries g1 (secLabs q2) (max (domain g1)))
               ++ (b1, b2, vis, t') :: removeEntry (b1, b2) g1).
     inversion TYPx1; subst. 
-    specialize uRin with
+    specialize L_uRin with
       (a1 := a1) (a2 := a2) (b1 := b1) (b2 := b2) (x1 := x1) (x2 := x2)
       (p := p) (t2 := t')
       (pf := nd_pf1) (f := f1) (t1 := ty) (pol := p0) (t := t) as URIN.
@@ -422,7 +422,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     eauto.
     eauto.
     rewrite Heqq1...
-  - Case lcomL.
+  - Case L_lcomL.
     
     intros.
     inversion TCHECK; subst.
@@ -1076,7 +1076,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                       :: ((b1, b2), vis, s'')
                       :: removeEntry (a1, a2)
                       (removeEntry (b1, b2) g1)).
-            apply lcomL with
+            apply L_lcomL with
               (s1 := r'') (pf1 := nd_pfw1) (pf2 := nd_pfw2).
             eauto.
             eauto. 
@@ -1330,7 +1330,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                       :: ((b1, b2), vis, s'')
                       :: removeEntry (a1, a2)
                       (removeEntry (b1, b2) g1)).
-            apply lcomL with
+            apply L_lcomL with
               (s1 := r'') (pf1 := nd_pfw1) (pf2 := nd_pfw2).
             eauto.
             eauto.
@@ -1562,7 +1562,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                     :: ((b1, b2), vis, Top)
                     :: removeEntry (a1, a2)
                     (removeEntry (b1, b2) g1)).
-          apply lcomL with
+          apply L_lcomL with
             (s1 := Top) (pf1 := nd_pfw1) (pf2 := nd_pfw2).
 
           inversion IHPREQ. subst. inversion TPLUS1; subst.
@@ -1739,7 +1739,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
           *** eauto.
       * eauto.
       * eauto.    
-  - Case lclsL.
+  - Case L_lclsL.
     intros.
     remember g3 as gg3; subst g3.
     inversion TCHECK; subst.
@@ -2370,7 +2370,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                       :: ((b1, b2), hid, s'')
                       :: removeEntry (a1, a2)
                       (removeEntry (b1, b2) g1)).
-            apply lclsL with
+            apply L_lclsL with
               (s1 := r'') (pf1 := nd_pfw1) (pf2 := nd_pfw2).
             eauto.
             eauto.
@@ -2624,7 +2624,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                       :: ((b1, b2), hid, s'')
                       :: removeEntry (a1, a2)
                       (removeEntry (b1, b2) g1)).
-            apply lclsL with
+            apply L_lclsL with
               (s1 := r'') (pf1 := nd_pfw1) (pf2 := nd_pfw2).
             eauto.
             eauto.
@@ -2851,7 +2851,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                     :: ((b1, b2), hid, Top)
                     :: removeEntry (a1, a2)
                     (removeEntry (b1, b2) g1)).
-          apply lclsL with
+          apply L_lclsL with
             (s1 := Top) (pf1 := nd_pfw1) (pf2 := nd_pfw2).
 
           intuition.
@@ -3030,7 +3030,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
         ***  eapply sl_pos_par_l...
       * eauto.
       * eauto.  
-  - Case ucomL.
+  - Case L_ucomL.
     intros.
     remember g3 as gg3; subst g3.
     inversion TCHECK; subst.
@@ -3536,7 +3536,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
           exists (kk1 ++
                     (b1, b2, vis, s'')
                     :: removeEntry (b1, b2) ((b1, b2, vis, r'') :: removeEntry (b1, b2) g1)).
-          apply ucomL with
+          apply L_ucomL with
             (s1 := r'') (s := s'') (t := t)(pf1 := nd_pf1) (pf2 := nd_pfw2).
           eauto.
           eauto.
@@ -3749,7 +3749,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
           exists (kk1 ++
                     (b1, b2, vis, s'')
                     :: removeEntry (b1, b2) ((b1, b2, vis, r'') :: removeEntry (b1, b2) g1)).
-          apply ucomL with
+          apply L_ucomL with
             (s1 := r'') (s := s'') (t := t)(pf1 := nd_pf1) (pf2 := nd_pfw2).
           
           eauto.
@@ -3939,7 +3939,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
         exists (kk1 ++
                   (b1, b2, vis, Top)
                   :: removeEntry (b1, b2) ((b1, b2, vis, Top) :: removeEntry (b1, b2) g1)).
-        apply ucomL with
+        apply L_ucomL with
           (s1 := Top) (s := Top) (t := t)(pf1 := nd_pf1) (pf2 := nd_pfw2).
         intuition; subst...
         eauto.
@@ -4069,7 +4069,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     * eauto.    
 
       
-  - Case uclsL.
+  - Case L_uclsL.
     intros.
     remember g3 as gg3; subst g3.
     inversion TCHECK; subst.
@@ -4590,7 +4590,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                       (b1, b2, vis, s'')
                       :: removeEntry (b1, b2) ((b1, b2, ill, r'') :: removeEntry (b1, b2) g1)) as gk1.
           exists (((b1, b2), hid, s'') :: removeEntry (b1, b2) gk1).
-          apply uclsL with
+          apply L_uclsL with
             (s1 := r'') (s := s'') (t := t)(pf1 := nd_pf1) (pf2 := nd_pfw2).
           eauto.
           eauto.
@@ -4803,7 +4803,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                       (b1, b2, vis, s'')
                       :: removeEntry (b1, b2) ((b1, b2, ill, r'') :: removeEntry (b1, b2) g1)) as gk1.
           exists (((b1, b2), hid, s'') :: removeEntry (b1, b2) gk1).
-          apply uclsL with
+          apply L_uclsL with
             (s1 := r'') (s := s'') (t := t)(pf1 := nd_pf1) (pf2 := nd_pfw2).
           eauto.
           eauto.
@@ -4995,7 +4995,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
                     (b1, b2, vis, Top)
                     :: removeEntry (b1, b2) ((b1, b2, ill, Top) :: removeEntry (b1, b2) g1)) as gk1.
         exists (((b1, b2), hid, Top) :: removeEntry (b1, b2) gk1).
-        apply uclsL with
+        apply L_uclsL with
           (s1 := Top) (s := Top) (t := t)(pf1 := nd_pf1) (pf2 := nd_pfw2).
         intuition; subst...
         eauto.
@@ -5115,7 +5115,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     * eauto.
     * eauto.
 
-  - Case open.
+  - Case L_open.
     intros. 
     inversion TCHECK.  destruct n. simpl in H0. simpl in H1.
     subst n n0 p0. simpl.
@@ -5153,7 +5153,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     apply IHLTS in IHREQ as LTSOUT.
     destruct LTSOUT as [k1 LTSOUT].
     exists k1.
-    apply open with (t := t0) (pf1 := nd_pf1')...
+    apply L_open with (t := t0) (pf1 := nd_pf1')...
     eauto.
     eauto.
     inversion ABS. inversion H1. subst. 
@@ -5162,7 +5162,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
     destruct H6; discriminate. eauto.
 
     
-  - Case hide.
+  - Case L_hide.
 
 
     
@@ -5232,7 +5232,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
      
      assert (IH' :
               exists k1 (pfk1 : NoDup (domain k1)),
-                lts (l1 ++ (c1, c2, vis, t1) :: l2) p a k1 p' nd_pf' /\
+                ltsL (l1 ++ (c1, c2, vis, t1) :: l2) p a k1 p' nd_pf' /\
             (forall x : name * name * flag * piType, In x  (m1 ++ (c1, c2, vis, s) :: m2) <-> In x k1 )).
      eapply lts_iff
        with (pf1 := nd_pf)
@@ -5263,7 +5263,7 @@ Proof with eauto using typeCheck_no_dup,sl_pos_par_l,sl_pos_par_r.
        try eapply in_split in IN as (k' &k'' &IH''); subst.
      
      exists ((k' ++ (c1, c2, hid, t0) :: k''));
-       try eapply hide...
+       try eapply L_hide...
 
 
     

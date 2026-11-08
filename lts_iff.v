@@ -144,14 +144,14 @@ Qed.
    #[global] Hint Resolve in_removeEntry_cons_iff_2.
 
   Lemma lts_iff a g1 g' g2 p p' pf1 pf2 (pf' : NoDup (domain g')):
-    lts g1 p a g' p' pf1 ->
+    ltsL g1 p a g' p' pf1 ->
     (forall x, In x g1 <-> In x g2) ->
     sl_pos p ->
     NoDup (secLabs p) ->
     incl (secLabs p ) (domain g1) -> 
     max (secLabs p) <= max (domain g1) ->
     exists g'' (pf'' : NoDup(domain g'')),
-      lts g2 p a g'' p' pf2 /\
+      ltsL g2 p a g'' p' pf2 /\
         (forall x, In x  g' <-> In x g'').
   Proof with eauto using
              cons_cons_removeEntry_iff,
@@ -172,26 +172,26 @@ Qed.
           (domain
              ((a1, a2, vis, Chan lin empty t)
                 :: (b1, b2, vis, t2) :: removeEntry (a1, a2) (removeEntry (b1, b2) g2)))).
-    eapply no_dup_cons_removeEntry_app,nonRecActions2,lOut ...
+    eapply no_dup_cons_removeEntry_app,nonRecActions2,L_lOut ...
     
-    eexists; split... split; try eapply lOut;
+    eexists; split... split; try eapply L_lOut;
       try eapply IFF...
   - assert (pf'': NoDup (domain ((b1, b2, vis, t2) :: removeEntry (b1, b2) g2))).
     eapply no_dup_cons_removeEntry...
-    eexists;exists pf''; split.  try eapply uOut;
+    eexists;exists pf''; split.  try eapply L_uOut;
       try eapply IFF...
     try eapply IFF...
   - assert (pf'': NoDup
           (domain
              ((a1, a2, vis, Chan lin empty t)
                 :: (b1, b2, vis, t2) :: removeEntry (a1, a2) (removeEntry (b1, b2) g2)))).
-    eapply no_dup_cons_removeEntry_app,nonRecActions1,lIn ...
+    eapply no_dup_cons_removeEntry_app,nonRecActions1,L_lIn ...
     eexists; split...
-     split; try eapply lIn;
+     split; try eapply L_lIn;
       try eapply IFF... 
   - assert (pf'': NoDup (domain ((b1, b2, vis, t2) :: removeEntry (b1, b2) g2))).
     eapply no_dup_cons_removeEntry...
-    eexists;exists pf''; split.  try eapply uIn;
+    eexists;exists pf''; split.  try eapply L_uIn;
       try eapply IFF...
     try eapply IFF...
   - assert (MAX: max (domain g) = max (domain g2)).
@@ -220,7 +220,7 @@ Qed.
     try eapply in_g_in_domain; try rewrite <-IFF...
     
     
-    eexists; exists pf''. split; try eapply uRin;try eapply IFF...
+    eexists; exists pf''. split; try eapply L_uRin;try eapply IFF...
     erewrite MAX,NewEntries.newEntries_iff...
     assumption.
   -
@@ -330,7 +330,7 @@ Qed.
       
       
       subst g0; eexists; split...
-      split; try eapply lcomL; try eapply IFF...
+      split; try eapply L_lcomL; try eapply IFF...
 
       all:
         intros;
@@ -340,7 +340,7 @@ Qed.
           try tauto; try eassumption.
        
 
-  -    (* same as lcomL  *)
+  -    (* same as L_lcomL  *)
       assert (NDP2 := NDP); simpl in NDP2;
       eapply no_dup_iff in NDP2 as (ND1 &ND2 &DIS).
    
@@ -468,7 +468,7 @@ Qed.
       
 
       subst g0; eexists; split...
-      split;try eapply lclsL; try eapply IFF...
+      split;try eapply L_lclsL; try eapply IFF...
 
        all:
         intros;
@@ -602,7 +602,7 @@ Qed.
        destruct EQ as (k &DIS &EQ).
        exists k2; split...
           split;
-            try eapply ucomL; try assumption;
+            try eapply L_ucomL; try assumption;
             subst g'; try rewrite <-IFF...
          
           subst; try rewrite in_app_iff; repeat right;
@@ -610,7 +610,7 @@ Qed.
           try eapply removeEntry_in,IFF...
           subst; try rewrite in_app_iff...
 
-  -  (* same as lcomL  *)
+  -  (* same as L_lcomL  *)
      assert (NDP2 := NDP); simpl in NDP2;
       eapply no_dup_iff in NDP2 as (ND1 &ND2 &DIS').
     simpl in INCL; eapply incl_distr in INCL as (INCL1 &INCL2).
@@ -711,7 +711,7 @@ Qed.
 
 
           destruct EQ as (ne &DIS &EQ2).
-          exists ((b1, b2, hid, s):: removeEntry (b1, b2) k2); split... split; subst k2; try eapply uclsL; try assumption;
+          exists ((b1, b2, hid, s):: removeEntry (b1, b2) k2); split... split; subst k2; try eapply L_uclsL; try assumption;
             try rewrite <-IFF...
           
           subst; try rewrite in_app_iff; repeat right;
@@ -739,7 +739,7 @@ Qed.
      
      eapply IHLTS in IH as (k1 &IH &IFF2); clear IHLTS;
        try eexists; try split;
-    try split; try eapply open;
+    try split; try eapply L_open;
   try eapply IFF;
       try eapply IFF2;
        try eassumption.
@@ -855,7 +855,7 @@ Qed.
   rewrite domain_distr in *; simpl in *...
 
   eexists; split...
-  split; try eapply hide; destruct  IFF1 as (LTS1 &IFF1)...
+  split; try eapply L_hide; destruct  IFF1 as (LTS1 &IFF1)...
   
   (*forall x : name * name * flag * piType,
 In x (h1 ++ (b1, b2, hid, t) :: h2) <->

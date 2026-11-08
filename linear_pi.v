@@ -106,8 +106,8 @@ Qed.
       sl_pos p -> (* HYP *)
       typeCheck g1 pf1 p -> (* g1 |- p *)
       tEnv_split g1 g2 g pf1 pf2 pf -> (* g1 + g2 = g *)
-      lts g p a h p' nd_pf -> (* g>p -a-> h>p' *)
-      lts g1 p a k1 p' nd_pf1 ->    (* g1>p -a-> k1>p' *)
+      ltsL g p a h p' nd_pf -> (* g>p -a-> h>p' *)
+      ltsL g1 p a k1 p' nd_pf1 ->    (* g1>p -a-> k1>p' *)
       typeCheck k1 pfk1 p'. (* k1 |- p' *)
    Proof with eauto using
               typeCheck_hid_proj.
@@ -119,7 +119,7 @@ Qed.
     generalize dependent k1.
     dependent induction LTS.
     
-    - Case parL.
+    - Case L_parL.
 
       assert (lts_finite := nonDivergentProcesses).
       intros k1 pfk1 g2 pf2 g1 pf1 nd_pf1
@@ -207,7 +207,7 @@ tEnv_split g1 g2 g pf1 pf2 pf ->
 flagOf b g1 hid ->
 flagOf b g hid.
 finally
-lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_hid*)
+ltsL g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_hid*)
                destruct f3.
                clear IHLTS.
                eapply lts_inp_obj_not_hid in LTS0;
@@ -307,7 +307,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                 
                 
                destruct lts_input_exists_plus as [r' TP2].
-               assert (LTS1:  lts g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
+               assert (LTS1:  ltsL g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
                inversion LTSPAR...
                apply lts_inp with
                    (ta :=  Chan m q1 t)
@@ -921,7 +921,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                 
                 
                destruct lts_input_exists_plus as [r' TP2].
-               assert (LTS1:  lts g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
+               assert (LTS1:  ltsL g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
                inversion LTSPAR...
                apply lts_inp with
                    (ta :=  Chan m q1 t)
@@ -1528,7 +1528,7 @@ tEnv_split g1 g2 g pf1 pf2 pf ->
 flagOf b g1 hid ->
 flagOf b g hid.
 finally
-lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_hid*)
+ltsL g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_hid*)
                destruct f3.
                clear IHLTS.
                eapply lts_inp_obj_not_hid in LTS0;
@@ -1597,7 +1597,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                 
                 
                destruct lts_input_exists_plus as [r' TP2].
-               assert (LTS1:  lts g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
+               assert (LTS1:  ltsL g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
                inversion LTSPAR...
                apply lts_inp with
                    (ta :=  Chan m q1 t)
@@ -2198,7 +2198,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
                 
                 
                destruct lts_input_exists_plus as [r' TP2].
-               assert (LTS1:  lts g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
+               assert (LTS1:  ltsL g1 p1 (aIn a1 a2 b1 b2) k1 p2 nd_pf1). 
                inversion LTSPAR...
                apply lts_inp with
                    (ta :=  Chan m q1 t)
@@ -10091,7 +10091,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
         apply lts_finite in H12.
         contradiction.
         
-    - Case lOut. 
+    - Case L_lOut. 
        intros. inversion TYP. subst.
       destruct u as [a1 a2];
         destruct v as [b1 b2];
@@ -10131,7 +10131,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
       inversion H2.  inversion H4.
       eauto.
       
-    - Case uOut.
+    - Case L_uOut.
       intros.
       inversion TYP. subst.
 
@@ -10156,7 +10156,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
       rewrite <-H4. intuition.
       all:eapply typeCheck_rewrite_pf...
       
-    - Case lIn.
+    - Case L_lIn.
       intros.
       assert (DIFF : (a1, a2) <> (b1, b2)).
       eapply nonRecActions1...
@@ -10281,7 +10281,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
       inversion H3.  inversion H5.
       all:eauto.
                                
-    - Case uIn.
+    - Case L_uIn.
       intros.
       inversion TYP. subst.
       assert (DIFF : u <> (b1, b2)).
@@ -10363,7 +10363,7 @@ lts g p1 (aIn a1 a2 b1 b2) g' p2 nd_pf ->contradiction by apply lts_inp_obj_not_
       rewrite EQx. intuition.
 
       
-    - Case uRin.
+    - Case L_uRin.
       intros. 
       inversion TYP. subst.
       assert (DIFF : u <> (b1, b2)).
@@ -11932,7 +11932,7 @@ eapply no_dup_cons_removeEntry.
 
       
  
-    - Case lcomL.
+    - Case L_lcomL.
       intros.
       remember pf0 as nd_pf. remember pf1 as nd_pf_Out.
       remember pf2 as nd_pf_Inp. subst pf0 pf1 pf2.
@@ -12862,7 +12862,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
       eauto.
 
       
-    - Case lclsL.
+    - Case L_lclsL.
       intros.
       remember pf0 as nd_pf. remember pf1 as nd_pf_Out.
       remember pf2 as nd_pf_Inp. subst pf0 pf1 pf2.
@@ -13818,7 +13818,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
       intuition; inversion H8; subst.
       eauto.
       
-    - Case ucomL .
+    - Case L_ucomL .
       intros.
       remember pf0 as nd_pf. remember pf1 as nd_pf_Out.
       remember pf2 as nd_pf_Inp. subst pf0 pf1 pf2.
@@ -13860,7 +13860,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
       assert (INb := H1).
 
       (*assert (K4IN:
-                exists k4 : typeEnv, lts g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
+                exists k4 : typeEnv, ltsL g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
       eapply no_dup_isMap in nd_pf'0 as pf'0.
       eapply split_lts_exists_lts with (pf := pf'0).
       subst g7. Search s2.
@@ -14320,7 +14320,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
      intros.
      move TC1 at bottom.
      assert (K4IN:
-               exists k4 : typeEnv, lts g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
+               exists k4 : typeEnv, ltsL g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
      eapply split_lts_exists_lts with (pf := pf_Inp)...
      destruct K4IN as [k4 K4IN].
      eapply lts_un_input_action with (r := s04) in K4IN as K4EQ.
@@ -14775,7 +14775,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
         * (* incl (secLabs p1) (domain (hid_proj g3)) *)
           eapply typeCheck_hid_proj...
 
-    - Case uclsL .
+    - Case L_uclsL .
       intros.
       remember pf0 as nd_pf. remember pf1 as nd_pf_Out.
       remember pf2 as nd_pf_Inp. subst pf0 pf1 pf2.
@@ -14824,7 +14824,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
 
       
       (*assert (K4IN:
-                exists k4 : typeEnv, lts g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
+                exists k4 : typeEnv, ltsL g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
       eapply no_dup_isMap in nd_pf'0 as pf'0.
       eapply split_lts_exists_lts with (pf := pf'0).
       subst g7. Search s2.
@@ -15284,7 +15284,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
      intros.
      move TC1 at bottom.
      assert (K4IN:
-               exists k4 : typeEnv, lts g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
+               exists k4 : typeEnv, ltsL g4 q1 (aIn a1 a2 b1 b2) k4 q2 nd_pf4).
      eapply split_lts_exists_lts with (pf := pf_Inp)...
      destruct K4IN as [k4 K4IN].
      eapply lts_un_input_action with (r := s04) in K4IN as K4EQ.
@@ -15852,7 +15852,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
           eapply typeCheck_hid_proj...
 
           
-    - Case open.
+    - Case L_open.
       intros.
       inversion AFT; subst.
       assert (IN1b := H8).
@@ -15922,7 +15922,7 @@ g0, a : Chan lin empty t, b : s > p2' *)
       simpl in H8; intuition.
 
        
-      - Case hide. 
+      - Case L_hide. 
         introv TC1 TS1 LTS1; assert (TC' := TC1);inv TC'.
         assert (TC := H5); clear H5.
         destruct n as [n1 n2]; simpl in *.
@@ -15951,10 +15951,10 @@ g0, a : Chan lin empty t, b : s > p2' *)
           
           assert (LTS'' := LTS').
          (* assert (LTS_IFF: forall g1 p a k1 p' pf1 g2 pf2,
-                   lts g1 p a k1 p' pf1 ->
+                   ltsL g1 p a k1 p' pf1 ->
                    (forall x, In x g1 <-> In x g2) ->
                     exists k2 ,
-                      lts g2 p a k2 p' pf2 /\
+                      ltsL g2 p a k2 p' pf2 /\
                         (forall x, In x k1 <-> In x k2)).
           *)
           assert (SLP2 := SLP).
@@ -16258,11 +16258,11 @@ g0, a : Chan lin empty t, b : s > p2' *)
       eapply no_dup_isMap...
    Qed.
 
-      Theorem sr :
+      Theorem sr_left :
     forall g p a g' p' nd_pf pf pf',
       sl_pos p ->
       typeCheck g pf p ->  
-      lts g p a g' p' nd_pf -> 
+      ltsL g p a g' p' nd_pf -> 
       typeCheck g' pf' p'.
   Proof.
     intros.

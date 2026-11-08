@@ -246,7 +246,7 @@ Lemma typeCheck_lts_out_type_remove:
     typeCheck g pf p ->
     In (a1, a2, vis, Chan m pol t) g ->
     In (b1, b2, f, s) g ->
-    lts g1 p (aOut a1 a2 b1 b2) g' p' pf1 ->
+    ltsL g1 p (aOut a1 a2 b1 b2) g' p' pf1 ->
     exists r, type_remove s t r.
 Proof with eauto.
   intros g p a1 a2 b1 b2 m pol t f s g1 p' g' pf pf1 TC INa INb LTS.

@@ -35,7 +35,7 @@ Import ListNotations.
 #[global] Hint Constructors replication.
 
 Lemma lts_after_tau_linh: forall g  p1 p2 a1 a2 t g' nd_pf,
-    lts g p1 (aTau a1 a2) g' p2 nd_pf ->
+    ltsL g p1 (aTau a1 a2) g' p2 nd_pf ->
     In (a1, a2, hid, Chan lin io t) g ->
     exists b1 b2 f tb,
       (a1, a2) <> (b1, b2) /\  
@@ -70,8 +70,8 @@ Proof with eauto.
        try eassumption...
      discriminate.
 
-  - Case hide.
-    assert (HIDE: lts (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'')(dNu b1 b2 p') pf)...
+  - Case L_hide.
+    assert (HIDE: ltsL (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'')(dNu b1 b2 p') pf)...
     remember b1 as c1. remember b2 as c2. subst b1 b2.
 
     assert (PF := pf).
@@ -197,7 +197,7 @@ Lemma lts_after_tau_unh: forall g  p1 p2 a1 a2 t g' nd_pf nd_pf1,
     sl_pos p1 ->
     incl (secLabs p1) (domain (hid_proj g)) ->
     NoDup (secLabs p1) ->
-    lts g p1 (aTau a1 a2) g' p2 nd_pf ->
+    ltsL g p1 (aTau a1 a2) g' p2 nd_pf ->
     In (a1, a2, hid, Chan un io t) g ->
     exists b1 b2 f tb ne,
       (a1, a2) <> (b1, b2) /\  
@@ -253,12 +253,12 @@ Proof with eauto using no_dup_app_shift,iff_shift.
 
 
 
-    - Case hide.
+    - Case L_hide.
 
       assert (pfh := pf).
 
       assert (HIDE:
-               lts (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p)
+               ltsL (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p)
                  (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'')
                  (dNu b1 b2 p')
                  pfh)...
@@ -932,7 +932,7 @@ Qed.
   forall (*g p a1 a2 b1 b2 r g1 p1 nd_pf k pol t rp,*)
     g p a1 a2 b1 b2 g1 p1 nd_pf pol t rp,
     In (a1, a2, hid, Chan un pol t) g ->
-    lts g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
     (*g1 = k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g ->*)
     replication p p1 rp ->
     incl (secLabs rp) (secLabs p).
@@ -972,7 +972,7 @@ Qed.
 Lemma lts_un_tau_action_newEntries_secLabsh:
   forall g p a1 a2 g1 p1 nd_pf pol t rp,
     typeOf g (a1,a2) (Chan un pol t) ->
-    lts g p (aTau a1 a2) g1 p1 nd_pf ->
+    ltsL g p (aTau a1 a2) g1 p1 nd_pf ->
     replication p p1 rp ->
     incl (secLabs rp) (secLabs p).
 Proof with eauto.
@@ -1000,9 +1000,9 @@ Proof with eauto.
     eapply lts_un_input_action_newEntries_secLabs with (rp := rp) in LTS2. simpl; eapply incl_appl...
     subst g' g0. right. eapply removeEntry_in...
     assumption.
-  - Case hide.
+  - Case L_hide.
     assert (HIDE:
-             lts (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'') (dNu b1 b2 p')
+             ltsL (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'') (dNu b1 b2 p')
                pf)...
 
     introv REPL; inv REPL; simpl; eapply incl_appl.
@@ -1021,7 +1021,7 @@ Lemma lts_un_tau_action_newEntries_1k p g a1 a2 c1 c2 t r p1 pf q:
     (a1, a2) <> (c1, c2) ->
    typeOf g (a1, a2) (Chan un io t)->
     In (c1, c2) (domain g) -> 
-    lts g p (aTau a1 a2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g) p1 pf ->
+    ltsL g p (aTau a1 a2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g) p1 pf ->
     replication p p1 q ->
     secLabs (dep_relabel q (domain g) pf) = nil.
  Proof with eauto.
@@ -1104,9 +1104,9 @@ Lemma lts_un_tau_action_newEntries_1k p g a1 a2 c1 c2 t r p1 pf q:
         contradiction.
         
 
-    - Case hide.
-      assert (HIDE: lts (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'')(dNu b1 b2 p') pf).
-      eapply hide...
+    - Case L_hide.
+      assert (HIDE: ltsL (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'')(dNu b1 b2 p') pf).
+      eapply L_hide...
 
       introv REPL.
       assert (REPL2: replication p p' q).
@@ -1246,7 +1246,7 @@ Lemma lts_un_tau_action_newEntries_1k p g a1 a2 c1 c2 t r p1 pf q:
     (a1, a2) <> (c1, c2) ->
     typeOf g (a1, a2) (Chan un io t) ->
     In (c1, c2) (domain g) ->
-    lts g p (aTau a1 a2) ( (c1, c2, hid, r) :: removeEntry (c1, c2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g)) p1 pf ->
+    ltsL g p (aTau a1 a2) ( (c1, c2, hid, r) :: removeEntry (c1, c2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g)) p1 pf ->
     replication p p1 q ->
     secLabs (dep_relabel q (domain g) pf) = nil.
  Proof with eauto.
@@ -1376,10 +1376,10 @@ Lemma lts_un_tau_action_newEntries_1k p g a1 a2 c1 c2 t r p1 pf q:
         assert (incl (domain (hid_proj g)) (domain g)) by eapply hid_proj_incl...
         eapply proposition27.incl_preserves_max,incl_tran, incl_iff with (m1 :=domain g)...
         right. eapply removeEntry_in...
-     - Case hide.
+     - Case L_hide.
        assert (HIDE: 
-                lts  (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'') (dNu b1 b2 p') pf).
-       eapply hide...
+                ltsL  (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'') (dNu b1 b2 p') pf).
+       eapply L_hide...
        
        introv REPL.
       assert (REPL2: replication p p' q).
@@ -1521,7 +1521,7 @@ Lemma lts_un_tau_action_newEntries_1k p g a1 a2 c1 c2 t r p1 pf q:
     NoDup (secLabs p) ->
     In (a1, a2, hid, Chan un io t) g ->
     In (b1, b2) (domain g) -> 
-    lts g p (aTau a1 a2) g1 p1 pf ->
+    ltsL g p (aTau a1 a2) g1 p1 pf ->
   (g1 = k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g \/
    g1 = (b1, b2, hid, r):: removeEntry (b1, b2) (k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g))
    ->

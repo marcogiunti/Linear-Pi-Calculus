@@ -10,7 +10,8 @@ Require Import
   type_checking_1
   type_operations_1
   lts_no_dup
-  linear_pi.
+  linear_pi
+  right_rules.
 
 Require Import CpdtTactics LibTactics.
 
@@ -24,10 +25,7 @@ Proof with eauto using typeCheck_no_dup.
   assert (NDSL: NoDup (secLabs p1))...
   eapply typeCheck_no_dup...
   assert (nd_pf2: NoDup (domain g2)).
-  eapply lts_no_dup in LTS; try tauto.
-  eapply incl_incl2...
-  eapply typeCheck_no_dup...
-  eapply incl_preserves_max, typeCheck_no_dup...  
+  eapply lts_no_dup_typed; eauto.
   assert (LTS2 := LTS).
   eapply sr with (pf := pf) in LTS2; try tauto.
   split.

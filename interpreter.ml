@@ -32,7 +32,7 @@ let rec add = (+)
 
 (** val sub : int -> int -> int **)
 
-let rec sub = fun n m -> Pervasives.max 0 (n-m)
+let rec sub = fun n m -> Stdlib.max 0 (n-m)
 
 module Nat =
  struct
@@ -44,36 +44,36 @@ module Nat =
 (** val nat_pair_eq_dec : (int*int) -> (int*int) -> bool **)
 
 let nat_pair_eq_dec n m =
-  let x,x0 = n in
+  let a,b = n in
   let n0,n1 = m in
-  if let rec f n2 x1 =
+  if let rec f n2 x =
        (fun fO fS n -> if n=0 then fO () else fS (n-1))
          (fun _ ->
          (fun fO fS n -> if n=0 then fO () else fS (n-1))
            (fun _ -> true)
            (fun _ -> false)
-           x1)
+           x)
          (fun n3 ->
          (fun fO fS n -> if n=0 then fO () else fS (n-1))
            (fun _ -> false)
            (fun n4 -> f n3 n4)
-           x1)
+           x)
          n2
-     in f x n0
-  then let rec f n2 x1 =
+     in f a n0
+  then let rec f n2 x =
          (fun fO fS n -> if n=0 then fO () else fS (n-1))
            (fun _ ->
            (fun fO fS n -> if n=0 then fO () else fS (n-1))
              (fun _ -> true)
              (fun _ -> false)
-             x1)
+             x)
            (fun n3 ->
            (fun fO fS n -> if n=0 then fO () else fS (n-1))
              (fun _ -> false)
              (fun n4 -> f n3 n4)
-             x1)
+             x)
            n2
-       in f x0 n1
+       in f b n1
   else false
 
 (** val pair_eq : (int*int) -> (int*int) -> bool **)
@@ -106,8 +106,7 @@ let mv py pz pv =
   let z1 = fst pz in
   let z2 = snd pz in
   let v1 = fst pv in
-  let v2 = snd pv in
-  if andb ((=) y1 z1) ((=) y2 z2) then v1,v2 else y1,y2
+  let v2 = snd pv in if andb ((=) y1 z1) ((=) y2 z2) then v1,v2 else y1,y2
 
 (** val pmap : dproc -> int -> int -> int -> int -> dproc **)
 
@@ -117,8 +116,7 @@ let rec pmap p z1 z2 v1 v2 =
   | DBang (x1, x2, y1, y2, q) ->
     let r = mv (x1,x2) (z1,z2) (v1,v2) in
     DBang ((fst r), (snd r), y1, y2, (pmap q z1 z2 v1 v2))
-  | DPar (p0, q) ->
-    DPar ((pmap p0 z1 z2 v1 v2), (pmap q z1 z2 v1 v2))
+  | DPar (p0, q) -> DPar ((pmap p0 z1 z2 v1 v2), (pmap q z1 z2 v1 v2))
   | DNu (h, i, q) -> DNu (h, i, (pmap q z1 z2 v1 v2))
   | DInp (x1, x2, y1, y2, q) ->
     let r = mv (x1,x2) (z1,z2) (v1,v2) in
@@ -126,31 +124,25 @@ let rec pmap p z1 z2 v1 v2 =
   | DOut (x1, x2, y1, y2, p0) ->
     let r1 = mv (x1,x2) (z1,z2) (v1,v2) in
     let r2 = mv (y1,y2) (z1,z2) (v1,v2) in
-    DOut ((fst r1), (snd r1), (fst r2), (snd r2),
-    (pmap p0 z1 z2 v1 v2))
+    DOut ((fst r1), (snd r1), (fst r2), (snd r2), (pmap p0 z1 z2 v1 v2))
 
 (** val max : (int*int) list -> int **)
 
 let rec max = function
 | [] -> 0
-| p::t0 ->
-  let _,x = p in let m = max t0 in if Nat.ltb x m then m else x
+| p::t0 -> let _,x = p in let m = max t0 in if Nat.ltb x m then m else x
 
 (** val dep_relabel : dproc -> (int*int) list -> dproc **)
 
 let rec dep_relabel p s =
   match p with
   | DZero -> p
-  | DBang (x1, x2, y1, y2, p0) ->
-    DBang (x1, x2, y1, y2, (dep_relabel p0 s))
+  | DBang (x1, x2, y1, y2, p0) -> DBang (x1, x2, y1, y2, (dep_relabel p0 s))
   | DPar (p0, q) -> DPar ((dep_relabel p0 s), (dep_relabel q s))
   | DNu (h, i, p0) ->
-    DNu (h, (add i (max s)),
-      (pmap (dep_relabel p0 s) h i h (add i (max s))))
-  | DInp (x1, x2, y1, y2, p0) ->
-    DInp (x1, x2, y1, y2, (dep_relabel p0 s))
-  | DOut (x1, x2, y1, y2, p0) ->
-    DOut (x1, x2, y1, y2, (dep_relabel p0 s))
+    DNu (h, (add i (max s)), (pmap (dep_relabel p0 s) h i h (add i (max s))))
+  | DInp (x1, x2, y1, y2, p0) -> DInp (x1, x2, y1, y2, (dep_relabel p0 s))
+  | DOut (x1, x2, y1, y2, p0) -> DOut (x1, x2, y1, y2, (dep_relabel p0 s))
 
 type pol =
 | Empty
@@ -267,8 +259,7 @@ type action =
 | ATau of int * int
 
 (** val inB :
-    (int*int) -> (((int*int)*flag)*piType) list ->
-    (flag*piType)*bool **)
+    (int*int) -> (((int*int)*flag)*piType) list -> (flag*piType)*bool **)
 
 let rec inB a = function
 | [] -> (Ill,Top),false
@@ -320,10 +311,9 @@ let tplus t1 t2 =
                       | Empty -> Some t1
                       | Inp -> Some (Chan (Lin, Io, r1))
                       | _ -> raise)
-                   | Io ->
-                     (match p2 with
-                      | Empty -> Some t1
-                      | _ -> raise))
+                   | Io -> (match p2 with
+                            | Empty -> Some t1
+                            | _ -> raise))
              else raise
            | Un -> raise)
         | Top -> raise)
@@ -354,10 +344,9 @@ let tremove t1 t2 =
            | Lin ->
              if type_eq r1 r2
              then (match p1 with
-                   | Empty ->
-                     (match p2 with
-                      | Empty -> Some t1
-                      | _ -> raise)
+                   | Empty -> (match p2 with
+                               | Empty -> Some t1
+                               | _ -> raise)
                    | Inp ->
                      (match p2 with
                       | Empty -> Some t1
@@ -385,10 +374,9 @@ let tremove t1 t2 =
            | Un ->
              if type_eq r1 r2
              then (match p1 with
-                   | Empty ->
-                     (match p2 with
-                      | Empty -> Some t1
-                      | _ -> raise)
+                   | Empty -> (match p2 with
+                               | Empty -> Some t1
+                               | _ -> raise)
                    | Inp ->
                      (match p2 with
                       | Empty -> Some t1
@@ -407,8 +395,7 @@ let tremove t1 t2 =
             | Top -> Some Top)
 
 (** val typeEnv_eq :
-    (((int*int)*flag)*piType) list -> (((int*int)*flag)*piType)
-    list -> bool **)
+    (((int*int)*flag)*piType) list -> (((int*int)*flag)*piType) list -> bool **)
 
 let rec typeEnv_eq g1 g2 =
   match g1 with
@@ -423,33 +410,26 @@ let rec typeEnv_eq g1 g2 =
      | p2::d2 ->
        let p3,t2 = p2 in
        let p4,f2 = p3 in
-       andb
-         (andb (andb (pair_eq p1 p4) (flag_eq f1 f2))
-           (type_eq t1 t2)) (typeEnv_eq d1 d2))
+       andb (andb (andb (pair_eq p1 p4) (flag_eq f1 f2)) (type_eq t1 t2))
+         (typeEnv_eq d1 d2))
 
-(** val changeVis :
-    (int*int) -> typeEnv -> (((int*int)*flag)*piType) list **)
+(** val changeVis : (int*int) -> typeEnv -> (((int*int)*flag)*piType) list **)
 
 let rec changeVis a = function
 | [] -> []
 | p::tl ->
   let p0,t0 = p in
   let b,f = p0 in
-  if pair_eq a b
-  then ((b,Vis),t0)::tl
-  else ((b,f),t0)::(changeVis a tl)
+  if pair_eq a b then ((b,Vis),t0)::tl else ((b,f),t0)::(changeVis a tl)
 
-(** val changeHid :
-    (int*int) -> typeEnv -> (((int*int)*flag)*piType) list **)
+(** val changeHid : (int*int) -> typeEnv -> (((int*int)*flag)*piType) list **)
 
 let rec changeHid a = function
 | [] -> []
 | p::tl ->
   let p0,t0 = p in
   let b,f = p0 in
-  if pair_eq a b
-  then ((b,Hid),t0)::tl
-  else ((b,f),t0)::(changeHid a tl)
+  if pair_eq a b then ((b,Hid),t0)::tl else ((b,f),t0)::(changeHid a tl)
 
 (** val posB : (int*int) list -> bool **)
 
@@ -476,20 +456,25 @@ let rec nodupb = function
 | [] -> true
 | a::tl -> andb (negb (inB0 a tl)) (nodupb tl)
 
-type bothRedexesChange = bool
+type sched =
+| SLeaf
+| SParL of sched
+| SParR of sched
+| SComL of sched * sched
+| SComR of sched * sched
 
 (** val elts :
-    typeEnv -> dproc -> action -> (int*int) option ->
-    bothRedexesChange -> (typeEnv*dproc) option **)
+    typeEnv -> dproc -> action -> (int*int) option -> sched ->
+    (typeEnv*dproc) option **)
 
-let rec elts g p act tau_arg b =
+let rec elts g p act tau_arg s =
   match p with
   | DZero -> raise
   | DBang (a1, a2, x1, x2, q) ->
     (match act with
      | AIn (c1, c2, b1, b2) ->
        if pair_eq (a1,a2) (c1,c2)
-       then let p0,b0 = inB (a1,a2) g in
+       then let p0,b = inB (a1,a2) g in
             let f0,p1 = p0 in
             (match f0 with
              | Vis ->
@@ -498,31 +483,24 @@ let rec elts g p act tau_arg b =
                   (match m with
                    | Lin -> raise
                    | Un ->
-                     if b0
-                     then let p2,b3 = inB (b1,b2) g in
-                          let f,s = p2 in
-                          if b3
-                          then if andb
-                                    ((||) (pol_eq pl Inp)
-                                      (pol_eq pl Io))
+                     if b
+                     then let p2,b0 = inB (b1,b2) g in
+                          let f,s0 = p2 in
+                          if b0
+                          then if andb ((||) (pol_eq pl Inp) (pol_eq pl Io))
                                     (negb (flag_eq f Hid))
-                               then (match tplus s t0 with
+                               then (match tplus s0 t0 with
                                      | Some r ->
-                                       let rq =
-                                         dep_relabel q (domain g)
-                                       in
+                                       let rq = dep_relabel q (domain g) in
                                        let d =
                                          app
-                                           (newEntries g
-                                             (secLabs rq)
+                                           (newEntries g (secLabs rq)
                                              (max (domain g)))
-                                           ((((b1,b2),Vis),r)::
-                                           (removeEntry (b1,b2) g))
+                                           ((((b1,b2),Vis),r)::(removeEntry
+                                                                 (b1,b2) g))
                                        in
-                                       Some (d,(DPar
-                                       ((pmap q x1 x2 b1 b2),
-                                       (DBang (a1, a2, x1, x2,
-                                       rq)))))
+                                       Some (d,(DPar ((pmap q x1 x2 b1 b2),
+                                       (DBang (a1, a2, x1, x2, rq)))))
                                      | None -> raise)
                                else raise
                           else raise
@@ -534,382 +512,563 @@ let rec elts g p act tau_arg b =
   | DPar (q1, q2) ->
     (match act with
      | ATau (a1, a2) ->
-       if b
-       then (match tau_arg with
-             | Some p0 ->
-               let b1,b2 = p0 in
-               if nat_pair_eq_dec (a1,a2) (b1,b2)
-               then raise
-               else let p1,b0 = inB (a1,a2) g in
-                    let f,p2 = p1 in
-                    (match f with
-                     | Vis ->
-                       (match p2 with
-                        | Chan (m, p3, t0) ->
-                          (match m with
-                           | Lin ->
-                             (match p3 with
-                              | Io ->
-                                if b0
-                                then let p4,b3 = inB (b1,b2) g in
-                                     let f0,s = p4 in
-                                     (match f0 with
-                                      | Hid ->
-                                        if b3
-                                        then (match tremove s t0 with
-                                              | Some r ->
-                                                let g0 =
-                                                  removeEntry
-                                                    (a1,a2)
-                                                    (removeEntry
-                                                      (b1,b2) g)
-                                                in
-                                                let act1 = AOut
-                                                  (a1, a2, b1, b2)
-                                                in
-                                                let d1 =
-                                                  (((a1,a2),Vis),(Chan
-                                                  (Lin, Out,
-                                                  t0)))::((((b1,b2),Hid),s)::g0)
-                                                in
-                                                let act2 = AIn (a1,
-                                                  a2, b1, b2)
-                                                in
-                                                let d2 =
-                                                  (((a1,a2),Vis),(Chan
-                                                  (Lin, Inp,
-                                                  t0)))::((((b1,b2),Ill),r)::g0)
-                                                in
-                                                (match elts d1 q1
-                                                         act1 None
-                                                         false with
-                                                 | Some p5 ->
-                                                   let d',q' = p5 in
-                                                   (match elts d2
-                                                          q2 act2
-                                                          None false with
-                                                    | Some p6 ->
-                                                      let d'',q'' =
-                                                        p6
-                                                      in
-                                                      if andb
-                                                          (typeEnv_eq
-                                                          d'
-                                                          ((((a1,a2),Vis),(Chan
-                                                          (Lin,
-                                                          Empty,
-                                                          t0)))::((((b1,b2),Vis),r)::g0)))
-                                                          (typeEnv_eq
-                                                          d''
-                                                          ((((a1,a2),Vis),(Chan
-                                                          (Lin,
-                                                          Empty,
-                                                          t0)))::((((b1,b2),Vis),s)::g0)))
-                                                      then 
-                                                        let d''' =
-                                                          (((a1,a2),Vis),(Chan
-                                                          (Lin,
-                                                          Empty,
-                                                          t0)))::((((b1,b2),Hid),s)::g0)
-                                                        in
-                                                        Some
-                                                        (d''',(DNu
-                                                        (b1, b2,
-                                                        (DPar (q',
-                                                        q'')))))
-                                                      else raise
-                                                    | None -> raise)
-                                                 | None -> raise)
-                                              | None -> raise)
-                                        else raise
-                                      | Ill -> raise
-                                      | Vis ->
-                                        if b3
-                                        then (match tremove s t0 with
-                                              | Some r ->
-                                                let g0 =
-                                                  removeEntry
-                                                    (a1,a2)
-                                                    (removeEntry
-                                                      (b1,b2) g)
-                                                in
-                                                let act1 = AOut
-                                                  (a1, a2, b1, b2)
-                                                in
-                                                let d1 =
-                                                  (((a1,a2),Vis),(Chan
-                                                  (Lin, Out,
-                                                  t0)))::((((b1,b2),Vis),s)::g0)
-                                                in
-                                                let act2 = AIn (a1,
-                                                  a2, b1, b2)
-                                                in
-                                                let d2 =
-                                                  (((a1,a2),Vis),(Chan
-                                                  (Lin, Inp,
-                                                  t0)))::((((b1,b2),Vis),r)::g0)
-                                                in
-                                                (match elts d1 q1
-                                                         act1 None
-                                                         false with
-                                                 | Some p5 ->
-                                                   let d',q' = p5 in
-                                                   (match elts d2
-                                                          q2 act2
-                                                          None false with
-                                                    | Some p6 ->
-                                                      let d'',q'' =
-                                                        p6
-                                                      in
-                                                      if andb
-                                                          (typeEnv_eq
-                                                          d'
-                                                          ((((a1,a2),Vis),(Chan
-                                                          (Lin,
-                                                          Empty,
-                                                          t0)))::((((b1,b2),Vis),r)::g0)))
-                                                          (typeEnv_eq
-                                                          d''
-                                                          ((((a1,a2),Vis),(Chan
-                                                          (Lin,
-                                                          Empty,
-                                                          t0)))::((((b1,b2),Vis),s)::g0)))
-                                                      then 
-                                                        Some
-                                                          (d'',(DPar
-                                                          (q',
-                                                          q'')))
-                                                      else raise
-                                                    | None -> raise)
-                                                 | None -> raise)
-                                              | None -> raise)
-                                        else raise)
-                                else raise
-                              | _ -> raise)
-                           | Un ->
-                             (match p3 with
-                              | Io ->
-                                if b0
-                                then let p4,b3 = inB (b1,b2) g in
-                                     let f0,s = p4 in
-                                     (match f0 with
-                                      | Hid ->
-                                        if b3
-                                        then (match tremove s t0 with
-                                              | Some r ->
-                                                let g0 =
-                                                  removeEntry
-                                                    (b1,b2) g
-                                                in
-                                                let act1 = AOut
-                                                  (a1, a2, b1, b2)
-                                                in
-                                                let act2 = AIn (a1,
-                                                  a2, b1, b2)
-                                                in
-                                                let d2 =
-                                                  (((b1,b2),Ill),r)::g0
-                                                in
-                                                (match elts g q1
-                                                         act1 None
-                                                         false with
-                                                 | Some p5 ->
-                                                   let d',q' = p5 in
-                                                   (match elts d2
-                                                          q2 act2
-                                                          None false with
-                                                    | Some p6 ->
-                                                      let d'',q'' =
-                                                        p6
-                                                      in
-                                                      let p7,b4 =
-                                                        inB (a1,a2)
-                                                          d''
-                                                      in
-                                                      let f1,ta = p7
-                                                      in
-                                                      (match f1 with
-                                                       | Vis ->
-                                                         if b4
-                                                         then 
-                                                          let p8,b5 =
-                                                          inB
-                                                          (b1,b2)
-                                                          d''
-                                                          in
-                                                          let f2,tb =
-                                                          p8
-                                                          in
-                                                          (
-                                                          match f2 with
-                                                          | Vis ->
-                                                          if b5
-                                                          then 
-                                                          if 
-                                                          andb
-                                                          (andb
-                                                          (typeEnv_eq
-                                                          d'
-                                                          ((((b1,b2),Vis),r)::g0))
-                                                          (type_eq
-                                                          ta (Chan
-                                                          (Un, Io,
-                                                          t0))))
-                                                          (type_eq
-                                                          tb s)
-                                                          then 
-                                                          let d''' =
-                                                          (((b1,b2),Hid),tb)::
-                                                          (removeEntry
-                                                          (b1,b2)
-                                                          d'')
-                                                          in
-                                                          Some
-                                                          (d''',(DNu
-                                                          (b1, b2,
-                                                          (DPar
-                                                          (q',
-                                                          q'')))))
-                                                          else raise
-                                                          else raise
-                                                          | _ ->
-                                                          raise)
-                                                         else raise
-                                                       | _ -> raise)
-                                                    | None -> raise)
-                                                 | None -> raise)
-                                              | None -> raise)
-                                        else raise
-                                      | Ill -> raise
-                                      | Vis ->
-                                        if b3
-                                        then (match tremove s t0 with
-                                              | Some r ->
-                                                let g0 =
-                                                  removeEntry
-                                                    (b1,b2) g
-                                                in
-                                                let act1 = AOut
-                                                  (a1, a2, b1, b2)
-                                                in
-                                                let act2 = AIn (a1,
-                                                  a2, b1, b2)
-                                                in
-                                                let d2 =
-                                                  (((b1,b2),Vis),r)::g0
-                                                in
-                                                (match elts g q1
-                                                         act1 None
-                                                         false with
-                                                 | Some p5 ->
-                                                   let d',q' = p5 in
-                                                   (match elts d2
-                                                          q2 act2
-                                                          None false with
-                                                    | Some p6 ->
-                                                      let d'',q'' =
-                                                        p6
-                                                      in
-                                                      let p7,b4 =
-                                                        inB (a1,a2)
-                                                          d''
-                                                      in
-                                                      let f1,ta = p7
-                                                      in
-                                                      (match f1 with
-                                                       | Vis ->
-                                                         if b4
-                                                         then 
-                                                          let p8,b5 =
-                                                          inB
-                                                          (b1,b2)
-                                                          d''
-                                                          in
-                                                          let f2,tb =
-                                                          p8
-                                                          in
-                                                          (
-                                                          match f2 with
-                                                          | Vis ->
-                                                          if b5
-                                                          then 
-                                                          if 
-                                                          andb
-                                                          (andb
-                                                          (typeEnv_eq
-                                                          d'
-                                                          ((((b1,b2),Vis),r)::g0))
-                                                          (type_eq
-                                                          ta (Chan
-                                                          (Un, Io,
-                                                          t0))))
-                                                          (type_eq
-                                                          tb s)
-                                                          then 
-                                                          Some
-                                                          (d'',(DPar
-                                                          (q',
-                                                          q'')))
-                                                          else raise
-                                                          else raise
-                                                          | _ ->
-                                                          raise)
-                                                         else raise
-                                                       | _ -> raise)
-                                                    | None -> raise)
-                                                 | None -> raise)
-                                              | None -> raise)
-                                        else raise)
-                                else raise
-                              | _ -> raise))
-                        | Top -> raise)
-                     | _ -> raise)
-             | None -> raise)
-       else raise
+       (match s with
+        | SLeaf -> raise
+        | SParL s' ->
+          (match elts g q1 act tau_arg s' with
+           | Some p0 -> let d',q' = p0 in Some (d',(DPar (q', q2)))
+           | None -> raise)
+        | SParR s' ->
+          (match elts g q2 act tau_arg s' with
+           | Some p0 -> let d',q' = p0 in Some (d',(DPar (q1, q')))
+           | None -> raise)
+        | SComL (s1, s2) ->
+          (match tau_arg with
+           | Some p0 ->
+             let b1,b2 = p0 in
+             if nat_pair_eq_dec (a1,a2) (b1,b2)
+             then raise
+             else let p1,b = inB (a1,a2) g in
+                  let f,p2 = p1 in
+                  (match f with
+                   | Vis ->
+                     (match p2 with
+                      | Chan (m, p3, t0) ->
+                        (match m with
+                         | Lin ->
+                           (match p3 with
+                            | Io ->
+                              if b
+                              then let p4,b0 = inB (b1,b2) g in
+                                   let f0,s0 = p4 in
+                                   (match f0 with
+                                    | Hid ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 =
+                                                removeEntry (a1,a2)
+                                                  (removeEntry (b1,b2) g)
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let d1 = (((a1,a2),Vis),(Chan
+                                                (Lin, Out,
+                                                t0)))::((((b1,b2),Hid),s0)::g0)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((a1,a2),Vis),(Chan
+                                                (Lin, Inp,
+                                                t0)))::((((b1,b2),Ill),r)::g0)
+                                              in
+                                              (match elts d1 q1 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q2 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    if andb
+                                                         (typeEnv_eq d'
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),r)::g0)))
+                                                         (typeEnv_eq d''
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),s0)::g0)))
+                                                    then let d''' =
+                                                           (((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Hid),s0)::g0)
+                                                         in
+                                                         Some (d''',(DNu (b1,
+                                                         b2, (DPar (q',
+                                                         q'')))))
+                                                    else raise
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise
+                                    | Ill -> raise
+                                    | Vis ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 =
+                                                removeEntry (a1,a2)
+                                                  (removeEntry (b1,b2) g)
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let d1 = (((a1,a2),Vis),(Chan
+                                                (Lin, Out,
+                                                t0)))::((((b1,b2),Vis),s0)::g0)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((a1,a2),Vis),(Chan
+                                                (Lin, Inp,
+                                                t0)))::((((b1,b2),Vis),r)::g0)
+                                              in
+                                              (match elts d1 q1 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q2 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    if andb
+                                                         (typeEnv_eq d'
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),r)::g0)))
+                                                         (typeEnv_eq d''
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),s0)::g0)))
+                                                    then Some (d'',(DPar (q',
+                                                           q'')))
+                                                    else raise
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise)
+                              else raise
+                            | _ -> raise)
+                         | Un ->
+                           (match p3 with
+                            | Io ->
+                              if b
+                              then let p4,b0 = inB (b1,b2) g in
+                                   let f0,s0 = p4 in
+                                   (match f0 with
+                                    | Hid ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 = removeEntry (b1,b2) g
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((b1,b2),Ill),r)::g0
+                                              in
+                                              (match elts g q1 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q2 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    let p7,b3 =
+                                                      inB (a1,a2) d''
+                                                    in
+                                                    let f1,ta = p7 in
+                                                    (match f1 with
+                                                     | Vis ->
+                                                       if b3
+                                                       then let p8,b4 =
+                                                              inB (b1,b2) d''
+                                                            in
+                                                            let f2,tb = p8 in
+                                                            (match f2 with
+                                                             | Vis ->
+                                                               if b4
+                                                               then if 
+                                                                    andb
+                                                                    (andb
+                                                                    (typeEnv_eq
+                                                                    d'
+                                                                    ((((b1,b2),Vis),r)::g0))
+                                                                    (type_eq
+                                                                    ta (Chan
+                                                                    (Un, Io,
+                                                                    t0))))
+                                                                    (type_eq
+                                                                    tb s0)
+                                                                    then 
+                                                                    let d''' =
+                                                                    (((b1,b2),Hid),tb)::
+                                                                    (removeEntry
+                                                                    (b1,b2)
+                                                                    d'')
+                                                                    in
+                                                                    Some
+                                                                    (d''',(DNu
+                                                                    (b1, b2,
+                                                                    (DPar
+                                                                    (q',
+                                                                    q'')))))
+                                                                    else raise
+                                                               else raise
+                                                             | _ -> raise)
+                                                       else raise
+                                                     | _ -> raise)
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise
+                                    | Ill -> raise
+                                    | Vis ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 = removeEntry (b1,b2) g
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((b1,b2),Vis),r)::g0
+                                              in
+                                              (match elts g q1 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q2 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    let p7,b3 =
+                                                      inB (a1,a2) d''
+                                                    in
+                                                    let f1,ta = p7 in
+                                                    (match f1 with
+                                                     | Vis ->
+                                                       if b3
+                                                       then let p8,b4 =
+                                                              inB (b1,b2) d''
+                                                            in
+                                                            let f2,tb = p8 in
+                                                            (match f2 with
+                                                             | Vis ->
+                                                               if b4
+                                                               then if 
+                                                                    andb
+                                                                    (andb
+                                                                    (typeEnv_eq
+                                                                    d'
+                                                                    ((((b1,b2),Vis),r)::g0))
+                                                                    (type_eq
+                                                                    ta (Chan
+                                                                    (Un, Io,
+                                                                    t0))))
+                                                                    (type_eq
+                                                                    tb s0)
+                                                                    then 
+                                                                    Some
+                                                                    (d'',(DPar
+                                                                    (q',
+                                                                    q'')))
+                                                                    else raise
+                                                               else raise
+                                                             | _ -> raise)
+                                                       else raise
+                                                     | _ -> raise)
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise)
+                              else raise
+                            | _ -> raise))
+                      | Top -> raise)
+                   | _ -> raise)
+           | None -> raise)
+        | SComR (s1, s2) ->
+          (match tau_arg with
+           | Some p0 ->
+             let b1,b2 = p0 in
+             if nat_pair_eq_dec (a1,a2) (b1,b2)
+             then raise
+             else let p1,b = inB (a1,a2) g in
+                  let f,p2 = p1 in
+                  (match f with
+                   | Vis ->
+                     (match p2 with
+                      | Chan (m, p3, t0) ->
+                        (match m with
+                         | Lin ->
+                           (match p3 with
+                            | Io ->
+                              if b
+                              then let p4,b0 = inB (b1,b2) g in
+                                   let f0,s0 = p4 in
+                                   (match f0 with
+                                    | Hid ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 =
+                                                removeEntry (a1,a2)
+                                                  (removeEntry (b1,b2) g)
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let d1 = (((a1,a2),Vis),(Chan
+                                                (Lin, Out,
+                                                t0)))::((((b1,b2),Hid),s0)::g0)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((a1,a2),Vis),(Chan
+                                                (Lin, Inp,
+                                                t0)))::((((b1,b2),Ill),r)::g0)
+                                              in
+                                              (match elts d1 q2 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q1 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    if andb
+                                                         (typeEnv_eq d'
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),r)::g0)))
+                                                         (typeEnv_eq d''
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),s0)::g0)))
+                                                    then let d''' =
+                                                           (((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Hid),s0)::g0)
+                                                         in
+                                                         Some (d''',(DNu (b1,
+                                                         b2, (DPar (q'',
+                                                         q')))))
+                                                    else raise
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise
+                                    | Ill -> raise
+                                    | Vis ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 =
+                                                removeEntry (a1,a2)
+                                                  (removeEntry (b1,b2) g)
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let d1 = (((a1,a2),Vis),(Chan
+                                                (Lin, Out,
+                                                t0)))::((((b1,b2),Vis),s0)::g0)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((a1,a2),Vis),(Chan
+                                                (Lin, Inp,
+                                                t0)))::((((b1,b2),Vis),r)::g0)
+                                              in
+                                              (match elts d1 q2 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q1 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    if andb
+                                                         (typeEnv_eq d'
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),r)::g0)))
+                                                         (typeEnv_eq d''
+                                                           ((((a1,a2),Vis),(Chan
+                                                           (Lin, Empty,
+                                                           t0)))::((((b1,b2),Vis),s0)::g0)))
+                                                    then Some (d'',(DPar
+                                                           (q'', q')))
+                                                    else raise
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise)
+                              else raise
+                            | _ -> raise)
+                         | Un ->
+                           (match p3 with
+                            | Io ->
+                              if b
+                              then let p4,b0 = inB (b1,b2) g in
+                                   let f0,s0 = p4 in
+                                   (match f0 with
+                                    | Hid ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 = removeEntry (b1,b2) g
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((b1,b2),Ill),r)::g0
+                                              in
+                                              (match elts g q2 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q1 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    let p7,b3 =
+                                                      inB (a1,a2) d''
+                                                    in
+                                                    let f1,ta = p7 in
+                                                    (match f1 with
+                                                     | Vis ->
+                                                       if b3
+                                                       then let p8,b4 =
+                                                              inB (b1,b2) d''
+                                                            in
+                                                            let f2,tb = p8 in
+                                                            (match f2 with
+                                                             | Vis ->
+                                                               if b4
+                                                               then if 
+                                                                    andb
+                                                                    (andb
+                                                                    (typeEnv_eq
+                                                                    d'
+                                                                    ((((b1,b2),Vis),r)::g0))
+                                                                    (type_eq
+                                                                    ta (Chan
+                                                                    (Un, Io,
+                                                                    t0))))
+                                                                    (type_eq
+                                                                    tb s0)
+                                                                    then 
+                                                                    let d''' =
+                                                                    (((b1,b2),Hid),tb)::
+                                                                    (removeEntry
+                                                                    (b1,b2)
+                                                                    d'')
+                                                                    in
+                                                                    Some
+                                                                    (d''',(DNu
+                                                                    (b1, b2,
+                                                                    (DPar
+                                                                    (q'',
+                                                                    q')))))
+                                                                    else raise
+                                                               else raise
+                                                             | _ -> raise)
+                                                       else raise
+                                                     | _ -> raise)
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise
+                                    | Ill -> raise
+                                    | Vis ->
+                                      if b0
+                                      then (match tremove s0 t0 with
+                                            | Some r ->
+                                              let g0 = removeEntry (b1,b2) g
+                                              in
+                                              let act1 = AOut (a1, a2, b1, b2)
+                                              in
+                                              let act2 = AIn (a1, a2, b1, b2)
+                                              in
+                                              let d2 = (((b1,b2),Vis),r)::g0
+                                              in
+                                              (match elts g q2 act1 None s1 with
+                                               | Some p5 ->
+                                                 let d',q' = p5 in
+                                                 (match elts d2 q1 act2 None
+                                                          s2 with
+                                                  | Some p6 ->
+                                                    let d'',q'' = p6 in
+                                                    let p7,b3 =
+                                                      inB (a1,a2) d''
+                                                    in
+                                                    let f1,ta = p7 in
+                                                    (match f1 with
+                                                     | Vis ->
+                                                       if b3
+                                                       then let p8,b4 =
+                                                              inB (b1,b2) d''
+                                                            in
+                                                            let f2,tb = p8 in
+                                                            (match f2 with
+                                                             | Vis ->
+                                                               if b4
+                                                               then if 
+                                                                    andb
+                                                                    (andb
+                                                                    (typeEnv_eq
+                                                                    d'
+                                                                    ((((b1,b2),Vis),r)::g0))
+                                                                    (type_eq
+                                                                    ta (Chan
+                                                                    (Un, Io,
+                                                                    t0))))
+                                                                    (type_eq
+                                                                    tb s0)
+                                                                    then 
+                                                                    Some
+                                                                    (d'',(DPar
+                                                                    (q'',
+                                                                    q')))
+                                                                    else raise
+                                                               else raise
+                                                             | _ -> raise)
+                                                       else raise
+                                                     | _ -> raise)
+                                                  | None -> raise)
+                                               | None -> raise)
+                                            | None -> raise)
+                                      else raise)
+                              else raise
+                            | _ -> raise))
+                      | Top -> raise)
+                   | _ -> raise)
+           | None -> raise))
      | _ ->
-       (match elts g q1 act tau_arg false with
-        | Some p0 -> let d',q' = p0 in Some (d',(DPar (q', q2)))
-        | None -> raise))
+       (match s with
+        | SParL s' ->
+          (match elts g q1 act tau_arg s' with
+           | Some p0 -> let d',q' = p0 in Some (d',(DPar (q', q2)))
+           | None -> raise)
+        | SParR s' ->
+          (match elts g q2 act tau_arg s' with
+           | Some p0 -> let d',q' = p0 in Some (d',(DPar (q1, q')))
+           | None -> raise)
+        | _ -> raise))
   | DNu (b1, b2, q) ->
     (match act with
-     | AOut (a1, a2, c1, c2) ->
+     | AIn (a1, a2, c1, c2) ->
        if pair_eq (b1,b2) (a1,a2)
        then raise
        else if pair_eq (b1,b2) (c1,c2)
-            then let p0,b0 = inB (b1,b2) g in
-                 let f,t0 = p0 in
-                 (match f with
-                  | Hid ->
-                    if b0
-                    then let d1 =
-                           (((b1,b2),Vis),t0)::(removeEntry (b1,b2)
-                                                 g)
-                         in
-                         elts d1 q act None false
-                    else raise
-                  | _ -> raise)
-            else let p0,b0 = inB (b1,b2) g in
+            then raise
+            else let p0,b = inB (b1,b2) g in
                  let f,_ = p0 in
                  (match f with
                   | Hid ->
-                    if b0
+                    if b
                     then let sl = secLabs p in
                          let dg = domain g in
                          if andb
                               (andb (andb (inclB sl dg) (posB sl))
                                 (nodupb sl))
                               ((<=) (max sl) (max dg))
-                         then (match elts (changeVis (b1,b2) g) q
-                                       act None false with
+                         then (match elts (changeVis (b1,b2) g) q act tau_arg
+                                       s with
                                | Some p1 ->
                                  let g2,q' = p1 in
-                                 let p2,b3 = inB (b1,b2) g2 in
+                                 let p2,b0 = inB (b1,b2) g2 in
                                  let f0,_ = p2 in
                                  (match f0 with
                                   | Vis ->
-                                    if b3
-                                    then Some
-                                           ((changeHid (b1,b2) g2),(DNu
+                                    if b0
+                                    then Some ((changeHid (b1,b2) g2),(DNu
                                            (b1, b2, q')))
                                     else raise
                                   | _ -> raise)
@@ -917,12 +1076,78 @@ let rec elts g p act tau_arg b =
                          else raise
                     else raise
                   | _ -> raise)
-     | _ -> raise)
+     | AOut (a1, a2, c1, c2) ->
+       if pair_eq (b1,b2) (a1,a2)
+       then raise
+       else if pair_eq (b1,b2) (c1,c2)
+            then let p0,b = inB (b1,b2) g in
+                 let f,t0 = p0 in
+                 (match f with
+                  | Hid ->
+                    if b
+                    then let d1 = (((b1,b2),Vis),t0)::(removeEntry (b1,b2) g)
+                         in
+                         elts d1 q act None s
+                    else raise
+                  | _ -> raise)
+            else let p0,b = inB (b1,b2) g in
+                 let f,_ = p0 in
+                 (match f with
+                  | Hid ->
+                    if b
+                    then let sl = secLabs p in
+                         let dg = domain g in
+                         if andb
+                              (andb (andb (inclB sl dg) (posB sl))
+                                (nodupb sl))
+                              ((<=) (max sl) (max dg))
+                         then (match elts (changeVis (b1,b2) g) q act None s with
+                               | Some p1 ->
+                                 let g2,q' = p1 in
+                                 let p2,b0 = inB (b1,b2) g2 in
+                                 let f0,_ = p2 in
+                                 (match f0 with
+                                  | Vis ->
+                                    if b0
+                                    then Some ((changeHid (b1,b2) g2),(DNu
+                                           (b1, b2, q')))
+                                    else raise
+                                  | _ -> raise)
+                               | None -> raise)
+                         else raise
+                    else raise
+                  | _ -> raise)
+     | ATau (_, _) ->
+       let p0,b = inB (b1,b2) g in
+       let f,_ = p0 in
+       (match f with
+        | Hid ->
+          if b
+          then let sl = secLabs p in
+               let dg = domain g in
+               if andb (andb (andb (inclB sl dg) (posB sl)) (nodupb sl))
+                    ((<=) (max sl) (max dg))
+               then (match elts (changeVis (b1,b2) g) q act tau_arg s with
+                     | Some p1 ->
+                       let g2,q' = p1 in
+                       let p2,b0 = inB (b1,b2) g2 in
+                       let f0,_ = p2 in
+                       (match f0 with
+                        | Vis ->
+                          if b0
+                          then Some ((changeHid (b1,b2) g2),(DNu (b1, b2,
+                                 q')))
+                          else raise
+                        | _ -> raise)
+                     | None -> raise)
+               else raise
+          else raise
+        | _ -> raise))
   | DInp (a1, a2, x1, x2, q) ->
     (match act with
      | AIn (c1, c2, b1, b2) ->
        if pair_eq (a1,a2) (c1,c2)
-       then let p0,b0 = inB (a1,a2) g in
+       then let p0,b = inB (a1,a2) g in
             let f0,p1 = p0 in
             (match f0 with
              | Vis ->
@@ -932,42 +1157,37 @@ let rec elts g p act tau_arg b =
                    | Lin ->
                      (match pl with
                       | Inp ->
-                        if b0
-                        then let p2,b3 = inB (b1,b2) g in
-                             let f,s = p2 in
-                             if b3
+                        if b
+                        then let p2,b0 = inB (b1,b2) g in
+                             let f,s0 = p2 in
+                             if b0
                              then if negb (flag_eq f Hid)
-                                  then (match tplus s t0 with
+                                  then (match tplus s0 t0 with
                                         | Some r ->
-                                          let d =
-                                            (((a1,a2),Vis),(Chan
-                                            (Lin, Empty,
+                                          let d = (((a1,a2),Vis),(Chan (Lin,
+                                            Empty,
                                             t0)))::((((b1,b2),Vis),r)::
                                             (removeEntry (a1,a2)
-                                              (removeEntry (b1,b2)
-                                                g)))
+                                              (removeEntry (b1,b2) g)))
                                           in
-                                          Some
-                                          (d,(pmap q x1 x2 b1 b2))
+                                          Some (d,(pmap q x1 x2 b1 b2))
                                         | None -> raise)
                                   else raise
                              else raise
                         else raise
                       | _ -> raise)
                    | Un ->
-                     if b0
-                     then let p2,b3 = inB (b1,b2) g in
-                          let f,s = p2 in
-                          if b3
-                          then if andb
-                                    ((||) (pol_eq pl Inp)
-                                      (pol_eq pl Io))
+                     if b
+                     then let p2,b0 = inB (b1,b2) g in
+                          let f,s0 = p2 in
+                          if b0
+                          then if andb ((||) (pol_eq pl Inp) (pol_eq pl Io))
                                     (negb (flag_eq f Hid))
-                               then (match tplus s t0 with
+                               then (match tplus s0 t0 with
                                      | Some r ->
                                        let d =
-                                         (((b1,b2),Vis),r)::
-                                         (removeEntry (b1,b2) g)
+                                         (((b1,b2),Vis),r)::(removeEntry
+                                                              (b1,b2) g)
                                        in
                                        Some (d,(pmap q x1 x2 b1 b2))
                                      | None -> raise)
@@ -982,7 +1202,7 @@ let rec elts g p act tau_arg b =
     (match act with
      | AOut (c1, c2, d1, d2) ->
        if andb (pair_eq (a1,a2) (c1,c2)) (pair_eq (b1,b2) (d1,d2))
-       then let p0,b0 = inB (a1,a2) g in
+       then let p0,b = inB (a1,a2) g in
             let f,p1 = p0 in
             (match f with
              | Vis ->
@@ -992,17 +1212,16 @@ let rec elts g p act tau_arg b =
                    | Lin ->
                      (match pl with
                       | Out ->
-                        if b0
-                        then let p2,b3 = inB (b1,b2) g in
-                             let f0,s = p2 in
+                        if b
+                        then let p2,b0 = inB (b1,b2) g in
+                             let f0,s0 = p2 in
                              (match f0 with
                               | Vis ->
-                                if b3
-                                then (match tremove s t0 with
+                                if b0
+                                then (match tremove s0 t0 with
                                       | Some r ->
-                                        let d =
-                                          (((a1,a2),Vis),(Chan
-                                          (Lin, Empty,
+                                        let d = (((a1,a2),Vis),(Chan (Lin,
+                                          Empty,
                                           t0)))::((((b1,b2),Vis),r)::
                                           (removeEntry (a1,a2)
                                             (removeEntry (b1,b2) g)))
@@ -1014,19 +1233,18 @@ let rec elts g p act tau_arg b =
                         else raise
                       | _ -> raise)
                    | Un ->
-                     if b0
-                     then let p2,b3 = inB (b1,b2) g in
-                          let f0,s = p2 in
+                     if b
+                     then let p2,b0 = inB (b1,b2) g in
+                          let f0,s0 = p2 in
                           (match f0 with
                            | Vis ->
-                             if b3
-                             then if (||) (pol_eq pl Out)
-                                       (pol_eq pl Io)
-                                  then (match tremove s t0 with
+                             if b0
+                             then if (||) (pol_eq pl Out) (pol_eq pl Io)
+                                  then (match tremove s0 t0 with
                                         | Some r ->
                                           let d =
-                                            (((b1,b2),Vis),r)::
-                                            (removeEntry (b1,b2) g)
+                                            (((b1,b2),Vis),r)::(removeEntry
+                                                                 (b1,b2) g)
                                           in
                                           Some (d,q)
                                         | None -> raise)

@@ -148,7 +148,7 @@ Qed.
     
    
    Lemma lts_vis_subject: forall a a1 a2 b1 b2 g p g1 p1 pf,
-       lts g p a g1 p1 pf ->
+       ltsL g p a g1 p1 pf ->
        (a = aIn a1 a2 b1 b2 \/ a = aOut a1 a2 b1 b2) ->
        flagOf g (a1, a2) vis.
    Proof with eauto.

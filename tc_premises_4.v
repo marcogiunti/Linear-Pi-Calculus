@@ -1020,13 +1020,13 @@ Qed.
 
 Lemma open_free g1 p1 a1 a2 b1 b2 g2 p2 pf
   (nd : NoDup (secLabs p1)): 
-  lts g1 p1 (aOut a1 a2 b1 b2) g2 p2 pf ->
+  ltsL g1 p1 (aOut a1 a2 b1 b2) g2 p2 pf ->
   disjoint (fn p1) (secLabs p1) ->
   ~In (b1, b2) (secLabs p2).
 Proof with eauto using payload_occurs, disjoint_commute.
   intros LTS DIS; dependent induction LTS; simpl in *...
 
-  Case parL.
+  Case L_parL.
   assert (IH: ~ In (b1, b2) (secLabs p2)).
   eapply IHLTS...
   eapply no_dup_iff in nd; intuition.
@@ -1045,7 +1045,7 @@ Proof with eauto using payload_occurs, disjoint_commute.
 
   all: intuition.
 
-  Case open. 
+  Case L_open. 
   assert (ND :=nd).
   eapply IHLTS; eapply no_dup_distr in nd; intuition...
 
@@ -1056,7 +1056,7 @@ Proof with eauto using payload_occurs, disjoint_commute.
     eapply no_dup_iff in ND; intuition; 
     try eapply disjoint_absurd...
 
-  Case hide.
+  Case L_hide.
   assert (ND :=nd).
   eapply IHLTS; eapply no_dup_distr in nd; intuition...
   eapply disjoint_commute,disjoint_app_l,disjoint_commute in DIS...
@@ -1070,8 +1070,8 @@ Lemma identif_payload
   k1 k2 k' k'' q1 q2 a1 a2 b1 b2 b3 b4 pf1 pf2
   (nd : NoDup (secLabs q1)) 
   (dis: disjoint (fn q1) (secLabs q1)):
-  lts k1 q1 (aOut a1 a2 b1 b2) k' q2 pf1 ->
-  lts k2 q1 (aOut a1 a2 b3 b4) k'' q2 pf2 ->
+  ltsL k1 q1 (aOut a1 a2 b1 b2) k' q2 pf1 ->
+  ltsL k2 q1 (aOut a1 a2 b3 b4) k'' q2 pf2 ->
   b1 = b3 /\ b2 = b4.
 Proof with eauto.
   intros.
@@ -1081,22 +1081,22 @@ Proof with eauto.
     assert (ND := nd);
     try simpl in *; 
     try eapply no_dup_distr in ND as [nd1 nd2]...
-  inversion H0; subst; eapply IHlts;
+  inversion H0; subst; eapply IHltsL;
     try eapply disjoint_app_l,disjoint_commute,
     disjoint_app_r,disjoint_commute in dis... 
   inversion H2; subst...
   inversion H3; subst...
 
-  Case open.
+  Case L_open.
   remember b1 as c1; remember b2 as c2.
   subst b1 b2.
   remember b3 as b1; remember b4 as b2.
   subst b3 b4.
   assert (ND := nd).
   assert (CONCL: 
-           lts g (dNu c1 c2 p) 
+           ltsL g (dNu c1 c2 p) 
              (aOut a1 a2 c1 c2) g' p' pf)...
-  inv H1; eapply IHlts ...
+  inv H1; eapply IHltsL ...
   eapply disjoint_commute,disjoint_app_l,disjoint_commute,
     disjoint_remove in dis;
     try intros ABS;
@@ -1116,9 +1116,9 @@ Proof with eauto.
 
   
 
-  Case hide.
+  Case L_hide.
   assert (ND := nd).
-  inv H1; eapply IHlts ...
+  inv H1; eapply IHltsL ...
   eapply disjoint_commute,disjoint_app_l,disjoint_commute,
     disjoint_remove in dis;
     try intros ABS;
@@ -1147,7 +1147,7 @@ Qed.
 
 
 Lemma lts_after_inp: forall g1 p1 a1 a2 b1 b2 g2 p2 nd_pf,
-    lts g1 p1
+    ltsL g1 p1
       (aIn a1 a2 b1 b2) g2 p2 nd_pf ->
     exists f m q t r tb,
       typeOf g1 (a1, a2) (Chan m q t) /\
@@ -1178,7 +1178,7 @@ Proof with eauto.
 Qed.
 
 Lemma lts_after_out: forall g1 p1 a1 a2 b1 b2 g2 p2 nd_pf,
-    lts g1 p1
+    ltsL g1 p1
       (aOut a1 a2 b1 b2) g2 p2 nd_pf ->
     exists m q t r tb,
       typeOf g1 (a1, a2) (Chan m q t) /\
@@ -1228,7 +1228,7 @@ Qed.
 
 
 Lemma lts_out_not_ill : forall g1 p1 a1 a2 b1 b2 g2 p2 nd_pf,
-    lts g1 p1 (aOut a1 a2 b1 b2) g2 p2 nd_pf ->
+    ltsL g1 p1 (aOut a1 a2 b1 b2) g2 p2 nd_pf ->
     flagOf g1 (b1, b2) ill ->
     False.
 Proof with eauto.

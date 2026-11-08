@@ -16,6 +16,8 @@ Require Import
   type_system_rules
   semantics
   linear_pi
+  par_equiv
+  right_rules
   sne_premises
   pairEq
   lts_no_dup
@@ -316,7 +318,7 @@ Qed.
 
 (* A name that is hidden in g but output by p must be bound in p. *)
 Lemma lts_out_hid_secLabs : forall g p a g' p' pf,
-    lts g p a g' p' pf ->
+    ltsL g p a g' p' pf ->
     forall c1 c2 d1 d2 s,
       a = aOut c1 c2 d1 d2 ->
       In ((d1, d2), hid, s) g ->
@@ -344,7 +346,7 @@ Proof.
 Qed.
 
 Lemma lts_sl_pos : forall g p a g' p' pf,
-    lts g p a g' p' pf ->
+    ltsL g p a g' p' pf ->
     sl_pos p ->
     sl_pos p'.
 Proof.
@@ -373,6 +375,18 @@ Proof.
   - apply sl_pos_nu_intro; eauto using sl_pos_nu, sl_pos_nu_pos.
 Qed.
 
+Lemma lts_sl_pos_full : forall g p a g' p' pf,
+    lts g p a g' p' pf ->
+    sl_pos p ->
+    sl_pos p'.
+Proof.
+  intros g p a g' p' pf LTS SLP.
+  destruct (lts_to_left _ _ _ _ _ _ LTS) as (L & L' & E & E' & LEFT).
+  eapply sl_pos_par_equiv; [apply par_equiv_sym; eassumption |].
+  eapply lts_sl_pos; [eassumption |].
+  eapply sl_pos_par_equiv; eassumption.
+Qed.
+
 (* Subject reduction lifted to weak (multi-step tau) transitions. As in sr,
    the conclusion holds for every isMap proof of the final environment. *)
 Lemma subject_reduction_wlts :
@@ -396,7 +410,7 @@ Proof.
   - inversion EQC; subst; auto.
   - destruct c1 as [g1 p1].
     destruct STEP as (a1 & a2 & nd_pf & LTS).
-    apply (IH eq_refl g1 p1); [eapply lts_sl_pos; eauto | | reflexivity].
+    apply (IH eq_refl g1 p1); [eapply lts_sl_pos_full; eauto | | reflexivity].
     intros pf1.
     eapply sr with (pf := no_dup_isMap _ nd_pf); eauto.
 Qed.
@@ -420,11 +434,8 @@ Proof.
   - inversion EQC; subst; auto.
   - destruct c1 as [g1 p1].
     destruct STEP as (a1 & a2 & nd_pf & LTS).
-    destruct (typeCheck_no_dup _ _ _ pf TC) as [INCL NDSL].
-    assert (ND1 : NoDup (domain g1)).
-    { eapply lts_no_dup with (pf_incl := incl_incl2 _ _ NDSL pf INCL); eauto.
-      apply incl_preserves_max; auto. }
-    apply (IH eq_refl g1 p1 ND1); [eapply lts_sl_pos; eauto | | reflexivity].
+    assert (ND1 : NoDup (domain g1)) by (eapply lts_no_dup_typed; eauto).
+    apply (IH eq_refl g1 p1 ND1); [eapply lts_sl_pos_full; eauto | | reflexivity].
     eapply sr; eauto.
 Qed.
 

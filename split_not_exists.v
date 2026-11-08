@@ -236,7 +236,7 @@ Proof with eauto.
 Qed.
 
 (*Lemma split_exists_out  a1 a2 t b1 b2 s s1 g1 p2 pf0 g0 g2 g2 pf1 pf2 pf:
-  lts ((a1, a2, vis, Chan lin out t) :: (b1, b2, vis, s) :: g1) p1 (aOut a1 a2 b1 b2)
+  ltsL ((a1, a2, vis, Chan lin out t) :: (b1, b2, vis, s) :: g1) p1 (aOut a1 a2 b1 b2)
            ((a1, a2, vis, Chan lin empty t) :: (b1, b2, vis, s1) :: g1) p2 pf0 ->
   tEnv_split g0 g2 g pf1 pf2 pf ->
   In (b1, b2, vis, s) g0 ->
@@ -249,14 +249,14 @@ Qed.
 (* USED WHERE??? 
 Lemma split_exists_tau g1 g2 g pf1 pf2 pf k1 nd_pf1 nd_pf p p1 a1 a2:
   tEnv_split g1 g2 g pf1 pf2 pf ->
-  lts g1 p (aTau a1 a2) k1 p1 nd_pf1 ->
+  ltsL g1 p (aTau a1 a2) k1 p1 nd_pf1 ->
   exists k,
-    lts g p (aTau a1 a2) k p1 nd_pf.
+    ltsL g p (aTau a1 a2) k p1 nd_pf.
 Proof with eauto.
   introv TS LTS.
   dependent induction LTS;
     try eapply IHLTS in TS as (k&TS)...
-  - econstructor;eapply parL...
+  - econstructor;eapply L_parL...
   - clear IHLTS1 IHLTS2.
     eapply tsub_io with (pf := pf) in H0 as K...
     assert (INb := H1).
@@ -274,7 +274,7 @@ Proof with eauto.
     eapply split_type_plus with (pf2 := pf2) (pf := pf) (t := r) in TYP as (t2 &TYP &TP)...
     eapply type_plus_comm in TP;
       eapply type_remove_super in H as (s2 &TREM)...
-    econstructor; eapply lcomL with (b1 := b1)(b2 := b2) (s :=r) (t := t)...
+    econstructor; eapply L_lcomL with (b1 := b1)(b2 := b2) (s :=r) (t := t)...
 *)
 
 Lemma split_rewrite_pf: forall g1 g2 g pf1 pf2 pf pf',
@@ -369,7 +369,7 @@ Lemma split_rewrite_pf: forall g1 g2 g pf1 pf2 pf pf',
 
 
 Lemma payload_occurs  g1 p1 a1 a2 b1 b2 g2 p2 pf:
-lts g1 p1 (aOut a1 a2 b1 b2) g2 p2 pf ->
+ltsL g1 p1 (aOut a1 a2 b1 b2) g2 p2 pf ->
 In (b1, b2) (fn p1) \/ In (b1, b2) (secLabs p1).
 Proof with eauto.
   introv LTS.
@@ -382,7 +382,7 @@ Qed.
 Lemma split_not_exists_lts :
   forall g1 g2 g k1 p a  p' pf1 pf2 pf nd_pf1 (nd_pf2 : NoDup (domain g2)) nd_pf,
     tEnv_split g1 g2 g pf1 pf2 pf ->
-    lts g1 p a k1 p' nd_pf1 ->
+    ltsL g1 p a k1 p' nd_pf1 ->
      NoDup (secLabs p) ->
      incl (secLabs p) (domain (hid_proj g1)) ->
     (*(forall x f1 f2,
@@ -393,7 +393,7 @@ Lemma split_not_exists_lts :
      wf p -> 
      sl_pos p ->
      max (secLabs p) <= max (domain g1) ->
-    (~ exists g', lts g p a g' p' nd_pf) ->
+    (~ exists g', ltsL g p a g' p' nd_pf) ->
     exists x1 x2 y1 y2 t,
       (a = aIn x1 x2 y1 y2 /\
        typeOf g1 (x1, x2) (Chan lin inp t) /\
@@ -417,7 +417,7 @@ Proof with eauto.
   generalize dependent g2.
   dependent induction LTS.
   intros g2 pf2 nd_pf2 g0 pf0 nd_pf0 TSPLIT  NLTS.
-  - Case parL.
+  - Case L_parL.
     eapply sl_pos_par_l in SLP;
       eapply max_sl_par in MAX as (MAX &_).
     apply IHLTS with
@@ -433,9 +433,9 @@ Proof with eauto.
     eapply wf_par in WF; intuition.
     unfold not; intros ABSURD. destruct ABSURD as [g0' ABSURD].
     elim NLTS. exists g0'.
-    apply parL with (q := q) in ABSURD.
+    apply L_parL with (q := q) in ABSURD.
     assumption.
-  - Case lOut.
+  - Case L_lOut.
     intros g2 pf2 nd_pf2 g0 pf0 nd_pf0 TSPLIT NLTS.
     assert (TIN := H0).
     assert (TINb := H1).
@@ -453,7 +453,7 @@ Proof with eauto.
       * destruct H1 as [t1' [t2' [TYP_b TREM]]].
         destruct H0 as [POUT | PIO].
         ** inversion POUT; subst; auto.
-           apply lOut with
+           apply L_lOut with
                g0 p a1 a2 b1 b2 nd_pf0 t t1' t2' in TREM
              as LTS.
            remember  ((a1, a2, vis, Chan lin empty t)
@@ -490,7 +490,7 @@ Proof with eauto.
       * assumption.
       * assumption.
     + assumption.
-  - Case uOut.
+  - Case L_uOut.
     intros g2 pf2 nd_pf2 g0 pf0 nd_pf0 TSPLIT NLTS.
     assert (TIN := H1).
     elim NLTS.
@@ -500,7 +500,7 @@ Proof with eauto.
         g g2 g0 pf1 pf2 pf0 b1 b2 vis t t1 t2 as TYP2.
     apply TYP2 in H2 as TYP_b.
     destruct TYP_b as [t1' [t2' [TYP_b TREM]]].
-    apply uOut with
+    apply L_uOut with
         g0 pol p a1 a2 b1 b2 nd_pf0 t t1' t2'
       in H.
     clear TYP2.
@@ -536,7 +536,7 @@ Proof with eauto.
     apply F_Entry in H3; assumption.
     apply F_Entry in H4; assumption.
     all:assumption.
-  - Case lIn.
+  - Case L_lIn.
     intros g2 pf2 nd_pf2 g0 pf0 nd_pf0 TSPLIT NLTS.
     remember pf as nd_pf. subst pf.
     remember pf1 as pf. subst pf1.
@@ -580,7 +580,7 @@ Proof with eauto.
                      :: ((b1, b2), vis, t2)
                      :: (removeEntry (a1, a2)
                                      (removeEntry (b1, b2) g0)))).
-          apply lIn with
+          apply L_lIn with
               g0 p a1 a2 x1 x2 b1 b2 nd_pf0 ill
               T Tb t2
             in ABS; eauto.
@@ -598,7 +598,7 @@ Proof with eauto.
                      :: ((b1, b2), vis, t2)
                      :: (removeEntry (a1, a2)
                                      (removeEntry (b1, b2) g0)))).
-          apply lIn with
+          apply L_lIn with
               g0 p a1 a2 x1 x2 b1 b2 nd_pf0 vis
               T Tb t2
             in ABS; eauto.
@@ -626,7 +626,7 @@ Proof with eauto.
                      :: ((b1, b2), vis, t2)
                      :: (removeEntry (a1, a2)
                                      (removeEntry (b1, b2) g0)))).
-          apply lIn with
+          apply L_lIn with
               g0 p a1 a2 x1 x2 b1 b2 nd_pf0 ill
               T Tb t2
             in ABS; eauto.
@@ -644,7 +644,7 @@ Proof with eauto.
                        :: ((b1, b2), vis, t2)
                        :: (removeEntry (a1, a2)
                                        (removeEntry (b1, b2) g0)))).
-            apply lIn with
+            apply L_lIn with
                 g0 p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                 T Tb t2
               in ABS; eauto.
@@ -675,7 +675,7 @@ Proof with eauto.
                         :: ((b1, b2), vis, Top)
                         :: (removeEntry (a1, a2)
                                         (removeEntry (b1, b2) g0)))).
-             apply lIn with
+             apply L_lIn with
                  g0 p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                  Top Top Top in ABS;  eauto.
              discriminate.
@@ -691,7 +691,7 @@ Proof with eauto.
                         :: ((b1, b2), vis, Top)
                         :: (removeEntry (a1, a2)
                                         (removeEntry (b1, b2) g0)))).
-             apply lIn with
+             apply L_lIn with
                  g0 p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                  Top Top Top
                in ABS; eauto.
@@ -699,7 +699,7 @@ Proof with eauto.
          * eauto.
     + left. split. eauto.
       eauto.
-  - Case uIn.
+  - Case L_uIn.
     intros g2 pf2 nd_pf2 g0 pf0 nd_pf0 TSPLIT NLTS.
     remember pf as nd_pf. subst pf.
     remember pf1 as pf. subst pf1.
@@ -739,7 +739,7 @@ Proof with eauto.
                 exists (((b1, b2), vis, t2')
                           :: (removeEntry (b1, b2) g0)).
                 assert (ABS2: inp = inp \/ inp = io) by eauto.
-                apply uIn with
+                apply L_uIn with
                     g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                     t Tb t2'
                   in ABS2...
@@ -755,7 +755,7 @@ Proof with eauto.
                 exists (((b1, b2), vis, t2')
                           :: (removeEntry (b1, b2) g0)).
                 assert (ABS2: inp = inp \/ inp = io) by eauto.
-                apply uIn with
+                apply L_uIn with
                     g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                     t Tb t2'
                   in ABS; eauto.
@@ -785,7 +785,7 @@ Proof with eauto.
               exists (((b1, b2), vis, Top)
                         :: (removeEntry (b1, b2) g0)).
               assert (ABS2: inp = inp \/ inp = io) by eauto.
-              apply uIn with
+              apply L_uIn with
                   g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                   Top Top Top in ABS...
               discriminate.
@@ -799,7 +799,7 @@ Proof with eauto.
               exists (((b1, b2), vis, Top)
                         :: (removeEntry (b1, b2) g0)).
               assert (ABS2: inp = inp \/ inp = io) by eauto.
-              apply uIn with
+              apply L_uIn with
                   g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                   Top Top Top in ABS...
               discriminate.
@@ -834,7 +834,7 @@ Proof with eauto.
                exists (((b1, b2), vis, t2')
                          :: (removeEntry (b1, b2) g0)).
                assert (ABS2: io = inp \/ io = io) by eauto.
-               apply uIn with
+               apply L_uIn with
                    g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                    t Tb t2'
                  in ABS2...
@@ -850,7 +850,7 @@ Proof with eauto.
                exists (((b1, b2), vis, t2')
                          :: (removeEntry (b1, b2) g0)).
                assert (ABS2: io = inp \/ io = io) by eauto.
-               apply uIn with
+               apply L_uIn with
                    g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                    t Tb t2'
                  in ABS; eauto.
@@ -880,7 +880,7 @@ Proof with eauto.
               exists (((b1, b2), vis, Top)
                         :: (removeEntry (b1, b2) g0)).
               assert (ABS2: io = inp \/ io = io) by eauto.
-              apply uIn with
+              apply L_uIn with
                   g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                   Top Top Top in ABS...
               discriminate.
@@ -894,12 +894,12 @@ Proof with eauto.
               exists (((b1, b2), vis, Top)
                         :: (removeEntry (b1, b2) g0)).
               assert (ABS2: io = inp \/ io = io) by eauto.
-              apply uIn with
+              apply L_uIn with
                   g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                   Top Top Top in ABS...
               discriminate.
         ** eauto.
-  - Case uRin.
+  - Case L_uRin.
     intros g2 pf2 nd_pf2 g0 pf0 nd_pf0 TSPLIT NLTS.
     remember pf as nd_pf. subst pf.
     remember pf1 as pf. subst pf1.
@@ -951,7 +951,7 @@ Proof with eauto.
                           dep_relabel p (domain g) nd_pf).
                 apply split_dep_relabel with
                     g2 pf pf2 pf0...
-                apply uRin with
+                apply L_uRin with
                     g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                     t Tb t2' in ABS2; subst l q. rewrite <-LEM...
                 eauto.
@@ -979,7 +979,7 @@ Proof with eauto.
                           dep_relabel p (domain g) nd_pf).
                 apply split_dep_relabel with
                     g2 pf pf2 pf0...
-                apply uRin with
+                apply L_uRin with
                     g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                     t Tb t2' in ABS2; subst l q. rewrite <-LEM...
                 eauto.
@@ -1021,7 +1021,7 @@ Proof with eauto.
                         dep_relabel p (domain g) nd_pf).
               apply split_dep_relabel with
                   g2 pf pf2 pf0...
-              apply uRin with
+              apply L_uRin with
                   g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                   Top Top Top in ABS2; subst l q. rewrite <-LEM...
               eauto.
@@ -1048,7 +1048,7 @@ Proof with eauto.
                         dep_relabel p (domain g) nd_pf).
               apply split_dep_relabel with
                   g2 pf pf2 pf0...
-              apply uRin with
+              apply L_uRin with
                   g0 inp p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                   Top Top Top in ABS2; subst l q. rewrite <-LEM...
               eauto.
@@ -1096,7 +1096,7 @@ Proof with eauto.
                          dep_relabel p (domain g) nd_pf).
                apply split_dep_relabel with
                    g2 pf pf2 pf0...
-               apply uRin with
+               apply L_uRin with
                    g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                    t Tb t2' in ABS2; subst l q. rewrite <-LEM...
                eauto.
@@ -1124,7 +1124,7 @@ Proof with eauto.
                          dep_relabel p (domain g) nd_pf).
                apply split_dep_relabel with
                    g2 pf pf2 pf0...
-               apply uRin with
+               apply L_uRin with
                    g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                    t Tb t2' in ABS2; subst l q. rewrite <-LEM...
                eauto.
@@ -1166,7 +1166,7 @@ Proof with eauto.
                         dep_relabel p (domain g) nd_pf).
               apply split_dep_relabel with
                   g2 pf pf2 pf0...
-              apply uRin with
+              apply L_uRin with
                   g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 ill
                   Top Top Top in ABS2; subst l q. rewrite <-LEM...
               eauto.
@@ -1193,14 +1193,14 @@ Proof with eauto.
                         dep_relabel p (domain g) nd_pf).
               apply split_dep_relabel with
                   g2 pf pf2 pf0...
-              apply uRin with
+              apply L_uRin with
                   g0 io p a1 a2 x1 x2 b1 b2 nd_pf0 vis
                   Top Top Top in ABS2; subst l q. rewrite <-LEM...
               eauto.
               discriminate.
               all:eauto.
         ** eauto.
-  - Case lcomL.
+  - Case L_lcomL.
     intros g2 pf3 nd_pf2 g1 pf4 nd_pf0 TSPLIT NLTS.
     elim NLTS.
     assert (DIFFA: (a1, a2) <> (b1, b2))...
@@ -1216,7 +1216,7 @@ Proof with eauto.
      apply no_dup_cons_removeEntry_app with
          g1 (a1, a2) (b1, b2) vis (Chan lin inp t) vis s01 in nd_pf0 as pf2'.
           
-    apply lcomL with
+    apply L_lcomL with
         (g := g1) (p1 := p1) (q1 := q1) (a1 := a1) (a2 := a2)
         (t := t) (s := s0) (b1 := b1) (b2 := b2) (p2 := p2)
         (q2 := q2) (s1 := s01) (pf := nd_pf0)
@@ -1411,7 +1411,7 @@ Proof with eauto.
        eauto.
        eapply in_hid_proj...
        all:eauto.
-  - Case lclsL. intros g2 pf3 nd_pf2 g1 pf4 nd_pf0 TSPLIT NLTS.
+  - Case L_lclsL. intros g2 pf3 nd_pf2 g1 pf4 nd_pf0 TSPLIT NLTS.
     elim NLTS. clear IHLTS1 IHLTS2.
      assert (DIFFA: (a1, a2) <> (b1, b2))...
     remember (removeEntry (a1, a2) (removeEntry (b1, b2) g1)) as g0'.
@@ -1426,7 +1426,7 @@ Proof with eauto.
      apply no_dup_cons_removeEntry_app with
          g1 (a1, a2) (b1, b2) vis (Chan lin inp t) vis s01 in nd_pf0 as pf2'.
           
-    apply lclsL with
+    apply L_lclsL with
         (g := g1) 
         (p1 := p1) (q1 := q1) (a1 := a1) (a2 := a2)
         (t := t) (s := s0) (b1 := b1) (b2 := b2)
@@ -1597,7 +1597,7 @@ Proof with eauto.
          try inv ABS; try contradiction.
        all:eauto.
        
-  - Case ucomL.
+  - Case L_ucomL.
     intros g2 pf3 nd_pf3 g4 pf4 nd_pf TSPLIT NLTS.
     elim NLTS. clear IHLTS1 IHLTS2.
     assert (DIFF: (a1, a2)<> (b1, b2))...
@@ -1669,7 +1669,7 @@ Proof with eauto.
     assert (type_plus s1 t s).
     unfold type_remove in H; destruct H as [TSUB [TREM2 TUN]].
     apply type_plus_comm in TREM2...
-    assert (lts ((b1, b2, vis, s1) :: removeEntry (b1, b2) g) q1 (aIn a1 a2 b1 b2)
+    assert (ltsL ((b1, b2, vis, s1) :: removeEntry (b1, b2) g) q1 (aIn a1 a2 b1 b2)
                 (k1 ++
                     (b1, b2, vis, s)
                     :: removeEntry (b1, b2) ((b1, b2, vis, s1) :: removeEntry (b1, b2) g)) q2 pf2).
@@ -1732,7 +1732,7 @@ Proof with eauto.
     exists
       (k2 ++ (b1, b2, vis, s0) :: removeEntry (b1, b2) g4).
     (*    apply no_dup_cons_removeEntry with (b := (b1, b2)) (f1 :=vis) (t1 := s1) in nd_pf as nd_pf2.*)
-    apply ucomL with
+    apply L_ucomL with
         (b1 := b1) (b2 := b2) (s := s0) (s1 := s01) (t := t) (pf1 := nd_pf) (pf2 := nd_pf2) .
     eauto.    
     apply tsub_io with g g2 g4 pf1 pf3 pf4
@@ -1837,7 +1837,7 @@ Proof with eauto.
     erewrite <-max_removeEntry_cons;
       try eapply in_g_in_domain...
     all : eauto.
-  -  Case open. intros g2 pf3 nd_pf3 g4 pf4 nd_pf TSPLIT NLTS.
+  -  Case L_open. intros g2 pf3 nd_pf3 g4 pf4 nd_pf TSPLIT NLTS.
      elim NLTS. clear IHLTS1 IHLTS2.
     apply split_exists_remove_l with
         g g2 g4 pf1 pf3 pf4 b1 b2 hid t s s1 
@@ -1904,7 +1904,7 @@ Proof with eauto.
     assert (type_plus s1 t s).
     unfold type_remove in H; destruct H as [TSUB [TREM2 TUN]].
     apply type_plus_comm in TREM2...
-    assert (lts ((b1, b2, ill, s1) :: removeEntry (b1, b2) g) q1 (aIn a1 a2 b1 b2)
+    assert (ltsL ((b1, b2, ill, s1) :: removeEntry (b1, b2) g) q1 (aIn a1 a2 b1 b2)
                 (k1 ++
                     (b1, b2, vis, s)
                     :: removeEntry (b1, b2) ((b1, b2, vis, s1) :: removeEntry (b1, b2) g)) q2 pf2).
@@ -1978,7 +1978,7 @@ Proof with eauto.
     exists
       ((b1, b2, hid, s0) :: removeEntry (b1, b2) k3).
     
-     apply uclsL with
+     apply L_uclsL with
          (b1 := b1) (b2 := b2) (s := s0) (s1 := s01) (t := t)
          (pf1 := nd_pf) (pf2 := nd_pf2) .
     eauto.    
@@ -2149,11 +2149,11 @@ Proof with eauto.
     
     intuition.
     
-    assert (((exists g' : typeEnv, lts k0 p (aOut a1 a2 b1 b2) g' p' pfk0) -> False)). intros ABS.
+    assert (((exists g' : typeEnv, ltsL k0 p (aOut a1 a2 b1 b2) g' p' pfk0) -> False)). intros ABS.
     destruct ABS as [k' ABS].
     elim H0.
     subst.
-    exists k'. apply open with (t := tb0) (pf1 := pfk0).
+    exists k'. apply L_open with (t := tb0) (pf1 := pfk0).
     assert (FLHID: flagOf g0 (b1, b2) hid).
     specialize fsub_hid with g g2 g0 pf1 pf2 pf3 b1 b2 t as FHID.
       intuition.
@@ -2211,7 +2211,7 @@ Proof with eauto.
 
     eapply wf_res...
 
-  - Case hide. intros.
+  - Case L_hide. intros.
     
     remember g0 as g3. subst g0.
 
@@ -2456,7 +2456,7 @@ Proof with eauto.
      assert (AX := H1); clear H1; intros (g' &ABS).
      assert (LEM: forall x t g p g' pf,
                 In (x, vis, t) g ->
-                lts g p a g' p' pf ->
+                ltsL g p a g' p' pf ->
               exists t',
                 In (x, vis, t') g').
      introv INLM LTSLM.
@@ -2469,10 +2469,10 @@ Proof with eauto.
      subst g'.
 
      
-     assert (HD:  lts g3
+     assert (HD:  ltsL g3
                       (dNu b1 b2 p) a (k1 ++ (b1, b2, hid, r) :: k2)
                       (dNu  b1 b2 p') nd_pf).
-     subst g3; eapply hide...
+     subst g3; eapply L_hide...
 
      elim AX.
      eexists...

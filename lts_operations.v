@@ -22,7 +22,7 @@ Import ListNotations.
 
 
 Lemma lts_lin_input_action: forall g p a1 a2 b1 b2 g1 p' nd_pf pol t s r,
-    lts g p (aIn a1 a2 b1 b2) g1 p' nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g1 p' nd_pf ->
     typeOf g (a1, a2) (Chan lin pol t) ->
     typeOf g (b1, b2) s ->
     type_plus s t r ->
@@ -92,7 +92,7 @@ Qed.
 
 Lemma lts_inp:
   forall g p a1 a2 b1 b2 g' p' nd_pf ta tb m q t r, 
-    lts g p (aIn a1 a2 b1 b2) g' p' nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g' p' nd_pf ->
     typeOf g (a1, a2) ta ->
     typeOf g (b1, b2) tb ->
     ta = Chan m q t ->
@@ -119,7 +119,7 @@ Proof with eauto.
 Qed.
  
 Lemma lts_un_output_action: forall g p a1 a2 b1 b2 g1 p' nd_pf pol t s r,
-    lts g p (aOut a1 a2 b1 b2) g1 p' nd_pf ->
+    ltsL g p (aOut a1 a2 b1 b2) g1 p' nd_pf ->
     typeOf g (a1, a2) (Chan un pol t) ->
     typeOf g (b1, b2) s ->
     type_remove s t r ->
@@ -192,7 +192,7 @@ Proof with eauto using typeEnv_eq_change_flag_removeEntry.
 Qed.
     
     Lemma lts_lin_output_action: forall g p a1 a2 b1 b2 g1 p' nd_pf pol t s r,
-    lts g p (aOut a1 a2 b1 b2) g1 p' nd_pf ->
+    ltsL g p (aOut a1 a2 b1 b2) g1 p' nd_pf ->
     typeOf g (a1, a2) (Chan lin pol t) ->
     typeOf g (b1, b2) s ->
     type_remove s t r ->
@@ -263,7 +263,7 @@ Qed.
 
 Lemma lts_out:
   forall g p a1 a2 b1 b2 g' p' nd_pf ta tb m q t s,
-    lts g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
+    ltsL g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
     typeOf g (a1, a2) ta ->
     ta = Chan m q t ->
     typeOf g (b1, b2) tb ->
@@ -289,7 +289,7 @@ Qed.
 
 (*Lemma lts_tau:
   forall g p a1 a2 g' p' nd_pf ta m q t,
-    lts g p (aTau a1 a2) g' p' nd_pf ->
+    ltsL g p (aTau a1 a2) g' p' nd_pf ->
     typeOf g (a1, a2) ta ->
     ta = Chan m q t ->
     ((m = lin  ->
@@ -306,7 +306,7 @@ Proof.
 Lemma typeCheck_lts_in:
   forall g1 g pf1 p a1 a2 b1 b2 g' p' nd_pf,
     typeCheck g1 pf1 p ->
-    lts g p (aIn a1 a2 b1 b2) g' p' nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g' p' nd_pf ->
     exists m t,
       typeOf g1 (a1, a2) (Chan m inp t) \/
       typeOf g1 (a1, a2) (Chan m io t).
@@ -364,7 +364,7 @@ Qed.
 Lemma typeCheck_lts_out:
   forall g1 g pf1 p a1 a2 b1 b2 g' p' nd_pf,
     typeCheck g1 pf1 p ->
-    lts g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
+    ltsL g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
     exists m t,
       typeOf g1 (a1, a2) (Chan m out t) \/
       typeOf g1 (a1, a2) (Chan m io t).
@@ -443,7 +443,7 @@ Qed.
 Lemma typeCheck_lts_out_payload:
   forall g1 g pf1 p a1 a2 b1 b2 g' p' nd_pf,
     typeCheck g1 pf1 p ->
-    lts g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
+    ltsL g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
     ( flagOf g1 (b1, b2) vis \/
       flagOf g1 (b1, b2) hid).
 Proof with eauto.

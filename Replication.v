@@ -48,7 +48,7 @@ Qed.
 #[global] Hint Resolve replication_diff.
 
 Lemma replication_unique: forall g p a g1 p1 nd_pf q1 q2,
-    lts g p a g1 p1 nd_pf ->
+    ltsL g p a g1 p1 nd_pf ->
     replication p p1 q1 ->
     replication p p1 q2 ->
     q1 = q2.

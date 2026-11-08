@@ -55,7 +55,7 @@ Lemma split_plus_un_isrestricted: forall g1 g2 g pf1 pf2 pf b1 b2 t,
  
 Lemma lts_flagOf_vis_entry
   c1 c2 g g1 a p p1 pf:
-  lts g p a g1 p1 pf ->
+  ltsL g p a g1 p1 pf ->
   flagOf g (c1, c2) vis ->
   flagOf g1 (c1, c2) vis.
 Proof with eauto.
@@ -772,7 +772,7 @@ Qed.
          x1 x2 y1 y2 m q t,
     typeOf g1 (x1, x2) (Chan m q t) ->
     tEnv_split g1 g2 g pf1 pf2 pf ->
-    lts g p (aIn x1 x2 y1 y2) g' p' nd_pf ->
+    ltsL g p (aIn x1 x2 y1 y2) g' p' nd_pf ->
     exists ty t',
       typeOf g1 (y1, y2) ty /\
         type_plus t ty t'.
@@ -1132,12 +1132,12 @@ Qed.
 
 Lemma lts_inp_obj_not_hid:
   forall g p a1 a2 b1 b2 g' p' nd_pf,
-    lts g p (aIn a1 a2 b1 b2) g' p' nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g' p' nd_pf ->
     ~flagOf g (b1, b2) hid.
 Proof with eauto.
   intros. intro ABS.  inversion ABS.
   dependent induction H. 
-  specialize IHlts with a1 a2 b1 b2 g (b1, b2) hid t.
+  specialize IHltsL with a1 a2 b1 b2 g (b1, b2) hid t.
   intuition.
   inversion ABS. subst.
   assert (EQ: f = hid /\ t1 = t3).
@@ -1146,7 +1146,7 @@ Proof with eauto.
   assert (DISEQ: f<> hid)...
   assert (DISEQ: f<> hid)...
   destruct H0 as (DIFF1 &DIFF2).
-  subst;eapply IHlts; try eapply in_app_iff in H1 as [HD|TL]; try econstructor;
+  subst;eapply IHltsL; try eapply in_app_iff in H1 as [HD|TL]; try econstructor;
     try eapply in_app_iff...
   inversion TL as [EQ | TL2];
     try inversion EQ; subst; try contradiction.
@@ -1439,7 +1439,7 @@ Qed.
 Lemma remove_exists: forall b1 b2 s m q t g p  a1 a2 g' p' nd_pf,
     typeOf g (a1, a2) (Chan m q t) ->
     typeOf g (b1, b2) s ->
-    lts g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
+    ltsL g p (aOut a1 a2 b1 b2) g' p' nd_pf ->
     exists r,
       type_remove s t r.       
 Proof with eauto.

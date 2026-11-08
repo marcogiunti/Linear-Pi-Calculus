@@ -19,9 +19,50 @@ Require Import
 Require Import CpdtTactics LibTactics.
 Import ListNotations.
 
- Parameter nonDivergentProcesses :
+(* A step can never produce its source wrapped in zero or more restrictions.
+   Zero restrictions is non-divergence; the general form is what makes the
+   induction go through the [open] and [hide] rules. *)
+Fixpoint dproc_size (p : dproc) : nat :=
+  match p with
+  | dZero => 1
+  | dBang _ _ _ _ q | dInp _ _ _ _ q | dOut _ _ _ _ q | dNu _ _ q => S (dproc_size q)
+  | dPar q r => S (dproc_size q + dproc_size r)
+  end.
+
+Lemma dproc_size_pmap : forall p a b c d, dproc_size (pmap p a b c d) = dproc_size p.
+Proof. induction p; intros; simpl; rewrite ?IHp, ?IHp1, ?IHp2; reflexivity. Qed.
+
+Inductive nu_wrap (p : dproc) : dproc -> Prop :=
+| nu_wrap_0 : nu_wrap p p
+| nu_wrap_S : forall b c q, nu_wrap p q -> nu_wrap p (dNu b c q).
+
+Lemma nu_wrap_size : forall p q, nu_wrap p q -> dproc_size p <= dproc_size q.
+Proof. induction 1; simpl; lia. Qed.
+
+Lemma nu_wrap_strip : forall b c r q, nu_wrap (dNu b c r) q -> nu_wrap r q.
+Proof. induction 1; constructor; auto; constructor. Qed.
+
+Lemma no_nu_wrapped_step :
+  forall g p a g' q pf, ltsL g p a g' q pf -> nu_wrap p q -> False.
+Proof.
+  induction 1; intro W;
+    repeat match goal with
+           | H : nu_wrap (dPar _ _) (dPar _ _) |- _ => inversion H; clear H; subst
+           | H : nu_wrap (dPar _ _) (dNu _ _ _) |- _ => inversion H; clear H; subst
+           | H : nu_wrap (dBang _ _ _ _ _) (dPar _ _) |- _ => inversion H; clear H; subst
+           end;
+    try (eauto using nu_wrap_0; fail);
+    try (apply nu_wrap_size in W; simpl in W; rewrite ?dproc_size_pmap in W; lia).
+  all: try (match goal with
+            | H : nu_wrap (dNu ?b ?c ?r) _ |- _ => eauto using nu_wrap_strip
+            end; fail).
+  all: try (inversion W; subst; eauto using nu_wrap_0, nu_wrap_strip; fail).
+Qed.
+
+Theorem nonDivergentProcesses :
     forall g p a g' nd_pf,
-      ~ lts g p a g' p nd_pf.
+      ~ ltsL g p a g' p nd_pf.
+Proof. intros; intro H; eapply no_nu_wrapped_step; [exact H | constructor]. Qed.
 
  #[global] Hint Resolve nonDivergentProcesses length_zero_iff_nil.
 

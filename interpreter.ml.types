@@ -52,10 +52,15 @@ val posB : ('a * int) list -> bool
 val inB0 : 'a -> 'a list -> bool
 val inclB : 'a list -> 'a list -> bool
 val nodupb : 'a list -> bool
-type bothRedexesChange = bool
+type sched =
+    SLeaf
+  | SParL of sched
+  | SParR of sched
+  | SComL of sched * sched
+  | SComR of sched * sched
 val elts :
   (((int * int) * flag) * piType) list ->
   dproc ->
   action ->
   (int * int) option ->
-  bool -> ((((int * int) * flag) * piType) list * dproc) option
+  sched -> ((((int * int) * flag) * piType) list * dproc) option

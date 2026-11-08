@@ -26,7 +26,7 @@ Require Import CpdtTactics LibTactics.
 Import ListNotations.
 
 Lemma type_of_tau_Action: forall g p a1 a2 g' p' pf,
-    lts g p (aTau a1 a2) g' p' pf ->
+    ltsL g p (aTau a1 a2) g' p' pf ->
     exists m t,
       In (a1, a2, vis, Chan m io t) g \/
         In (a1, a2, hid, Chan m io t) g.
@@ -61,7 +61,7 @@ Qed.
 #[global] Hint Constructors replication.
 
 Lemma lts_after_tau_lin: forall g  p1 p2 a1 a2 t g' nd_pf,
-    lts g p1 (aTau a1 a2) g' p2 nd_pf ->
+    ltsL g p1 (aTau a1 a2) g' p2 nd_pf ->
     In (a1, a2, vis, Chan lin io t) g ->
     exists b1 b2 f tb,
       (a1, a2) <> (b1, b2) /\  
@@ -205,7 +205,7 @@ Qed.
 
 Lemma lts_open_in_secLabs: forall a1 a2 b1 b2 s g1 g2 pf p1 p2,
     In (b1, b2, hid, s) g1 ->
-    lts g1 p1 (aOut a1 a2 b1 b2) g2 p2 pf ->
+    ltsL g1 p1 (aOut a1 a2 b1 b2) g2 p2 pf ->
     In (b1, b2) (secLabs p1).
 Proof with eauto || simpl.
   intros   a1 a2 b1 b2 s g1 g2 pf p1 p2 IN LTS.
@@ -366,7 +366,7 @@ Lemma lts_after_tau_un: forall g  p1 p2 a1 a2 t g' nd_pf nd_pf1,
     sl_pos p1 ->
     incl (secLabs p1) (domain (hid_proj g)) ->
     NoDup (secLabs p1) ->
-    lts g p1 (aTau a1 a2) g' p2 nd_pf ->
+    ltsL g p1 (aTau a1 a2) g' p2 nd_pf ->
     In (a1, a2, vis, Chan un io t) g ->
     exists b1 b2 f tb ne,
       (a1, a2) <> (b1, b2) /\  
@@ -977,7 +977,7 @@ Proof with eauto using no_dup_app_shift,iff_shift.
 Qed.
 
 Lemma replication_not_out g p a1 a2 b1 b2 g1 p1 nd_pf q1:
-  lts g p (aOut a1 a2 b1 b2) g1 p1 nd_pf -> replication p p1 q1 -> False.
+  ltsL g p (aOut a1 a2 b1 b2) g1 p1 nd_pf -> replication p p1 q1 -> False.
 Proof with eauto.
   introv LTS ABS; dependent induction LTS; try inv ABS...
   clear IHLTS.
@@ -1020,7 +1020,7 @@ Lemma lts_un_input_action_newEntries_secLabs:
   forall (*g p a1 a2 b1 b2 r g1 p1 nd_pf k pol t rp,*)
     g p a1 a2 b1 b2 g1 p1 nd_pf pol t rp,
     In (a1, a2, vis, Chan un pol t) g ->
-    lts g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
     (*g1 = k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g ->*)
     replication p p1 rp ->
     incl (secLabs rp) (secLabs p).
@@ -1048,7 +1048,7 @@ Qed.
 Lemma lts_un_tau_action_newEntries_secLabs:
   forall g p a1 a2 g1 p1 nd_pf pol t rp,
     In (a1, a2, vis, Chan un pol t) g ->
-    lts g p (aTau a1 a2) g1 p1 nd_pf ->
+    ltsL g p (aTau a1 a2) g1 p1 nd_pf ->
     replication p p1 rp ->
     incl (secLabs rp) (secLabs p).
 Proof with eauto.
@@ -1101,7 +1101,7 @@ Lemma lts_un_tau_action_newEntries_1 p g a1 a2 c1 c2 t r p1 pf q:
     (a1, a2) <> (c1, c2) ->
     In (a1, a2, vis, Chan un io t) g ->
     In (c1, c2) (domain g) -> 
-    lts g p (aTau a1 a2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g) p1 pf ->
+    ltsL g p (aTau a1 a2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g) p1 pf ->
     replication p p1 q ->
     secLabs (dep_relabel q (domain g) pf) = nil.
  Proof with eauto.
@@ -1389,7 +1389,7 @@ Lemma lts_un_tau_action_newEntries_1 p g a1 a2 c1 c2 t r p1 pf q:
     (a1, a2) <> (c1, c2) ->
     In (a1, a2, vis, Chan un io t) g ->
     In (c1, c2) (domain g) ->
-    lts g p (aTau a1 a2) ( (c1, c2, hid, r) :: removeEntry (c1, c2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g)) p1 pf ->
+    ltsL g p (aTau a1 a2) ( (c1, c2, hid, r) :: removeEntry (c1, c2) (nil ++ (c1, c2, vis, r) :: removeEntry (c1, c2) g)) p1 pf ->
     replication p p1 q ->
     secLabs (dep_relabel q (domain g) pf) = nil.
  Proof with eauto.
@@ -1534,9 +1534,9 @@ Lemma lts_un_tau_action_newEntries_1 p g a1 a2 c1 c2 t r p1 pf q:
         assert (incl (domain (hid_proj g)) (domain g)) by eapply hid_proj_incl...
         eapply proposition27.incl_preserves_max,incl_tran, incl_iff with (m1 :=domain g)...
         right. eapply removeEntry_in...
-     - Case hide.
+     - Case L_hide.
        assert (HIDE: 
-                lts  (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'') (dNu b1 b2 p') pf)...
+                ltsL  (h1 ++ (b1, b2, hid, t0) :: h2) (dNu b1 b2 p) (aTau a1 a2) (h' ++ (b1, b2, hid, t') :: h'') (dNu b1 b2 p') pf)...
        
        introv REPL.
       assert (REPL2: replication p p' q).
@@ -1699,7 +1699,7 @@ Lemma lts_un_tau_action_newEntries_1 p g a1 a2 c1 c2 t r p1 pf q:
     NoDup (secLabs p) ->
     In (a1, a2, vis, Chan un io t) g ->
     In (b1, b2) (domain g) -> 
-    lts g p (aTau a1 a2) g1 p1 pf ->
+    ltsL g p (aTau a1 a2) g1 p1 pf ->
   (g1 = k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g \/
    g1 = (b1, b2, hid, r):: removeEntry (b1, b2) (k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g))
    ->
@@ -1955,8 +1955,8 @@ Qed.
 
 Lemma lts_middle: forall g1 g2 g k1 k pf1 pf2 pf nd_pf1 nd_pf p1 act a1 a2 b1 b2 q1 p t,
     tEnv_split g1 g2 g pf1 pf2 pf ->
-    lts g1 p1 act k1 q1 nd_pf1 ->
-    lts g p1 act k q1 nd_pf ->
+    ltsL g1 p1 act k1 q1 nd_pf1 ->
+    ltsL g p1 act k q1 nd_pf ->
     (typeOf g1 (a1, a2) (Chan lin p t) \/
        typeOf g2 (a1, a2) (Chan lin p t) \/
        typeOf g (a1, a2)  (Chan lin p t)) ->

@@ -540,7 +540,7 @@ Proof with eauto.
 Qed.
 
 Lemma lts_un_input_action_replication: forall g p a1 a2 b1 b2 r g1 p1 nd_pf pol t k,
-    lts g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
     g1 = k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g ->
     k <> nil ->
     disjoint (domain k) (domain g)->
@@ -582,7 +582,7 @@ Proof with eauto using
     rewrite length_zero_iff_nil in ABS2; contradiction.
   - exists p. split. eapply replInp...
     unfold secLabs; fold secLabs...
-  - Case hide. remember b0 as c1. remember b3 as c2. subst b0 b3.
+  - Case L_hide. remember b0 as c1. remember b3 as c2. subst b0 b3.
     introv DIFF3 EQ1.
     
     destruct H as (DIFF1 &DIFF2).
@@ -610,7 +610,7 @@ Qed.
 
 
 Lemma lts_un_input_action_newEntries_2: forall g p a1 a2 b1 b2 r g1 p1 nd_pf pf q k,
-    lts g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
     g1 = k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g ->
     sl_pos p ->
     NoDup (secLabs p) ->
@@ -721,7 +721,7 @@ Qed.
 
 
 Lemma lts_un_input_action_newEntries: forall g p a1 a2 b1 b2 r g1 p1 nd_pf pf pol t k,
-    lts g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g1 p1 nd_pf ->
     g1 = k ++ (b1, b2, vis, r) :: removeEntry (b1, b2) g ->
     typeOf g (a1, a2) (Chan un pol t) ->
     disjoint (domain k) (domain((b1, b2, vis, r) :: removeEntry (b1, b2) g)) ->

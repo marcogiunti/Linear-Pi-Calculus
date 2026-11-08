@@ -101,7 +101,7 @@ Qed.
 
 Lemma type_of_in_action :
   forall g p x1 x2 y1 y2 p' g' pf,
-    lts g p (aIn x1 x2 y1 y2) g' p' pf ->
+    ltsL g p (aIn x1 x2 y1 y2) g' p' pf ->
     exists t,
       typeOf g (x1, x2) (Chan lin inp t) \/
       typeOf g (x1, x2) (Chan un inp t) \/
@@ -152,7 +152,7 @@ Qed.
 
 Lemma type_of_out_action :
   forall g p x1 x2 y1 y2 p' g' pf,
-    lts g p (aOut x1 x2 y1 y2) g' p' pf ->
+    ltsL g p (aOut x1 x2 y1 y2) g' p' pf ->
     exists t,
       typeOf g (x1, x2) (Chan lin out t) \/
       typeOf g (x1, x2) (Chan un out t) \/
@@ -479,15 +479,15 @@ Qed.
 
 
 Lemma lts_rewrite_pf : forall g a p g1 p1 pf (pf1 : NoDup (domain g)),
-    lts g p a g1 p1 pf ->
-    lts g p a g1 p1 pf1.
+    ltsL g p a g1 p1 pf ->
+    ltsL g p a g1 p1 pf1.
 Proof with eauto.
   intros.
   dependent induction H.
   all:try econstructor...
   assert (DEPEQ : dep_relabel p (domain g) pf = dep_relabel p (domain g) pf1) by apply dep_relabel_rewrite_pf.
   subst q; rewrite DEPEQ.
-  apply uRin with (f := f) (t1 := t1) (pol := pol) (t := t)...
+  apply L_uRin with (f := f) (t1 := t1) (pol := pol) (t := t)...
 Qed.
 
 #[global] Hint Resolve lts_rewrite_pf.
@@ -504,19 +504,19 @@ Qed.
 #[global] Hint Resolve removeEntry_twice.
 
 (*Lemma lts_out_vis_vis : forall a1 a2 b1 b2 t t' t1 s' f p p' g0 pf,  
-   lts ((a1, a2, vis, t) :: (b1, b2, vis, t1) :: g0) p 
+   ltsL ((a1, a2, vis, t) :: (b1, b2, vis, t1) :: g0) p 
        (aOut a1 a2 b1 b2) ((a1, a2, vis, t') :: (b1, b2, f, s') :: g0) p' pf ->
    f = vis.
 Proof with eauto using flagOf_turnHid.
   intros.
   dependent induction H.
-  - specialize IHlts with a1 a2 b1 b2 t t' t1 s' f g0 pf.
+  - specialize IHltsL with a1 a2 b1 b2 t t' t1 s' f g0 pf.
   intuition.
   - tauto.
   - specialize pairEq_eq with (a1, a2) (a1, a2) as BEQ; intuition.
     rewrite H in x. inversion x...
     rewrite H in x. inversion x...
-  - clear IHlts.
+  - clear IHltsL.
     specialize in_isMap with (b1, b2) hid t0 vis t1 ((a1, a2, vis, t) :: (b1, b2, vis, t1) :: g0) as IN.
     assert ( In (b1, b2, vis, t1) ((a1, a2, vis, t) :: (b1, b2, vis, t1) :: g0)). apply in_second...
     apply no_dup_isMap in pf.
@@ -784,7 +784,7 @@ Qed.
 *)
 
 Lemma lts_type_plus_un_in : forall a1 a2 pol t b1 b2 f f1 s s1 s0 s01 q1 q2 g pf g1 pf1 k,
-    lts g q1 
+    ltsL g q1 
         (aIn a1 a2 b1 b2)
         (k ++ (b1, b2, vis, s) :: removeEntry (b1, b2) g) q2 pf ->
     In (a1, a2, vis, Chan un pol t) g ->
@@ -805,7 +805,7 @@ Lemma lts_type_plus_un_in : forall a1 a2 pol t b1 b2 f f1 s s1 s0 s01 q1 q2 g pf
         ~In x (secLabs q2)) ->*)
     disjoint (domain k) (domain g) ->
     exists k1,
-      lts
+      ltsL
         g1 q1
         (aIn a1 a2 b1 b2)
         (k1 ++ (b1, b2, vis, s0) :: removeEntry (b1, b2) g1) q2 pf1.
@@ -819,7 +819,7 @@ Proof with eauto using hide_in.
   dependent induction LTS; try intros...
   - try eapply IHLTS in IH as (k1 &IH)...
     exists k1.
-    apply parL...
+    apply L_parL...
     simpl in NDSL;
       try eapply no_dup_distr in NDSL;
       intuition.
@@ -835,7 +835,7 @@ Proof with eauto using hide_in.
     apply in_isMap with (x := (a1, a2)) (g := g)...
     destruct EQ as (_&EQ); try inv EQ.
     exists (nil:typeEnv);erewrite app_nil_l;
-      eapply uIn...
+      eapply L_uIn...
   -  assert (EQ: vis = vis /\ Chan un pol0 t0 = Chan un pol t).
      apply in_isMap with (x := (a1, a2)) (g := g)...
      destruct EQ as (_&EQ); try inv EQ.
@@ -846,8 +846,8 @@ Proof with eauto using hide_in.
                  =
                  dBang a1 a2 x1 x2 (dep_relabel p (domain g1) pf1)).
      erewrite max_dep_relabel...
-     erewrite EQ; try eapply uRin...
-  - Case hide.
+     erewrite EQ; try eapply L_uRin...
+  - Case L_hide.
     remember b0 as c1. remember b3 as c2. subst b0 b3.
     assert (NH := H); destruct H as (DIFF1 &DIFF2).
     
@@ -901,7 +901,7 @@ Proof with eauto using hide_in.
               (k1 ++ (b1, b2, vis, s0) :: removeEntry (b1, b2) l1) ++ (c1, c2, hid, t1) :: l2)...
     erewrite <-app_assoc...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     revert dependent nd_pf1;
@@ -911,7 +911,7 @@ Proof with eauto using hide_in.
               (k1 ++ (b1, b2, vis, s0) :: l1) ++ (c1, c2, hid, t1) :: removeEntry (b1, b2) l2)...
     erewrite <-app_assoc...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
     eapply typeEnv_eq_change_flag_removeEntry in x as EQ; try rewrite EQ...
 
@@ -947,7 +947,7 @@ Proof with eauto using hide_in.
 Qed.
 
 Lemma lts_type_plus_lin_in : forall a1 a2 t b1 b2 f f1 s s1 s0 s01 q1 q2 g pf g1 pf1,
-    lts g q1 
+    ltsL g q1 
         (aIn a1 a2 b1 b2)
         ((a1, a2, vis, Chan lin empty t) :: (b1, b2, vis, s) :: removeEntry (a1,a2)(removeEntry (b1, b2) g)) q2 pf ->
     In (a1, a2, vis, Chan lin inp t) g ->
@@ -968,7 +968,7 @@ Lemma lts_type_plus_lin_in : forall a1 a2 t b1 b2 f f1 s s1 s0 s01 q1 q2 g pf g1
         f2 = hid /\ f1 = ill /\
           ~In x (secLabs q1)) ->
     *)
-    lts
+    ltsL
       g1 q1 
       (aIn a1 a2 b1 b2)
       ((a1, a2, vis, Chan lin empty t)
@@ -979,7 +979,7 @@ Proof with eauto using in_g_in_domain.
   assert (IH :  aIn a1 a2 b1 b2 = aIn a1 a2 b1 b2)...
   gen g1;
   dependent induction LTS; try intros...
-  - eapply IHLTS in IH; try eapply parL...
+  - eapply IHLTS in IH; try eapply L_parL...
      simpl in NDSL;
       try eapply no_dup_distr in NDSL;
       intuition.
@@ -988,12 +988,12 @@ Proof with eauto using in_g_in_domain.
       intuition.
     (*intros x ff1 ff2; specialize FIFF with x ff1 ff2;
       simpl in *; intuition.*)
-  - apply lIn with (f := f1) (t1 := s01)...
+  - apply L_lIn with (f := f1) (t1 := s01)...
   - assert (ABS: Chan un pol t0 =  Chan lin inp t)...
     inv ABS...
   - assert (ABS: Chan un pol t0 =  Chan lin inp t)...
     inv ABS...
-  - Case hide.
+  - Case L_hide.
     remember b0 as c1; remember b3 as c2; subst b0 b3.
     assert (HEQ1:=x); assert (HEQ2 := H0); clear x H0; assert (NH := H);
       destruct H as (DIFF1 &DIFF2).
@@ -1052,7 +1052,7 @@ Proof with eauto using in_g_in_domain.
      :: (b1, b2, vis, s0)  :: removeEntry (a1, a2)(removeEntry (b1, b2) l1) ++ (c1, c2, hid, t1) :: l2) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, vis, s0)  :: removeEntry (a1, a2)(removeEntry (b1, b2) l1)) ++ (c1, c2, hid, t1) :: l2)...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     revert dependent nd_pf1;
@@ -1062,7 +1062,7 @@ Proof with eauto using in_g_in_domain.
      :: (b1, b2, vis, s0)  :: removeEntry (a1, a2)l1 ++ (c1, c2, hid, t1) :: removeEntry (b1,b2)l2) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, vis, s0)  :: removeEntry (a1, a2)  l1) ++ (c1, c2, hid, t1) :: removeEntry (b1, b2) l2)...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
 revert dependent nd_pf1;
@@ -1072,7 +1072,7 @@ revert dependent nd_pf1;
      :: (b1, b2, vis, s0)  :: removeEntry (b1, b2)l1 ++ (c1, c2, hid, t1) :: removeEntry (a1,a2)l2) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, vis, s0)  :: removeEntry (b1, b2)  l1) ++ (c1, c2, hid, t1) :: removeEntry (a1, a2) l2)...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     revert dependent nd_pf1;
@@ -1082,7 +1082,7 @@ revert dependent nd_pf1;
      :: (b1, b2, vis, s0)  :: l1 ++ (c1, c2, hid, t1) :: removeEntry (a1, a2)(removeEntry (b1,b2)l2)) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, vis, s0)  ::   l1) ++ (c1, c2, hid, t1) :: removeEntry (a1, a2)(removeEntry (b1, b2) l2))...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     eapply typeEnv_eq_change_flag_removeEntry_app in HEQ1; try erewrite HEQ1...
@@ -1173,7 +1173,7 @@ Qed.
 *)
 
 Lemma lts_un_input_action:   forall g p a1 a2 b1 b2 g1 p' nd_pf pol t s r,
-    lts g p (aIn a1 a2 b1 b2) g1 p' nd_pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g1 p' nd_pf ->
     typeOf g (a1, a2) (Chan un pol t) ->
     typeOf g (b1, b2) s ->
     type_plus s t r ->
@@ -1285,7 +1285,7 @@ Qed.
 
 
 Lemma lts_type_remove_lin_out : forall a1 a2 t b1 b2 f f1 s s1 s0 s01 p1 p2 g0 pf0 g1 pf1,
-    lts g0 p1
+    ltsL g0 p1
         (aOut a1 a2 b1 b2)
         ((a1, a2, vis, Chan lin empty t) :: (b1, b2, f1, s1) :: (removeEntry (a1, a2) (removeEntry (b1, b2) g0))) p2 pf0 ->
     In (a1, a2, vis, Chan lin out t) g0 ->
@@ -1297,7 +1297,7 @@ Lemma lts_type_remove_lin_out : forall a1 a2 t b1 b2 f f1 s s1 s0 s01 p1 p2 g0 p
         In x (domain g0) <-> In x (domain g1)) ->
      NoDup (secLabs p1) ->
     incl (secLabs p1) (domain (hid_proj g1)) ->
-    lts g1 p1
+    ltsL g1 p1
         (aOut a1 a2 b1 b2)
         ((a1, a2, vis, Chan lin empty t) :: (b1, b2, f1, s01) :: (removeEntry (a1, a2) (removeEntry (b1, b2) g1))) p2 pf1.
 Proof with eauto.
@@ -1315,7 +1315,7 @@ Proof with eauto.
         (s1 := s1)  (f1 := f1). 
     simpl; intros.
     eapply IHLTS in IH...
-    apply parL...
+    apply L_parL...
      simpl in NDSL;
       try eapply no_dup_distr in NDSL;
       intuition.
@@ -1323,7 +1323,7 @@ Proof with eauto.
       eapply incl_app_inv in INCL;
       intuition.
     (*intros x ff1 ff2; specialize FIMPL with x ff1 ff2; intuition.*)
-  - intros. apply lOut with (t1 := s0).
+  - intros. apply L_lOut with (t1 := s0).
     specialize flag_of_map with g (b1, b2) vis f as FYP...
     assumption.
     specialize flag_of_map with g (b1, b2) vis f as FYP.
@@ -1364,7 +1364,7 @@ Proof with eauto.
 
     eapply IHLTS in IH; clear IHLTS...
 
-    apply open  with (t := s0) (pf1 := pf4).
+    apply L_open  with (t := s0) (pf1 := pf4).
     all:eauto.
     assert (removeEntry (a1, a2)
                         (removeEntry (b1, b2) ((b1, b2, vis, s0) :: removeEntry (b1, b2) g1))
@@ -1471,7 +1471,7 @@ Proof with eauto.
      :: (b1, b2, f1, s01)  :: removeEntry (a1, a2)(removeEntry (b1, b2) l1) ++ (c1, c2, hid, tt1) :: l2) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, f1, s01)  :: removeEntry (a1, a2)(removeEntry (b1, b2) l1)) ++ (c1, c2, hid, tt1) :: l2)...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     revert dependent nd_pf1;
@@ -1481,7 +1481,7 @@ Proof with eauto.
      :: (b1, b2, f1, s01)  :: removeEntry (a1, a2)l1 ++ (c1, c2, hid, tt1) :: removeEntry (b1,b2)l2) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, f1, s01)  :: removeEntry (a1, a2)  l1) ++ (c1, c2, hid, tt1) :: removeEntry (b1, b2) l2)...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
 revert dependent nd_pf1;
@@ -1491,7 +1491,7 @@ revert dependent nd_pf1;
      :: (b1, b2, f1, s01)  :: removeEntry (b1, b2)l1 ++ (c1, c2, hid, tt1) :: removeEntry (a1,a2)l2) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, f1, s01)  :: removeEntry (b1, b2)  l1) ++ (c1, c2, hid, tt1) :: removeEntry (a1, a2) l2)...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     revert dependent nd_pf1;
@@ -1501,7 +1501,7 @@ revert dependent nd_pf1;
      :: (b1, b2, f1, s01)  :: l1 ++ (c1, c2, hid, tt1) :: removeEntry (a1, a2)(removeEntry (b1,b2)l2)) =((a1, a2, vis, Chan lin empty t)
      :: (b1, b2, f1, s01)  ::   l1) ++ (c1, c2, hid, tt1) :: removeEntry (a1, a2)(removeEntry (b1, b2) l2))...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     eapply typeEnv_eq_change_flag_removeEntry_app in HEQ1; try erewrite HEQ1...
@@ -1552,7 +1552,7 @@ Qed.
 Lemma lts_type_remove_un_out : forall a1 a2 pol t b1 b2 f f1 s s1 s0 s01 p1 p2 g pf g1 pf1,
     In (a1, a2, vis, Chan un pol t) g ->
     In (b1, b2, f, s) g ->
-    lts g p1
+    ltsL g p1
         (aOut a1 a2 b1 b2)
         ((b1, b2, f1, s1) :: removeEntry (b1, b2) g) p2 pf ->
     type_remove s0 t s01 ->
@@ -1568,7 +1568,7 @@ Lemma lts_type_remove_un_out : forall a1 a2 pol t b1 b2 f f1 s s1 s0 s01 p1 p2 g
         f2 <> f1 ->
         f2 = hid /\ f1 = ill /\
         ~In x (secLabs p1)) ->*)
-    lts g1 p1
+    ltsL g1 p1
         (aOut a1 a2 b1 b2)
         ((b1, b2, f1, s01) :: removeEntry (b1, b2) g1) p2 pf1.
 Proof with eauto.
@@ -1586,7 +1586,7 @@ Proof with eauto.
         (b1 := b1) (b2 := b2) (pf := pf)
         (s1 := s1) (g := g) (f1 := f1) 
         (pf1 := pf1) in IH...
-    apply parL...
+    apply L_parL...
      simpl in NDSL;
       try eapply no_dup_distr in NDSL;
       intuition.
@@ -1596,7 +1596,7 @@ Proof with eauto.
    (* intros x ff1 ff2; specialize FIMPL with x ff1 ff2; intuition.*)
   -  contradiction.
   - intros.
-    apply uOut with (pol := pol0) (t := t) (t1 := s0).
+    apply L_uOut with (pol := pol0) (t := t) (t1 := s0).
     all:eauto.
     specialize type_of_map with
         g (a1, a2)  (Chan un pol0 t0) (Chan un pol t) as TYP.
@@ -1644,7 +1644,7 @@ Proof with eauto.
 
     
 
-    apply open with (t := s0) (pf := pf0) (pf1 := pf1')...
+    apply L_open with (t := s0) (pf := pf0) (pf1 := pf1')...
     assert (EQ2:removeEntry (b1, b2) ((b1, b2, vis, s0) :: removeEntry (b1, b2) g1) = removeEntry (b1, b2) g1).
     unfold removeEntry.  assert (BEQ: pair_eq (b1, b2) (b1, b2) = true)...
     rewrite BEQ...
@@ -1742,7 +1742,7 @@ Proof with eauto.
     assert (EQ2:
               ( (b1, b2, f1, s01)  :: removeEntry (b1, b2) l1) ++ (c1, c2, hid, tt1) :: l2 =( (b1, b2, f1, s01)  :: (removeEntry (b1, b2) l1) ++ (c1, c2, hid, tt1) :: l2))...
     erewrite <-EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
     revert dependent nd_pf1;
@@ -1750,7 +1750,7 @@ Proof with eauto.
     assert (EQ2:
               ((b1, b2, f1, s01)  :: l1 ++ (c1, c2, hid, tt1) :: removeEntry (b1,b2)l2) =((b1, b2, f1, s01)  ::   l1) ++ (c1, c2, hid, tt1) :: removeEntry (b1, b2) l2)...
     erewrite EQ2;
-      eapply hide with (pf1 := nd_pf1);
+      eapply L_hide with (pf1 := nd_pf1);
       try erewrite <-app_assoc...
 
      eapply hide_in...

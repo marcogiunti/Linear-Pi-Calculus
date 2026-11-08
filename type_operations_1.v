@@ -328,14 +328,14 @@ Qed.
 
 Lemma nonRecActions1:
   forall g p a1 a2 b1 b2 g' p' pf,
-    lts g p (aIn a1 a2 b1 b2) g' p' pf ->
+    ltsL g p (aIn a1 a2 b1 b2) g' p' pf ->
     (a1, a2) <> (b1, b2).
 Proof with eauto.
   intros.
   unfold not; intros ABS.
   assert (pf1: isMap g)...
   dependent induction H.
-  specialize IHlts with a1 a2 b1 b2...
+  specialize IHltsL with a1 a2 b1 b2...
   
   inversion H; subst.
   rewrite <-ABS in H2.
@@ -406,14 +406,14 @@ Qed.
 
 Lemma nonRecActions2:
   forall g p a1 a2 b1 b2 g' p' pf,
-    lts g p (aOut a1 a2 b1 b2) g' p' pf ->
+    ltsL g p (aOut a1 a2 b1 b2) g' p' pf ->
     (a1, a2) <> (b1, b2).
 Proof.
   intros.
   unfold not; intros ABS.
   apply no_dup_isMap in pf as pf1.
   dependent induction H.
-  specialize IHlts with a1 a2 b1 b2.
+  specialize IHltsL with a1 a2 b1 b2.
   intuition.
   
   assert (H2 := H1).

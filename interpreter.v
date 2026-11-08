@@ -7,7 +7,8 @@ Require Import
   split_operations_4
   lts_no_dup
   proposition27
-  operations.
+  operations
+  par_equiv.
 
 Require Extraction.
 Require Import ExtrOcamlNatInt.
@@ -558,11 +559,23 @@ Proof with eauto using  inB_false_nIn.
     split...
 Qed.  
 
-Definition bothRedexesChange := bool.
+(** A schedule says which redex to fire at each parallel composition:
+    [SParL]/[SParR] step inside the left/right component (parL, parR);
+    [SComL s1 s2] synchronises with the output in the left component and the
+    input in the right one (lcomL, lclsL, ucomL, uclsL), [SComR s1 s2] with the
+    output in the right component and the input in the left one (lcomR, lclsR,
+    ucomR, uclsR). [s1] schedules the output and [s2] the input.
+    [SLeaf] is the schedule of a process that fires without a parallel step. *)
+Inductive sched : Set :=
+| SLeaf : sched
+| SParL : sched -> sched
+| SParR : sched -> sched
+| SComL : sched -> sched -> sched
+| SComR : sched -> sched -> sched.
+
 (** [elts] is the interpreter of semantics.lts *)
 (** [tau_arg] is the payload of the tau *)
-(** [b] indicates whether we chose to change both redexes in a comm or close *)
-(** or to fire a parallel execution and change only one redex *)
+(** [s] selects the redex to fire *)
 (** [pf] is a dependent proof and is elided in the extraction *)
 (** Extraction: interpreter.ml *)
 (** Extraction types: interpreter.ml.types *)
@@ -571,16 +584,15 @@ Function elts
   (p : dproc)
   (act : action)
   (tau_arg : option (name * name))
-  (b : bothRedexesChange)
+  (s : sched)
   (pf : nodupB g = true)
   : option (typeEnv * dproc) :=
   match p, act with
     
   | dPar q1 q2, aTau a1 a2 =>
       
-      if b
-      then
-        
+      match s with
+      | SComL s1 s2 =>
         (match tau_arg with
          | Some (b1, b2) =>
 
@@ -621,8 +633,8 @@ Function elts
                                 (b1, b2) vis r pf diff 
                             in
                             (match
-                                elts d1 q1 act1 None false pf1,
-                                elts d2 q2 act2 None false pf2
+                                elts d1 q1 act1 None s1 pf1,
+                                elts d2 q2 act2 None s2 pf2
                               with
                               | Some (d', q'),
                                 Some (d'', q'') =>
@@ -677,8 +689,8 @@ Function elts
                                 (b1, b2) ill r pf diff
                             in
                             (match
-                                elts d1 q1 act1 None false pf1,
-                                elts d2 q2 act2 None false pf2
+                                elts d1 q1 act1 None s1 pf1,
+                                elts d2 q2 act2 None s2 pf2
                               with
                               | Some (d', q'),
                                 Some (d'', q'') =>
@@ -727,8 +739,8 @@ Function elts
                               ndb_sng g (b1, b2) vis r pf
                             in
                             (match
-                                elts g q1 act1 None false pf,
-                                elts d2 q2 act2 None false pf2
+                                elts g q1 act1 None s1 pf,
+                                elts d2 q2 act2 None s2 pf2
                               with
                               | Some (d', q'),
                                 Some (d'', q'') =>
@@ -773,8 +785,8 @@ Function elts
                               ndb_sng g (b1, b2) ill r pf
                             in
                             (match
-                                elts g q1 act1 None false pf,
-                                elts d2 q2 act2 None false pf2
+                                elts g q1 act1 None s1 pf,
+                                elts d2 q2 act2 None s2 pf2
                               with
                               | Some (d', q'),
                                 Some (d'', q'') =>
@@ -813,16 +825,267 @@ Function elts
                
          | _ => raise
          end)
-      else
-        raise
-          
+      | SComR s1 s2 =>
+        (match tau_arg with
+         | Some (b1, b2) =>
+
+
+             (match nat_pair_eq_dec (a1, a2) (b1, b2) with
+              | right diff =>
+
+                  (match InB (a1, a2) g, InB (b1, b2) g with
+
+                   (* lcomR *)
+                   | (vis, Chan lin io t, true),
+                     (vis, s, true) =>
+                       (match tremove s t with
+                        | Some r =>
+                            let g0 :=
+                              removeEntry (a1, a2) (removeEntry (b1, b2) g)
+                            in
+                            let act1 := aOut a1 a2 b1 b2
+                            in
+                            let d1 :=
+                              (a1, a2, vis, Chan lin out t)
+                                :: (b1, b2, vis, s) :: g0
+                            in
+                            let pf1 :=
+                              ndb_dbl g 
+                                (a1, a2) vis (Chan lin out t)
+                                (b1, b2) vis s pf diff
+                            in
+                            let act2 := aIn a1 a2 b1 b2
+                            in
+                            let d2 :=
+                              (a1, a2, vis, Chan lin inp t)
+                                :: (b1, b2, vis, r) :: g0
+                            in
+                            let pf2 :=
+                              ndb_dbl g 
+                                (a1, a2) vis (Chan lin inp t)
+                                (b1, b2) vis r pf diff 
+                            in
+                            (match
+                                elts d1 q2 act1 None s1 pf1,
+                                elts d2 q1 act2 None s2 pf2
+                              with
+                              | Some (d', q'),
+                                Some (d'', q'') =>
+                                  if typeEnv_eq
+                                       d'
+                                       ((a1, a2, vis, Chan lin empty t)
+                                          :: (b1, b2, vis, r) :: g0)
+                                     &&
+                                       typeEnv_eq
+                                         d''
+                                         ((a1, a2, vis, Chan lin empty t)
+                                            :: (b1, b2, vis, s)  :: g0) 
+                                  then
+                                    Some (d'', dPar q'' q')
+                                  else
+                                    raise
+                              | _, _ => raise
+                              end)
+                        | _ => raise
+                        end)
+                         
+
+
+                   (* lclsR *)
+                   | (vis, Chan lin io t, true),
+                     (hid, s, true) =>
+                       (match tremove s t with
+                        | Some r =>
+                            let g0 :=
+                              removeEntry (a1, a2) (removeEntry (b1, b2) g)
+                            in
+                            let act1 := aOut a1 a2 b1 b2
+                            in
+                            let d1 :=
+                              (a1, a2, vis, Chan lin out t)
+                                :: (b1, b2, hid, s) :: g0
+                            in
+                            let pf1 :=
+                              ndb_dbl g 
+                                (a1, a2) vis (Chan lin out t)
+                                (b1, b2) hid s pf diff
+                            in
+                            let act2 := aIn a1 a2 b1 b2
+                            in
+                            let d2 :=
+                              (a1, a2, vis, Chan lin inp t)
+                                :: (b1, b2, ill, r) :: g0
+                            in
+                            let pf2 :=
+                              ndb_dbl g 
+                                (a1, a2) vis (Chan lin inp t)
+                                (b1, b2) ill r pf diff
+                            in
+                            (match
+                                elts d1 q2 act1 None s1 pf1,
+                                elts d2 q1 act2 None s2 pf2
+                              with
+                              | Some (d', q'),
+                                Some (d'', q'') =>
+                                  if typeEnv_eq
+                                       d'
+                                       ((a1, a2, vis, Chan lin empty t)
+                                          :: (b1, b2, vis, r) :: g0)
+                                     &&
+                                       typeEnv_eq
+                                         d''
+                                         ((a1, a2, vis, Chan lin empty t)
+                                            :: (b1, b2, vis, s)  :: g0) 
+                                  then
+                                    let d''' :=
+                                      ((a1, a2, vis, Chan lin empty t)
+                                         :: (b1, b2, hid, s)  :: g0)
+                                    in
+                                    Some (d''', (dNu b1 b2 (dPar q'' q')))
+                                  else
+                                    raise
+                              | _, _ => raise
+                              end)
+                        | _ => raise
+                        end)
+
+
+                   (* ucomR *)
+                   | (vis, Chan un io t, true),
+                     (vis, s, true) =>
+                       (match tremove s t with
+                        | Some r =>
+                            let g0 :=
+                              removeEntry (b1, b2) g
+                            in
+                            let act1 := aOut a1 a2 b1 b2
+                            in
+                            let pf1 :=
+                              ndb_sng g (b1, b2) vis s pf
+                            in
+                            let act2 := aIn a1 a2 b1 b2
+                            in
+                            let d2 :=
+                              (b1, b2, vis, r) :: g0
+                            in
+                            let pf2 :=
+                              ndb_sng g (b1, b2) vis r pf
+                            in
+                            (match
+                                elts g q2 act1 None s1 pf,
+                                elts d2 q1 act2 None s2 pf2
+                              with
+                              | Some (d', q'),
+                                Some (d'', q'') =>
+                                  (match InB (a1, a2) d'',
+                                     InB (b1, b2) d'' with
+                                   | (vis, ta, true), (vis, tb, true) =>       
+                                       if typeEnv_eq
+                                            d'
+                                            ((b1, b2, vis, r) :: g0)
+                                          && type_eq ta (Chan un io t)
+                                          && type_eq tb s
+                                       then
+                                         Some (d'', dPar q'' q')
+                                       else
+                                         raise
+                                   | _, _ =>
+                                       raise
+                                   end)
+                              | _, _ =>
+                                  raise
+                              end)
+                        | _ => raise
+                        end)
+
+
+                   (* uclsR *)
+                   | (vis, Chan un io t, true),
+                     (hid, s, true) =>
+                       (match tremove s t with
+                        | Some r =>
+                            let g0 :=
+                              removeEntry (b1, b2) g
+                            in
+                            let act1 := aOut a1 a2 b1 b2
+                            in
+                            let act2 := aIn a1 a2 b1 b2
+                            in
+                            let d2 :=
+                              (b1, b2, ill, r) :: g0
+                            in
+                            let pf2 :=
+                              ndb_sng g (b1, b2) ill r pf
+                            in
+                            (match
+                                elts g q2 act1 None s1 pf,
+                                elts d2 q1 act2 None s2 pf2
+                              with
+                              | Some (d', q'),
+                                Some (d'', q'') =>
+                                  (match InB (a1, a2) d'',
+                                     InB (b1, b2) d'' with
+                                   | (vis, ta, true), (vis, tb, true) =>       
+                                       if typeEnv_eq
+                                            d'
+                                            ((b1, b2, vis, r) :: g0)
+                                          && type_eq ta (Chan un io t)
+                                          && type_eq tb s
+                                       then
+                                         let d''' :=
+                                           (b1, b2, hid, tb)
+                                             :: removeEntry (b1, b2) d''
+                                         in
+                                         Some (d''', dNu b1 b2 (dPar q'' q'))
+                                       else
+                                         raise
+                                   | _, _ =>
+                                       raise
+                                   end)
+                              | _, _ =>
+                                  raise
+                              end)
+                        | _ => raise
+                        end)
+                   |_, _ => raise
+                   end)
+
+
+              | left _ =>
+                  raise
+              end)
+         (* sumbool *)
+               
+         | _ => raise
+         end)
+      | SParL s' =>
+          (match elts g q1 act tau_arg s' pf with
+           | Some (d', q') => Some (d', dPar q' q2)
+           | _ => raise
+           end)
+      | SParR s' =>
+          (match elts g q2 act tau_arg s' pf with
+           | Some (d', q') => Some (d', dPar q1 q')
+           | _ => raise
+           end)
+      | SLeaf => raise
+      end
+
   | dPar q1 q2, _ =>
-      match elts g q1 act tau_arg false pf with
-      | Some (d', q') =>
-          Some (d', dPar q' q2)
+      match s with
+      | SParL s' =>
+          (match elts g q1 act tau_arg s' pf with
+           | Some (d', q') => Some (d', dPar q' q2)
+           | _ => raise
+           end)
+      | SParR s' =>
+          (match elts g q2 act tau_arg s' pf with
+           | Some (d', q') => Some (d', dPar q1 q')
+           | _ => raise
+           end)
       | _ => raise
       end
-        
+
   | dOut a1 a2 b1 b2 q,
     aOut c1 c2 d1 d2 =>
       if pair_eq (a1, a2) (c1, c2) &&
@@ -966,7 +1229,7 @@ Function elts
                 ndb_sng g (b1, b2) vis t pf 
               in
               
-              elts d1 q act None false pf1
+              elts d1 q act None s pf1
           | _ => raise
           end
 
@@ -988,7 +1251,7 @@ Function elts
                 let pf1 := ndb_changeVis (b1, b2) g pf
                   in
                   match 
-                    elts (changeVis (b1, b2) g) q act None false pf1
+                    elts (changeVis (b1, b2) g) q act None s pf1
                   with
                   | Some (g2, q') =>
                       match InB (b1, b2) g2 with
@@ -1007,6 +1270,82 @@ Function elts
             
             
             
+  | dNu b1 b2 q, aIn a1 a2 c1 c2 =>
+      if pair_eq (b1, b2) (a1, a2)
+      then
+        raise
+      else
+        if pair_eq (b1, b2) (c1, c2)
+        then
+          raise
+        else
+          (* hide *)
+          match InB (b1, b2) g with
+          | (hid, _, true)=>
+
+              let sl := secLabs p
+              in
+              let dg := domain g
+              in
+              if inclB sl dg &&
+                   posB sl &&
+                   nodupb sl &&
+                   (max sl <=? max dg)
+              then
+                let pf1 := ndb_changeVis (b1, b2) g pf
+                  in
+                  match 
+                    elts (changeVis (b1, b2) g) q act tau_arg s pf1
+                  with
+                  | Some (g2, q') =>
+                      match InB (b1, b2) g2 with
+                      |(vis, _, true) =>
+                         Some (changeHid (b1, b2) g2, dNu b1 b2 q')
+                      | _ => raise
+                      end
+                  | _ => raise
+                  end
+
+              else
+                raise
+                  
+              | _ => raise
+                end
+
+  | dNu b1 b2 q, aTau a1 a2 =>
+          (* hide *)
+          match InB (b1, b2) g with
+          | (hid, _, true)=>
+
+              let sl := secLabs p
+              in
+              let dg := domain g
+              in
+              if inclB sl dg &&
+                   posB sl &&
+                   nodupb sl &&
+                   (max sl <=? max dg)
+              then
+                let pf1 := ndb_changeVis (b1, b2) g pf
+                  in
+                  match 
+                    elts (changeVis (b1, b2) g) q act tau_arg s pf1
+                  with
+                  | Some (g2, q') =>
+                      match InB (b1, b2) g2 with
+                      |(vis, _, true) =>
+                         Some (changeHid (b1, b2) g2, dNu b1 b2 q')
+                      | _ => raise
+                      end
+                  | _ => raise
+                  end
+
+              else
+                raise
+                  
+              | _ => raise
+                end
+
   | _, _ => raise
   end.
 
@@ -1069,8 +1408,8 @@ Proof with eauto.
 Qed.                                
 
 (** Soundness of the interpreter *)
-Theorem elts_sound g p act tau_arg b d q pfb pf:
-  elts g p act tau_arg b pfb = Some (d, q) ->
+Theorem elts_sound g p act tau_arg s d q pfb pf:
+  elts g p act tau_arg s pfb = Some (d, q) ->
   lts g p act d q pf.
 Proof
   with
@@ -1091,7 +1430,7 @@ Proof
   introv EL.
   gen d q.
   functional induction
-    (elts g p act tau_arg b pfb)
+    (elts g p act tau_arg s pfb)
     using elts_ind;
     intros;
     try inv EL;
@@ -1147,6 +1486,44 @@ Proof
     eapply ucomL...
     eapply inB_implies_In_2 in e21...
     eapply inB_implies_In_2 in e25...    
+  - eapply uclsR...
+    eapply inB_implies_In_2 in e21...
+    eapply inB_implies_In_2 in e25...
+  - eapply IHo in e17 as K...
+    eapply ucomR...
+    eapply inB_implies_In_2 in e21...
+    eapply inB_implies_In_2 in e25...
+  - assert (pff := pf0).
+    eapply in_split in e3 as (h1 &h2 &EQ).
+    assert (ndcv :
+             nodupB (changeVis (b1, b2) g) = true)...
+    assert (ndcv_pf :
+             NoDup (domain  (changeVis (b1, b2) g)))...
+    eapply IHo with (pf := ndcv_pf) in e8 as IH.
+    clear IHo.
+    eapply in_split in e10 as (k1 &k2 &EQ2).
+    gen ndcv_pf.
+    erewrite changeVis_app, EQ2; intros...
+    assert (nd_pf := IH).
+    subst.
+    try eapply andb_prop in e7 as (K1 &K5);
+      try eapply andb_prop in K1 as (K1 &K4);
+      try eapply andb_prop in K1 as (K1 &K3).
+    eapply lts_no_dup_full in nd_pf.
+    erewrite changeHid_app with (h1 := k1); intros...
+    eapply hide...
+    rewrite <-pairEq_neq in *.
+    econstructor...
+    eapply inclB_incl, incl_incl2, incl2_distr  in K1 as [K1 _].
+    rewrite domain_distr in *; simpl...
+    eauto.
+    try eapply nodupb_NoDup;
+       rewrite domain_distr in *; simpl...          
+    simpl...
+    eapply posB_pos in K3.
+    eapply incl_pos with (l2 := secLabs q ++ [(b1, b2)])...
+    eapply incl_appl...
+    eapply nodupb_NoDup, no_dup_iff in K4 as [K4 _]...
   - rewrite <-pairEq_eq in e2; inv e2...
   - assert (pff := pf0).
     eapply in_split in e3 as (h1 &h2 &EQ).
@@ -1164,7 +1541,7 @@ Proof
     try eapply andb_prop in e7 as (K1 &K5);
       try eapply andb_prop in K1 as (K1 &K4);
       try eapply andb_prop in K1 as (K1 &K3).
-    eapply lts_no_dup in nd_pf.
+    eapply lts_no_dup_full in nd_pf.
     erewrite changeHid_app with (h1 := k1); intros...
     eapply hide...
     rewrite <-pairEq_neq in *.
@@ -1179,8 +1556,37 @@ Proof
     eapply incl_pos with (l2 := secLabs q ++ [(b1, b2)])...
     eapply incl_appl...
     eapply nodupb_NoDup, no_dup_iff in K4 as [K4 _]...
-    eapply Nat.leb_le,Max.max_app_l in K5.
-    rewrite domain_distr in *; simpl in *...
+  - eapply inB_implies_In_2 in H0.
+    assert (pff := pf0).
+    eapply in_split in H0 as (h1 &h2 &EQ).
+    assert (ndcv :
+             nodupB (changeVis (b1, b2) g) = true)...
+    assert (ndcv_pf :
+             NoDup (domain  (changeVis (b1, b2) g)))...
+    eapply IHo with (pf := ndcv_pf) in e6 as IH.
+    clear IHo.
+    eapply in_split in e8 as (k1 &k2 &EQ2).
+    gen ndcv_pf.
+    erewrite changeVis_app, EQ2; intros...
+    assert (nd_pf := IH).
+    subst.
+    try eapply andb_prop in e5 as (K1 &K5);
+      try eapply andb_prop in K1 as (K1 &K4);
+      try eapply andb_prop in K1 as (K1 &K3).
+    eapply lts_no_dup_full in nd_pf.
+    erewrite changeHid_app with (h1 := k1); intros...
+    eapply hide...
+    simpl; trivial.
+    eapply inclB_incl, incl_incl2, incl2_distr  in K1 as [K1 _].
+    rewrite domain_distr in *; simpl...
+    eauto.
+    try eapply nodupb_NoDup;
+       rewrite domain_distr in *; simpl...          
+    simpl...
+    eapply posB_pos in K3.
+    eapply incl_pos with (l2 := secLabs q ++ [(b1, b2)])...
+    eapply incl_appl...
+    eapply nodupb_NoDup, no_dup_iff in K4 as [K4 _]...
   - eapply flag_eq_false in e12...
   -  try eapply andb_prop in e11 as (K1 &K2).
      eapply orb_true_iff in K1.
