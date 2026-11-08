@@ -34,6 +34,10 @@ causes of breakage, the fixes applied, and how the result was validated.
 The `Coq.` → `Stdlib.` prefix change comes from the renaming of the standard library in
 Rocq 9.
 
+**Update after the port.** `nonRecTypes` and `nonDivergentProcesses` were parameters when the
+port was done. They have since been proved (in `semantics.v` and `lts_payload_un_inp.v`), so
+`make validate` no longer reports them.
+
 ## 1. Toolchain
 
 A dedicated opam switch was created, so existing switches are untouched:
