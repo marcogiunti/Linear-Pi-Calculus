@@ -10,7 +10,8 @@ causes of breakage, the fixes applied, and how the result was validated.
   about 40 minutes of wall-clock time, most of it spent on `linear_pi.v`.
 - No proof was weakened. Nothing was admitted, and no new axioms or parameters were added.
 - `make validate` (`rocqchk`) reports the same assumptions as under Coq 8.8.2, except that
-  `JMeq_eq` no longer appears: the Rocq 9.2 standard library derives it instead of assuming it.
+  `JMeq_eq` and `inj_pair2` no longer appear: the Rocq 9.2 standard library derives `JMeq_eq`
+  instead of assuming it, and `inj_pair2` is now proved in `LibTactics.v` from `eq_rect_eq`.
 - The statements of all lemmas and theorems are unchanged. Only proof scripts, imports and
   hint declarations were edited.
 - The diff touches 58 files (899 insertions, 909 deletions). This includes the new file
@@ -23,7 +24,7 @@ causes of breakage, the fixes applied, and how the result was validated.
 | `SR.LibTactics.skip_axiom` | `SR.LibTactics.skip_axiom` |
 | `SR.semantics.nonRecTypes` | `SR.semantics.nonRecTypes` |
 | `SR.lts_payload_un_inp.nonDivergentProcesses` | `SR.lts_payload_un_inp.nonDivergentProcesses` |
-| `SR.LibTactics.inj_pair2` | `SR.LibTactics.inj_pair2` |
+| `SR.LibTactics.inj_pair2` | *(no longer an axiom)* |
 | `Coq.Logic.ProofIrrelevance.proof_irrelevance` | `Stdlib.Logic.ProofIrrelevance.proof_irrelevance` |
 | `Coq.Logic.FunctionalExtensionality.functional_extensionality_dep` | `Stdlib.Logic.FunctionalExtensionality.functional_extensionality_dep` |
 | `Coq.Logic.Classical_Prop.classic` | `Stdlib.Logic.Classical_Prop.classic` |

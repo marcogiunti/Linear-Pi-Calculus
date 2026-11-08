@@ -1,5 +1,10 @@
 # Soundness of Typed Transitions in the Linear Pi Calculus
 
+This repository contains the mechanisation accompanying an ongoing submission that extends the paper
+*Soundness of Typed Transitions in the Linear Pi Calculus*, published in the proceedings of FORTE 2026
+([doi:10.1007/978-3-032-28187-6_7](https://doi.org/10.1007/978-3-032-28187-6_7)). The technical report is in
+[report/tech-report.pdf](report/tech-report.pdf).
+
 ## Software prerequisite
 The repository compiles with Rocq 9.2 (with the Rocq standard library 9.2).
 
